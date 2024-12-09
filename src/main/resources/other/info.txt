@@ -12,3 +12,6 @@ java:   17
 dependencies:
 spring web, spring data jpa, postgresql driver, lombok, java mail sender,
 spring security, spring boot actuator, validation
+
+eseguito in scaletta:
+model, repository, service, controller
