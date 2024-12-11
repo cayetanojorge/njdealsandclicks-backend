@@ -29,7 +29,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
@@ -39,7 +39,7 @@ public class ProductController {
         return productService.geProductById(id);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public Product createProduct(@RequestBody Product product) {
         return productService.createProduct(product);
     }
