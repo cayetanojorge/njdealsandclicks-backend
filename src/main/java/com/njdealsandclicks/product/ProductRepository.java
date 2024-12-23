@@ -1,7 +1,7 @@
-package com.njdealsandclicks.repository;
-import org.springframework.data.jpa.repository.JpaRepository;
+package com.njdealsandclicks.product;
+import java.util.List;
 
-import com.njdealsandclicks.model.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 
 /**
@@ -11,4 +11,5 @@ import com.njdealsandclicks.model.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
     /* JpaRepository: Fornisce metodi CRUD predefiniti (es. findAll(), save(), deleteById()) */
+    List<Product> findByCategoryId(Long id);
 }

@@ -1,4 +1,4 @@
-package com.njdealsandclicks.controller;
+package com.njdealsandclicks.product;
 
 import java.util.List;
 
@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.njdealsandclicks.model.Product;
-import com.njdealsandclicks.service.ProductService;
+import com.njdealsandclicks.pricehistory.PriceHistory;
 
 
 /**
@@ -36,7 +35,17 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public Product getProductById(@PathVariable Long id) {
-        return productService.geProductById(id);
+        return productService.getProductById(id);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public List<Product> getProductsByCategoryId(@PathVariable Long id) {
+        return productService.getProductsByCategoryId(id);
+    }
+
+    @GetMapping("/{id}/price-history")
+    public List<PriceHistory> getPriceHistoryProductById(@PathVariable Long id) {
+        return productService.getPriceHistoryByProductId(id);
     }
 
     @PostMapping("/create")

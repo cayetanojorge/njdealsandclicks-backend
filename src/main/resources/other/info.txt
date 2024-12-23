@@ -15,3 +15,9 @@ spring security, spring boot actuator, validation
 
 eseguito in scaletta:
 model, repository, service, controller
+
+to check the IP, comands:
+. for IPv6:
+    curl -6 ifconfig.me
+. for IPv4:
+    curl -4 ifconfig.me
