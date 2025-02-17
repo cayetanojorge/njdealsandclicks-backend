@@ -1,0 +1,25 @@
+subscription:
+  - planName: Free
+    description: Piano gratuito con funzionalità di base
+    price: 0.00
+    durationInDays: 0
+    maxEmailsPerWeek: 10
+    maxTrackedProducts: 10
+    maxTrackedCategories: 5
+    # isActive: true
+  - planName: Premium
+    description: Piano premium con funzionalità avanzate
+    price: 9.99
+    durationInDays: 30
+    maxEmailsPerWeek: 50
+    maxTrackedProducts: 50
+    maxTrackedCategories: 25
+    # isActive: true
+  - planName: Pro
+    description: Piano pro con tutte le funzionalità
+    price: 29.99
+    durationInDays: 30
+    maxEmailsPerWeek: 100
+    maxTrackedProducts: 100
+    maxTrackedCategories: 50
+    # isActive: true

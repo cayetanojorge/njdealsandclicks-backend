@@ -1,37 +1,95 @@
 package com.njdealsandclicks.category;
 
-// import java.util.ArrayList;
-// import java.util.List;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
 
-// import com.njdealsandclicks.product.Product;
-
-// import jakarta.persistence.CascadeType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-// import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Entity
-@Data
 @Table(indexes = {
+    @Index(name = "idx_category_public_id", columnList = "publicId"),
     @Index(name = "idx_category_name", columnList = "name")
 })
+@Data
 public class Category {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy =  GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
+    @Pattern(regexp = "categ_[a-zA-Z0-9]{10}")
+    private String publicId;
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @Column(nullable = true, length = 500)
+    private String description;
+
+    @Column(nullable = true)
+    private String imageUrl;
+
+    @Column(nullable = false, unique = true)
+    private String slug;
+
+    @Column(nullable = false)
+    private Boolean isActive = true;
+
+    @Column(nullable = true)
+    private Integer displayOrder; // per ordinare le categorie in una lista o un menu
+
+    /*
+    Vantaggi:
+    - Struttura logica: Le categorie figlie possono essere facilmente associate a una categoria principale.
+    - Navigazione utente: Gli utenti possono esplorare le categorie partendo da un livello alto e scendendo a livelli più specifici.
+    - Organizzazione backend: Utile per organizzare i prodotti e facilitare la gestione da parte degli amministratori.
+     */
+    @ManyToOne(fetch = FetchType.EAGER) // carica entità categoria con anche la categoria padre, senza query in secondo momento
+    @JoinColumn(name = "parent_id")
+    private Category parentCategory;
+
+    // FetchType.LAZY per evitare caricamenti non necessari delle sottocategorie, Hibernate carica dopo con altra query quando richiesta
+    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Category> subCategories;
+
+
+    // future-todo
+    // // // @Column(nullable = false)
+    // // // private Boolean createdByUser;
+    // // // @Column(nullable = true)
+    // // // private User user;
+
+    @Column(nullable = false, updatable = false)
+    private ZonedDateTime createdAt;
+    
+    @Column(nullable = true)
+    private ZonedDateTime updatedAt;
 
     // utile per recuperare lista prodotto da tabella Category, ogni prodotto aggiunto poi aggiunto a specifica categoria
     // non utile se abbiamo migliaia di prodotto, dati ridondanti.
     // @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     // private List<Product> products = new ArrayList<>();
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    }
 }

@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.njdealsandclicks.pricehistory.PriceHistory;
-
+import com.njdealsandclicks.dto.product.ProductCreateUpdateDTO;
+import com.njdealsandclicks.dto.product.ProductDTO;
+import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 
 /**
  * Il controller definisce gli endpoint per gestire i prodotti.
@@ -29,37 +30,37 @@ public class ProductController {
     }
 
     @GetMapping("/")
-    public List<Product> getAllProducts() {
+    public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
-        return productService.getProductById(id);
+    @GetMapping("/{publicId}")
+    public ProductDetailsDTO getProductByPublicId(@PathVariable String publicId) {
+        return productService.getProductDetailsDTOsByPublicId(publicId);
     }
 
-    @GetMapping("/category/{categoryId}")
-    public List<Product> getProductsByCategoryId(@PathVariable Long id) {
-        return productService.getProductsByCategoryId(id);
+    @GetMapping("/category/{categoryPublicId}")
+    public List<ProductDTO> getProductsByCategoryId(@PathVariable String categoryPublicId) {
+        return productService.getProductDTOsByCategoryId(categoryPublicId);
     }
 
-    @GetMapping("/{id}/price-history")
-    public List<PriceHistory> getPriceHistoryProductById(@PathVariable Long id) {
-        return productService.getPriceHistoryByProductId(id);
-    }
+    // @GetMapping("/{id}/price-history")
+    // public List<PriceHistory> getPriceHistoryProductById(@PathVariable Long id) {
+    //     return productService.getPriceHistoryByProductId(id);
+    // }
 
     @PostMapping("/create")
-    public Product createProduct(@RequestBody Product product) {
-        return productService.createProduct(product);
+    public ProductDTO createProduct(@RequestBody ProductCreateUpdateDTO productCreateDTO) {
+        return productService.createProduct(productCreateDTO);
     }
     
-    @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        return productService.updateProduct(id, product);
+    @PutMapping("/{publicId}")
+    public ProductDTO updateProduct(@PathVariable String publicId, @RequestBody ProductCreateUpdateDTO productUpdateDTO) {
+        return productService.updateProduct(publicId, productUpdateDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    @DeleteMapping("/delete/{publicId}")
+    public void deleteProduct(@PathVariable String publicId) {
+        productService.deleteProduct(publicId);
     }
 }

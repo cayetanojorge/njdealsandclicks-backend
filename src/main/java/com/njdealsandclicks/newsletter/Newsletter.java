@@ -1,12 +1,14 @@
 package com.njdealsandclicks.newsletter;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.user.User;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,8 +16,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Entity
@@ -23,8 +25,12 @@ import lombok.Data;
 public class Newsletter {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy =  GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false, unique = true)
+    @Pattern(regexp = "news_[a-zA-Z0-9]{10}")
+    private String publicId;
 
     // cascade se elimino user elimino rispettive riga in tab newsletter
     // orphanRemoval che se record in tab newsletter è orfano di user allora elimino
@@ -32,17 +38,31 @@ public class Newsletter {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    private boolean generalSubsription = false; // true se iscrizione tutti prodotti, default false
+    private Boolean generalNewsletter = false; // true se iscrizione tutti prodotti, default false
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product product;
 
+    // quando era possibile solo 1 prodotto specifico
+    // // @ManyToOne(optional = true)
+    // // @JoinColumn(name = "product_id", referencedColumnName = "id")
+    // // private Product product;
+
+    // ora possibilità a più prodotti
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "newsletter_product",
+        joinColumns = @JoinColumn(name = "newsletter_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products;
+
+    
     /*
     @ManyToMany con categories:
     Permette a un utente di iscriversi a più categorie.
-    Viene creata una tabella in db con join newsletter_category con due colonne fk che riferiscono a Newsletter e Category.
+    Hibernate creerà una tabella di join intermedia chiamata newsletter_product, come specificato con @JoinTable. Questa tabella avrà due colonne: newsletter_id, product_id
     Questa soluzione è scalabile perché supporta l'aggiunta di nuove categorie senza dover modificare la struttura delle tabelle.
+    PERSIST: Crea nuovi record nella tabella di join newsletter_category quando aggiungi categorie a una newsletter.
+    MERGE: Sincronizza le modifiche a Newsletter con la tabella di join.
     */
     // quando elimino record in newsletter voglio che si elimino record in tabella newsletter_category, 2 modi:
     //   . metodo 1: in service prima di eliminare newsletter, recuperare i record della tab newsletter_category far clear e poi eliminare record in newsletter

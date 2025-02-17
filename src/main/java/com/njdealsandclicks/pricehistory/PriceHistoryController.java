@@ -3,7 +3,10 @@ package com.njdealsandclicks.pricehistory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.njdealsandclicks.dto.pricehistory.PriceHistoryDTO;
+
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,9 +26,9 @@ public class PriceHistoryController {
         this.priceHistoryService = priceHistoryService;
     }
 
-    @GetMapping("/product/{productId}")
-    public List<PriceHistory> getPriceHistoriesByProductId(@PathVariable Long productId) {
-        return priceHistoryService.getPriceHistoriesByProductId(productId);
+    @GetMapping("/product/{productPublicId}")
+    public List<PriceHistoryDTO> getPriceHistoriesByProductPublicId(@PathVariable String productPublicId) {
+        return priceHistoryService.getPriceHistoriesDTOsByProductPublicId(productPublicId);
     }
 
     @PostMapping("/create")
@@ -34,13 +37,13 @@ public class PriceHistoryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deletePriceHistory(@PathVariable Long id) {
+    public void deletePriceHistory(@PathVariable UUID id) {
         priceHistoryService.deletePriceHistory(id);
     }
 
-    @DeleteMapping("/product/{productId}")
-    public void deletePriceHistoriesByProductId(@PathVariable Long productId) {
-        priceHistoryService.deletePriceHistoriesByProductId(productId);
+    @DeleteMapping("/product/{productPublicId}")
+    public void deletePriceHistoriesByProductId(@PathVariable String productPublicId) {
+        priceHistoryService.deletePriceHistoriesByProductPublicId(productPublicId);
     }
     
     

@@ -3,10 +3,14 @@ package com.njdealsandclicks.user;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.njdealsandclicks.dto.user.UserCreateUpdateDTO;
+import com.njdealsandclicks.dto.user.UserDTO;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +28,13 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
     
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    @GetMapping("/{publicId}")
+    public UserDTO getUserByPublicId(@PathVariable String publicId) {
+        return userService.getUserDTOByPublicId(publicId);
     }
 
     @GetMapping("/email")
@@ -39,18 +43,37 @@ public class UserController {
     }
     
     @PostMapping("/create")
-    public User creatUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public UserDTO creatUser(@RequestBody UserCreateUpdateDTO userCreateDTO) {
+        return userService.createUser(userCreateDTO);
     }
 
-    @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    @PutMapping("/{publicId}")
+    public UserDTO updateUser(@PathVariable String publicId, @RequestBody UserCreateUpdateDTO userUpdateDTO) {
+        return userService.updateUser(publicId, userUpdateDTO);
     }
     
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @PutMapping("/{publicId}/verify-email")
+    public UserDTO verifyEmail(@PathVariable String publicId) {
+        return userService.verifyEmail(publicId);
     }
-    
+
+    @PutMapping("/{publicId}/activate")
+    public UserDTO activateUser(@PathVariable String publicId) {
+        return userService.activateUser(publicId);
+    }
+
+    @PutMapping("/{publicId}/deactivate")
+    public UserDTO deactivateUser(@PathVariable String publicId) {
+        return userService.deactivateUser(publicId);
+    }
+
+    @PatchMapping("/{publicId}/email-frequency")
+    public UserDTO updateEmailFrequency(@PathVariable String publicId, @RequestBody String emailFrequency) {
+        return userService.updateEmailFrequency(publicId, emailFrequency);
+    }
+
+    @DeleteMapping("/delete/{publicId}")
+    public void deleteUser(@PathVariable String publicId) {
+        userService.deleteUser(publicId);
+    }
 }

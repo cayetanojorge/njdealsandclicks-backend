@@ -1,0 +1,377 @@
+category:
+  - name: Informatica
+    description: "Categorie legate al mondo dell'informatica e tecnologia"
+    imageUrl: "https://example.com/images/informatica.jpg"
+    slug: "informatica"
+    isActive: true
+    displayOrder: 1
+    subCategories:
+      - name: Notebook
+        description: "Computer portatili per uso personale o professionale"
+        imageUrl: "https://example.com/images/notebook.jpg"
+        slug: "notebook"
+        isActive: true
+        displayOrder: 1
+      - name: MacBook
+        description: "Portatili Apple MacBook"
+        imageUrl: "https://example.com/images/macbook.jpg"
+        slug: "macbook"
+        isActive: true
+        displayOrder: 2
+      - name: Tablet
+        description: "Tablet per lavoro e intrattenimento"
+        imageUrl: "https://example.com/images/tablet.jpg"
+        slug: "tablet"
+        isActive: true
+        displayOrder: 3
+      - name: iPad
+        description: "Tablet Apple iPad"
+        imageUrl: "https://example.com/images/ipad.jpg"
+        slug: "ipad"
+        isActive: true
+        displayOrder: 4
+      - name: Storage
+        description: "Dispositivi di archiviazione dati"
+        imageUrl: "https://example.com/images/storage.jpg"
+        slug: "storage"
+        isActive: true
+        displayOrder: 5
+      - name: Stampante e Scanner
+        description: "Stampanti e scanner per uso personale e ufficio"
+        imageUrl: "https://example.com/images/stampante-scanner.jpg"
+        slug: "stampante-scanner"
+        isActive: true
+        displayOrder: 6
+      - name: Monitor
+        description: "Monitor per PC e lavoro"
+        imageUrl: "https://example.com/images/monitor.jpg"
+        slug: "monitor"
+        isActive: true
+        displayOrder: 7
+      - name: Accessori Informatica
+        description: "Accessori per computer e dispositivi tecnologici"
+        imageUrl: "https://example.com/images/accessori-informatica.jpg"
+        slug: "accessori-informatica"
+        isActive: true
+        displayOrder: 8
+
+  - name: Smartphone
+    description: "Smartphone e dispositivi mobili"
+    imageUrl: "https://example.com/images/smartphone.jpg"
+    slug: "smartphone"
+    isActive: true
+    displayOrder: 2
+    subCategories:
+      - name: Android
+        description: "Smartphone con sistema operativo Android"
+        imageUrl: "https://example.com/images/android.jpg"
+        slug: "android"
+        isActive: true
+        displayOrder: 1
+      - name: iPhone
+        description: "Smartphone Apple iPhone"
+        imageUrl: "https://example.com/images/iphone.jpg"
+        slug: "iphone"
+        isActive: true
+        displayOrder: 2
+      - name: Accessori Smartphone
+        description: "Accessori per smartphone"
+        imageUrl: "https://example.com/images/accessori-smartphone.jpg"
+        slug: "accessori-smartphone"
+        isActive: true
+        displayOrder: 3
+
+  - name: Wearable
+    description: "Dispositivi indossabili come smartwatch e fitness tracker"
+    imageUrl: "https://example.com/images/wearable.jpg"
+    slug: "wearable"
+    isActive: true
+    displayOrder: 3
+
+  - name: Multimedia
+    description: "Dispositivi per l'intrattenimento e la visione multimediale"
+    imageUrl: "https://example.com/images/multimedia.jpg"
+    slug: "multimedia"
+    isActive: true
+    displayOrder: 4
+    subCategories:
+    - name: TV
+      description: "Televisioni di diverse marche e modelli"
+      imageUrl: "https://example.com/images/tv.jpg"
+      slug: "tv"
+      isActive: true
+      displayOrder: 1
+    - name: Home Cinema
+      description: "Sistemi e dispositivi per home cinema"
+      imageUrl: "https://example.com/images/home-cinema.jpg"
+      slug: "home-cinema"
+      isActive: true
+      displayOrder: 2
+    - name: Proiettori
+      description: "Proiettori per casa, ufficio e home cinema"
+      imageUrl: "https://example.com/images/proiettori.jpg"
+      slug: "proiettori"
+      isActive: true
+      displayOrder: 3
+    - name: Accessori Multimedia
+      description: "Accessori per dispositivi multimedia"
+      imageUrl: "https://example.com/images/accessori-informatica.jpg"
+      slug: "accessori-multimedia"
+      isActive: true
+      displayOrder: 4
+
+  - name: Fotografia e Video
+    description: "Fotocamere, videocamere e accessori per professionisti e appassionati"
+    imageUrl: "https://example.com/images/fotografia-video.jpg"
+    slug: "fotografia-video"
+    isActive: true
+    displayOrder: 5
+    subCategories:
+    - name: Fotocamere
+      description: "Fotocamere digitali e accessori"
+      imageUrl: "https://example.com/images/fotocamere.jpg"
+      slug: "fotocamere"
+      isActive: true
+      displayOrder: 1
+    - name: Videocamere
+      description: "Videocamere e accessori per riprese"
+      imageUrl: "https://example.com/images/videocamere.jpg"
+      slug: "videocamere"
+      isActive: true
+      displayOrder: 2
+    - name: Accessori Foto/Video
+      description: "Obiettivi, treppiedi, schede di memoria e altri accessori"
+      imageUrl: "https://example.com/images/accessori-foto-video.jpg"
+      slug: "accessori-foto-video"
+      isActive: true
+      displayOrder: 3
+
+  - name: Elettrodomestici
+    description: "Elettrodomestici per la casa e la cucina"
+    imageUrl: "https://example.com/images/elettrodomestici.jpg"
+    slug: "elettrodomestici"
+    isActive: true
+    displayOrder: 6
+    subCategories:
+      - name: Grandi Elettrodomestici
+        description: "Frigoriferi, lavatrici e altri grandi elettrodomestici"
+        imageUrl: "https://example.com/images/grandi-elettrodomestici.jpg"
+        slug: "grandi-elettrodomestici"
+        isActive: true
+        displayOrder: 1
+      - name: Condizionatori
+        description: "Condizionatori e sistemi di climatizzazione"
+        imageUrl: "https://example.com/images/condizionatori.jpg"
+        slug: "condizionatori"
+        isActive: true
+        displayOrder: 2
+      - name: Trattamento Aria
+        description: "Dispositivi per il trattamento dell'aria"
+        imageUrl: "https://example.com/images/trattamento-aria.jpg"
+        slug: "trattamento-aria"
+        isActive: true
+        displayOrder: 3
+      - name: Casa Pulizia
+        description: "Aspirapolvere e dispositivi per la pulizia"
+        imageUrl: "https://example.com/images/casa-pulizia.jpg"
+        slug: "casa-pulizia"
+        isActive: true
+        displayOrder: 4
+      - name: Caffè
+        description: "Macchine per il caffè e accessori"
+        imageUrl: "https://example.com/images/caffe.jpg"
+        slug: "caffe"
+        isActive: true
+        displayOrder: 5
+
+  - name: Gaming
+    description: "Dispositivi, giochi e accessori per il gaming"
+    imageUrl: "https://example.com/images/gaming.jpg"
+    slug: "gaming"
+    isActive: true
+    displayOrder: 7
+    subCategories:
+    - name: Console
+      description: "Console per videogiochi di tutte le marche"
+      imageUrl: "https://example.com/images/console.jpg"
+      slug: "console"
+      isActive: true
+      displayOrder: 1
+    - name: Videogiochi
+      description: "Giochi per console e PC"
+      imageUrl: "https://example.com/images/videogiochi.jpg"
+      slug: "videogiochi"
+      isActive: true
+      displayOrder: 2
+    - name: Accessori Gaming
+      description: "Controller, cuffie, tastiere e altri accessori per il gaming"
+      imageUrl: "https://example.com/images/accessori-gaming.jpg"
+      slug: "accessori-gaming"
+      isActive: true
+      displayOrder: 3
+
+  - name: Libri e Lettura Digitale
+    description: "Libri cartacei, eBook, audiolibri e dispositivi di lettura digitale"
+    imageUrl: "https://example.com/images/libri-lettura.jpg"
+    slug: "libri-lettura"
+    isActive: true
+    displayOrder: 8
+    subCategories:
+      - name: Libri Cartacei
+        description: "Libri stampati di tutti i generi"
+        imageUrl: "https://example.com/images/libri.jpg"
+        slug: "libri-cartacei"
+        isActive: true
+        displayOrder: 1
+      - name: eBook e Libri Digitali
+        description: "Libri in formato digitale per e-reader e tablet"
+        imageUrl: "https://example.com/images/ebook.jpg"
+        slug: "ebook"
+        isActive: true
+        displayOrder: 2
+      - name: Audiolibri
+        description: "Libri narrati in formato audio"
+        imageUrl: "https://example.com/images/audiolibri.jpg"
+        slug: "audiolibri"
+        isActive: true
+        displayOrder: 3
+      - name: eReader e Dispositivi di Lettura
+        description: "Dispositivi per la lettura di eBook, come Kindle e Kobo"
+        imageUrl: "https://example.com/images/ereader.jpg"
+        slug: "ereader"
+        isActive: true
+        displayOrder: 4
+
+  - name: Casa e Arredo
+    description: "Soluzioni per arredare, decorare e rendere più intelligente la casa"
+    imageUrl: "https://example.com/images/casa-arredo.jpg"
+    slug: "casa-arredo"
+    isActive: true
+    displayOrder: 9
+    subCategories:
+      - name: Smart Home
+        description: "Dispositivi per la casa intelligente e la domotica"
+        imageUrl: "https://example.com/images/smart-home.jpg"
+        slug: "smart-home"
+        isActive: true
+        displayOrder: 1
+      - name: Illuminazione
+        description: "Lampade da scrivania, da parete e soluzioni di illuminazione"
+        imageUrl: "https://example.com/images/illuminazione.jpg"
+        slug: "illuminazione"
+        isActive: true
+        displayOrder: 2
+      - name: Arredamento
+        description: "Mobili, sedie, tavoli e soluzioni per arredare la casa"
+        imageUrl: "https://example.com/images/arredamento.jpg"
+        slug: "arredamento"
+        isActive: true
+        displayOrder: 3
+      - name: Organizzazione e Contenitori
+        description: "Scaffali, armadi, scarpiere e soluzioni per organizzare lo spazio"
+        imageUrl: "https://example.com/images/organizzazione.jpg"
+        slug: "organizzazione"
+        isActive: true
+        displayOrder: 4
+      - name: Decorazioni e Profumazione
+        description: "Candele profumate, quadri, oggetti di design per la casa"
+        imageUrl: "https://example.com/images/decorazioni.jpg"
+        slug: "decorazioni-profumazione"
+        isActive: true
+        displayOrder: 5
+
+  - name: Sport e Tempo Libero
+    description: "Attrezzature e accessori per il fitness e il tempo libero"
+    imageUrl: "https://example.com/images/sport.jpg"
+    slug: "sport-tempo-libero"
+    isActive: true
+    displayOrder: 10
+    subCategories:
+      - name: Fitness e Palestra
+        description: "Attrezzature per il fitness e l'allenamento a casa"
+        imageUrl: "https://example.com/images/fitness.jpg"
+        slug: "fitness"
+        isActive: true
+        displayOrder: 1
+      - name: Sport all'Aperto
+        description: "Accessori e attrezzature per attività all'aperto"
+        imageUrl: "https://example.com/images/sport-outdoor.jpg"
+        slug: "sport-outdoor"
+        isActive: true
+        displayOrder: 2
+      - name: Sport di Squadra
+        description: "Palloni, divise e accessori per sport di squadra"
+        imageUrl: "https://example.com/images/sport-squadra.jpg"
+        slug: "sport-squadra"
+        isActive: true
+        displayOrder: 3
+      - name: Attrezzatura da Campeggio
+        description: "Tende, zaini, accessori per campeggio ed escursionismo"
+        imageUrl: "https://example.com/images/campeggio.jpg"
+        slug: "campeggio"
+        isActive: true
+        displayOrder: 4
+
+  - name: Giochi e Giocattoli
+    description: "Giochi e giocattoli per bambini di tutte le età"
+    imageUrl: "https://example.com/images/giochi.jpg"
+    slug: "giochi"
+    isActive: true
+    displayOrder: 11
+    subCategories:
+      - name: Giochi Educativi
+        description: "Giochi didattici e educativi per bambini"
+        imageUrl: "https://example.com/images/giochi-educativi.jpg"
+        slug: "giochi-educativi"
+        isActive: true
+        displayOrder: 1
+      - name: Giochi di Società
+        description: "Giochi da tavolo e di società per tutte le età"
+        imageUrl: "https://example.com/images/giochi-societa.jpg"
+        slug: "giochi-societa"
+        isActive: true
+        displayOrder: 2
+      - name: Giocattoli per Bambini
+        description: "Peluche, costruzioni e giocattoli per i più piccoli"
+        imageUrl: "https://example.com/images/giocattoli.jpg"
+        slug: "giocattoli-bambini"
+        isActive: true
+        displayOrder: 3
+      - name: Modellismo e Collezionismo
+        description: "Modellini, action figures e oggetti da collezione"
+        imageUrl: "https://example.com/images/modellismo.jpg"
+        slug: "modellismo"
+        isActive: true
+        displayOrder: 4
+
+  - name: Fai da Te
+    description: "Strumenti e materiali per il bricolage e il fai da te"
+    imageUrl: "https://example.com/images/fai-da-te.jpg"
+    slug: "fai-da-te"
+    isActive: true
+    displayOrder: 12
+    subCategories:
+      - name: Attrezzi e Utensili
+        description: "Martelli, trapani, cacciaviti e utensili da lavoro"
+        imageUrl: "https://example.com/images/attrezzi.jpg"
+        slug: "attrezzi"
+        isActive: true
+        displayOrder: 1
+      - name: Materiali per la Casa
+        description: "Pitture, vernici, piastrelle e materiali per ristrutturare"
+        imageUrl: "https://example.com/images/materiali-casa.jpg"
+        slug: "materiali-casa"
+        isActive: true
+        displayOrder: 2
+      - name: Giardinaggio
+        description: "Attrezzi e accessori per la cura del giardino"
+        imageUrl: "https://example.com/images/giardinaggio.jpg"
+        slug: "giardinaggio"
+        isActive: true
+        displayOrder: 3
+      - name: Elettronica e Impianti
+        description: "Componenti elettronici, fili e accessori per impianti"
+        imageUrl: "https://example.com/images/elettronica.jpg"
+        slug: "elettronica-impianti"
+        isActive: true
+        displayOrder: 4

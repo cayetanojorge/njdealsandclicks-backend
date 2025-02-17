@@ -3,6 +3,9 @@ package com.njdealsandclicks.category;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.njdealsandclicks.dto.category.CategoryCreateUpdateDTO;
+import com.njdealsandclicks.dto.category.CategoryDTO;
+
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,28 +28,28 @@ public class CategoryController {
     }
 
     @GetMapping("/")
-    public List<Category> getAllCategories() {
+    public List<CategoryDTO> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
-    @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable Long id) {
-        return categoryService.getCategoryById(id);
+    @GetMapping("/{publicId}")
+    public CategoryDTO getCategoryByPublicId(@PathVariable String publicId) {
+        return categoryService.getCategoryDTOByPublicId(publicId);
     }
     
     @PostMapping("/create")
-    public Category createCategory(@RequestBody Category category) {
-        return categoryService.createCategory(category);
+    public CategoryDTO createCategory(@RequestBody CategoryCreateUpdateDTO categoryCreateDTO) {
+        return categoryService.createCategory(categoryCreateDTO);
     }
 
-    @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable Long id, @RequestBody Category category) {
-        return categoryService.updateCategory(id, category);
+    @PutMapping("/{publicId}")
+    public CategoryDTO updateCategory(@PathVariable String publicId, @RequestBody CategoryCreateUpdateDTO categoryUpdateDTO) {
+        return categoryService.updateCategory(publicId, categoryUpdateDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
+    @DeleteMapping("/delete/{publicId}")
+    public void deleteCategory(@PathVariable String publicId) {
+        categoryService.deleteCategory(publicId);
     }
     
 }
