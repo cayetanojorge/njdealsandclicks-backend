@@ -259,25 +259,99 @@ public class CategoryService {
     @Transactional
     public CategoryDTO createCategory(CategoryCreateUpdateDTO categoryCreateDTO) {
         Category category = getCategoryByName(categoryCreateDTO.getName());
-        if(category!=null) {
+        if(category != null) {
             throw new RuntimeException("Category with name " + categoryCreateDTO.getName() + " already exists.");
         }
+        Category parentCategory = getCategoryByName(categoryCreateDTO.getNameParentCategory());
+        if(parentCategory == null) {
+            throw new RuntimeException("Parent Category with name " + categoryCreateDTO.getNameParentCategory() + " doesn't exists.");
+        }
+
         category = new Category();
         category.setPublicId(createPublicId());
         category.setName(categoryCreateDTO.getName());
-        return mapToCategoryDTO(categoryRepository.save(category));
+        category.setDescription(categoryCreateDTO.getDescription());
+        category.setImageUrl(categoryCreateDTO.getImageUrl());
+        category.setSlug(categoryCreateDTO.getSlug());
+        category.setIsActive(categoryCreateDTO.getIsActive());
+        category.setDisplayOrder(categoryCreateDTO.getDisplayOrder());
+        category.setParentCategory(parentCategory);
+        category = categoryRepository.save(category);
+        
+        // update subcategories of category parent of category just created
+        parentCategory.getSubCategories().add(category);
+        categoryRepository.save(parentCategory);
+
+        return mapToCategoryDTO(category);
     }
 
     @Transactional
     public CategoryDTO updateCategory(String publicId, CategoryCreateUpdateDTO categoryUpdateDTO) {
+        Category parentCategory = getCategoryByName(categoryUpdateDTO.getNameParentCategory());
+        if(parentCategory == null) {
+            throw new RuntimeException("Parent Category with name " + categoryUpdateDTO.getNameParentCategory() + " doesn't exists.");
+        }
+
         Category category = getCategoryByPublicId(publicId);
         category.setName(categoryUpdateDTO.getName());
+        category.setDescription(categoryUpdateDTO.getDescription());
+        category.setImageUrl(categoryUpdateDTO.getImageUrl());
+        category.setSlug(categoryUpdateDTO.getSlug());
+        category.setIsActive(categoryUpdateDTO.getIsActive());
+        category.setDisplayOrder(categoryUpdateDTO.getDisplayOrder());
+        
+        // if category doesn't have parent
+        if(category.getParentCategory() == null) {
+            category.setParentCategory(parentCategory);
+
+            parentCategory.getSubCategories().add(category);
+            categoryRepository.save(parentCategory);
+            
+            return mapToCategoryDTO(categoryRepository.save(category));
+        }
+
+        // old parent and new parent are the same
+        if(category.getParentCategory().getName().equals(categoryUpdateDTO.getNameParentCategory())) {
+            return mapToCategoryDTO(categoryRepository.save(category));
+        }
+
+        // new parent different from old 
+        Category oldParentCategory = category.getParentCategory();
+        List<Category> oldParentSubs = oldParentCategory.getSubCategories();
+        for(int i=0; i<oldParentSubs.size(); i++) {
+            if(oldParentSubs.get(i).getName().equals(category.getName())) {
+                oldParentSubs.remove(i);
+            }
+        }
+        oldParentCategory.setSubCategories(oldParentSubs);
+        categoryRepository.save(oldParentCategory);
+
+        category.setParentCategory(parentCategory);
+
+        parentCategory.getSubCategories().add(category);
+        categoryRepository.save(parentCategory);
+
         return mapToCategoryDTO(categoryRepository.save(category));
     }
 
     @Transactional
     public void deleteCategory(String publicId) {
         Category category = getCategoryByPublicId(publicId);
+        
+        if(category.getSubCategories()==null || category.getSubCategories().isEmpty()) {
+            throw new RuntimeException("The category that you want to delete " + category.getName() + " has subcategories, they need a new parent before the delete of the category.");
+        }
+
+        Category parentCategory = category.getParentCategory();
+        List<Category> parentSubs = parentCategory.getSubCategories();
+        for(int i=0; i<parentSubs.size(); i++) {
+            if(parentSubs.get(i).getName().equals(category.getName())) {
+                parentSubs.remove(i);
+            }
+        }
+        parentCategory.setSubCategories(parentSubs);
+        categoryRepository.save(parentCategory);
+
         categoryRepository.deleteById(category.getId());
     }
 }
