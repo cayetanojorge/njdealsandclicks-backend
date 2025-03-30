@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class CategoryCreateUpdateDTO {
+    
     @NotBlank
     private String name;
 

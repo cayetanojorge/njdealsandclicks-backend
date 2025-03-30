@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ProductCreateUpdateDTO {
+    
     @NotBlank
     private String name;
 

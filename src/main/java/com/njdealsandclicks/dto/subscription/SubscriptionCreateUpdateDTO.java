@@ -37,5 +37,5 @@ public class SubscriptionCreateUpdateDTO {
     @Positive
     private Integer maxTrackedCategories;
 
-    private Boolean isActive = true;
+    private Boolean isActive;
 }
