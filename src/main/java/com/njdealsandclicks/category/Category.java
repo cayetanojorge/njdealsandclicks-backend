@@ -3,23 +3,21 @@ package com.njdealsandclicks.category;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
+
+import com.njdealsandclicks.common.BaseEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(indexes = {
@@ -27,15 +25,16 @@ import lombok.Data;
     @Index(name = "idx_category_name", columnList = "name")
 })
 @Data
-public class Category {
+@EqualsAndHashCode(callSuper = true)
+public class Category extends BaseEntity {
     
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    private UUID id;
+    // @Id
+    // @GeneratedValue(strategy =  GenerationType.UUID)
+    // private UUID id;
 
-    @Column(nullable = false, unique = true)
-    @Pattern(regexp = "categ_[a-zA-Z0-9]{10}")
-    private String publicId;
+    // @Column(nullable = false, unique = true)
+    // @Pattern(regexp = "categ_[a-zA-Z0-9]{10}")
+    // private String publicId;
 
     @Column(nullable = false, unique = true)
     private String name;

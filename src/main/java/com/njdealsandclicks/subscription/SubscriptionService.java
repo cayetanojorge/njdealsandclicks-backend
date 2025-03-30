@@ -11,34 +11,34 @@ import org.springframework.transaction.annotation.Transactional;
 import com.njdealsandclicks.dto.subscription.SubscriptionCreateUpdateDTO;
 import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
 import com.njdealsandclicks.util.DatabaseInitializationService;
-import com.njdealsandclicks.util.PublicIdGenerator;
+import com.njdealsandclicks.util.DateUtil;
+import com.njdealsandclicks.util.PublicIdGeneratorService;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class SubscriptionService {
     
+    private static final int MAX_ATTEMPTS = 3;
+    private static final String PREFIX_PUBLIC_ID = "sub_";
+
     private final SubscriptionRepository subscriptionRepository;
-
-    /* init db */
     private final DatabaseInitializationService databaseInitializationService;
+    private final PublicIdGeneratorService publicIdGeneratorService;
+    private final DateUtil dateUtil;
 
-    // // // @Value("${custom.subscriptions-file}")
-    // // // private Resource subscriptionsResource;
-
-    private final PublicIdGenerator publicIdGenerator;
-    private final int MAX_ATTEMPTS = 3;
-    private final String PREFIX_PUBLIC_ID = "sub_";
-
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, PublicIdGenerator publicIdGenerator, DatabaseInitializationService databaseInitializationService) {
+    
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, DatabaseInitializationService databaseInitializationService,
+                                PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.subscriptionRepository = subscriptionRepository;
-        this.publicIdGenerator = publicIdGenerator;
         this.databaseInitializationService = databaseInitializationService;
+        this.publicIdGeneratorService = publicIdGeneratorService;
+        this.dateUtil = dateUtil;
     }
 
     /* ************ initialize db ************ */
     @PostConstruct
-    public void initializeSubscriptions() {
+    private void initializeSubscriptions() {
         // System.out.println("|- initializeSubscriptions() - Inizializzazione del database in corso...");
         List<Subscription> allSubscriptions = databaseInitializationService.loadEntitiesFromYaml(
             "subscriptions.yml",
@@ -71,7 +71,7 @@ public class SubscriptionService {
     /* ************************************************ */
 
     // // // @PostConstruct
-    // // // public void loadSubscriptionsFromYaml() {
+    // // // private void loadSubscriptionsFromYaml() {
     // // //     Yaml yaml = new Yaml();
     // // //     try (InputStream inputStream = subscriptionsResource.getInputStream()) {
     // // //         Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
@@ -99,7 +99,7 @@ public class SubscriptionService {
 
     private String createPublicId() {
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-            List<String> publicIdBatch = publicIdGenerator.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
             List<String> existingIds = subscriptionRepository.findExistingPublicIds(publicIdBatch);
             List<String> uniqueIds = publicIdBatch.stream()
                                                   .filter(id -> !existingIds.contains(id))
@@ -161,7 +161,7 @@ public class SubscriptionService {
     public SubscriptionDTO createSubscription(SubscriptionCreateUpdateDTO subscriptionCreateDTO) {
         Subscription subscription = getSubscriptionByPlanName(subscriptionCreateDTO.getPlanName());
         if(subscription != null) {
-            throw new RuntimeException("Subscription with name " + " already exists");
+            throw new RuntimeException("Subscription with planName " + subscriptionCreateDTO.getPlanName() + " already exists");
         }
         subscription = new Subscription();
         subscription.setPublicId(createPublicId());
@@ -193,11 +193,12 @@ public class SubscriptionService {
         subscription.setMaxTrackedCategories(subscriptionUpdateDTO.getMaxTrackedCategories());
         subscription.setMaxTrackedCategories(subscriptionUpdateDTO.getMaxTrackedCategories());
         subscription.setIsActive(subscriptionUpdateDTO.getIsActive());
+        subscription.setUpdatedAt(dateUtil.getCurrentDateTime());
         return mapToSubscriptionDTO(subscriptionRepository.save(subscription));
     }
 
     @Transactional
-    public void deleteUser(String publicId) {
+    public void deleteSubscription(String publicId) {
         Subscription subscription = getSubscriptionByPublicId(publicId);
         subscriptionRepository.deleteById(subscription.getId());
     }

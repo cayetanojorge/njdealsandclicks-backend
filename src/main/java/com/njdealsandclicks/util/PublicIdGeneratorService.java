@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PublicIdGenerator {
+public class PublicIdGeneratorService {
 
     /*
      * Invece di generare e verificare un ID alla volta, possiamo generare un batch di ID (ad esempio, 10 o 20 alla volta) 

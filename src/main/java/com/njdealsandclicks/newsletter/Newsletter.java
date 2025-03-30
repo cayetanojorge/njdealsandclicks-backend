@@ -1,36 +1,37 @@
 package com.njdealsandclicks.newsletter;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.UUID;
 
 import com.njdealsandclicks.category.Category;
+import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.user.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.PrePersist;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-public class Newsletter {
+@EqualsAndHashCode(callSuper = true)
+public class Newsletter extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    private UUID id;
+    // @Id
+    // @GeneratedValue(strategy =  GenerationType.UUID)
+    // private UUID id;
 
-    @Column(nullable = false, unique = true)
-    @Pattern(regexp = "news_[a-zA-Z0-9]{10}")
-    private String publicId;
+    // @Column(nullable = false, unique = true)
+    // @Pattern(regexp = "news_[a-zA-Z0-9]{10}")
+    // private String publicId;
 
     // cascade se elimino user elimino rispettive riga in tab newsletter
     // orphanRemoval che se record in tab newsletter è orfano di user allora elimino
@@ -76,5 +77,17 @@ public class Newsletter {
         inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
+
+    @Column(nullable = false, updatable = false)
+    private ZonedDateTime createdAt;
+    
+    @Column(nullable = true)
+    private ZonedDateTime updatedAt;
+
+    
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    }
 
 }

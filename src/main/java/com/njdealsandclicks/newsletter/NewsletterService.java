@@ -12,7 +12,8 @@ import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.product.ProductService;
 import com.njdealsandclicks.user.User;
 import com.njdealsandclicks.user.UserService;
-import com.njdealsandclicks.util.PublicIdGenerator;
+import com.njdealsandclicks.util.DateUtil;
+import com.njdealsandclicks.util.PublicIdGeneratorService;
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
 import com.njdealsandclicks.dto.category.CategoryDTO;
@@ -25,30 +26,32 @@ import com.njdealsandclicks.dto.product.ProductDTO;
 @Service
 public class NewsletterService {
     
+    private static final int MAX_ATTEMPTS = 3;
+    private static final String PREFIX_PUBLIC_ID = "news_";
+
     private final NewsletterRepository newsletterRepository;
-
-    private final PublicIdGenerator publicIdGenerator;
-    private final int MAX_ATTEMPTS = 3;
-    private final String PREFIX_PUBLIC_ID = "news_";
-
     private final UserService userService;
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final PublicIdGeneratorService publicIdGeneratorService;
+    private final DateUtil dateUtil;
 
     
-    public NewsletterService(NewsletterRepository newsletterRepository, PublicIdGenerator publicIdGenerator, UserService userService, ProductService productService, CategoryService categoryService) {
+    public NewsletterService(NewsletterRepository newsletterRepository, UserService userService, ProductService productService,
+                                CategoryService categoryService, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.newsletterRepository = newsletterRepository;
-        this.publicIdGenerator = publicIdGenerator;
+        this.publicIdGeneratorService = publicIdGeneratorService;
         this.userService = userService;
         this.productService = productService;
         this.categoryService = categoryService;
+        this.dateUtil = dateUtil;
     }
 
     private String createPublicId() {
-        // int batchSize = PublicIdGenerator.INITIAL_BATCH_SIZE; 
+        // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
-            List<String> publicIdBatch = publicIdGenerator.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
             // Verifica quali ID sono già presenti nel database
             List<String> existingIds = newsletterRepository.findExistingPublicIds(publicIdBatch);
@@ -159,6 +162,8 @@ public class NewsletterService {
             }
             newsLetter.setProducts(productService.getProductsByPublicIds(categoryPublicIds));
         }
+
+        newsLetter.setUpdatedAt(dateUtil.getCurrentDateTime());
         return mapToNewsletterDTO(newsletterRepository.save(newsLetter));
     }
 

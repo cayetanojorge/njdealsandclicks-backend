@@ -12,30 +12,34 @@ import org.springframework.transaction.annotation.Transactional;
 import com.njdealsandclicks.dto.user.UserCreateUpdateDTO;
 import com.njdealsandclicks.dto.user.UserDTO;
 import com.njdealsandclicks.subscription.SubscriptionService;
-import com.njdealsandclicks.util.PublicIdGenerator;
+import com.njdealsandclicks.util.DateUtil;
+import com.njdealsandclicks.util.PublicIdGeneratorService;
 
 @Service
 public class UserService {
     
+    private static final int MAX_ATTEMPTS = 3;
+    private static final String PREFIX_PUBLIC_ID = "user_";
+
     private final UserRepository userRepository;
-
-    private final PublicIdGenerator publicIdGenerator;
-    private final int MAX_ATTEMPTS = 3;
-    private final String PREFIX_PUBLIC_ID = "user_";
-
     private final SubscriptionService subscriptionService;
+    private final PublicIdGeneratorService publicIdGeneratorService;
+    private final DateUtil dateUtil;
 
-    public UserService(UserRepository userRepository, PublicIdGenerator publicIdGenerator, SubscriptionService subscriptionService) {
+
+    public UserService(UserRepository userRepository, SubscriptionService subscriptionService, 
+                        PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.userRepository = userRepository;
-        this.publicIdGenerator = publicIdGenerator;
         this.subscriptionService = subscriptionService;
+        this.publicIdGeneratorService = publicIdGeneratorService;
+        this.dateUtil = dateUtil;
     }
 
     private String createPublicId() {
-        // int batchSize = PublicIdGenerator.INITIAL_BATCH_SIZE; 
+        // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
-            List<String> publicIdBatch = publicIdGenerator.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
             // Verifica quali ID sono già presenti nel database
             List<String> existingIds = userRepository.findExistingPublicIds(publicIdBatch);
@@ -130,6 +134,7 @@ public class UserService {
         user.setLastName(userUpdateDTO.getLastName());
         user.setPreferredLanguage(userUpdateDTO.getPreferredLanguage());
         user.setTimezone(userUpdateDTO.getTimezone());
+        user.setUpdatedAt(dateUtil.getCurrentDateTime());
         return mapToUserDTO(userRepository.save(user));
     }
 

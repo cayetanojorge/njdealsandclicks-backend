@@ -2,15 +2,12 @@ package com.njdealsandclicks.user;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
+import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.subscription.Subscription;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,8 +15,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "app_user",
@@ -30,15 +27,16 @@ import lombok.Data;
     }
 )
 @Data
-public class User {
+@EqualsAndHashCode(callSuper = true)
+public class User extends BaseEntity{
     
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    private UUID id;
+    // @Id
+    // @GeneratedValue(strategy =  GenerationType.UUID)
+    // private UUID id;
 
-    @Column(nullable = false, unique = true)
-    @Pattern(regexp = "user_[a-zA-Z0-9]{10}")
-    private String publicId;
+    // @Column(nullable = false, unique = true)
+    // @Pattern(regexp = "user_[a-zA-Z0-9]{10}")
+    // private String publicId;
 
     @Column(nullable = false, unique = true)
     @Email
@@ -84,9 +82,13 @@ public class User {
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
 
+    @Column(nullable = true)
+    private ZonedDateTime updatedAt;
+
     /* annotazione PrePersist metodo chiamato automaticamente prima che nuovo record user salvato in db */
     @PrePersist
     protected void onCreate() {
         this.registrationDate = ZonedDateTime.now(ZoneId.of("UTC"));
     }
+    
 }

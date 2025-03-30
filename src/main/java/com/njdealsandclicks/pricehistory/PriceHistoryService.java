@@ -15,6 +15,7 @@ public class PriceHistoryService {
 
     private final PriceHistoryRepository priceHistoryRepository;
 
+    
     public PriceHistoryService(PriceHistoryRepository priceHistoryRepository) {
         this.priceHistoryRepository = priceHistoryRepository;
     }

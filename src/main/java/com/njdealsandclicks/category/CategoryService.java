@@ -14,29 +14,33 @@ import org.springframework.transaction.annotation.Transactional;
 import com.njdealsandclicks.dto.category.CategoryCreateUpdateDTO;
 import com.njdealsandclicks.dto.category.CategoryDTO;
 import com.njdealsandclicks.util.DatabaseInitializationService;
-import com.njdealsandclicks.util.PublicIdGenerator;
+import com.njdealsandclicks.util.DateUtil;
+import com.njdealsandclicks.util.PublicIdGeneratorService;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
 public class CategoryService {
 
+    private static final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
+    private static final String PREFIX_PUBLIC_ID = "categ_";
+
     private final CategoryRepository categoryRepository;
     private final DatabaseInitializationService databaseInitializationService;
+    private final PublicIdGeneratorService publicIdGeneratorService;
+    private final DateUtil dateUtil;
+    
 
-
-    private final PublicIdGenerator publicIdGenerator;
-    private final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
-    private final String PREFIX_PUBLIC_ID = "categ_";
-
-    public CategoryService(CategoryRepository categoryRepository, DatabaseInitializationService databaseInitializationService, PublicIdGenerator publicIdGenerator) {
+    public CategoryService(CategoryRepository categoryRepository, DatabaseInitializationService databaseInitializationService, 
+                            PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.categoryRepository = categoryRepository;
         this.databaseInitializationService = databaseInitializationService;
-        this.publicIdGenerator = publicIdGenerator;
+        this.publicIdGeneratorService = publicIdGeneratorService;
+        this.dateUtil = dateUtil;
     }
 
     @PostConstruct
-    public void initializeCategories() {
+    private void initializeCategories() {
         List<Category> allCategories = databaseInitializationService.loadEntitiesFromYaml(
             "categories.yml",
             Category.class,
@@ -177,7 +181,7 @@ public class CategoryService {
     private List<String> getNPublicIds(int nPublicIds) {
         List<String> retNpublicIds = new ArrayList<>();
         while(retNpublicIds.size()<nPublicIds) {
-            List<String> publicIdBatch = publicIdGenerator.generatePublicIdBatch(PREFIX_PUBLIC_ID, nPublicIds);
+            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID, nPublicIds);
             List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
             List<String> uniqueIds = publicIdBatch.stream()
                                                       .filter(id -> !existingIds.contains(id))
@@ -188,10 +192,10 @@ public class CategoryService {
     }
 
     private String createPublicId() {
-        // int batchSize = PublicIdGenerator.INITIAL_BATCH_SIZE; 
+        // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
-            List<String> publicIdBatch = publicIdGenerator.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
             // Verifica quali ID sono già presenti nel database
             List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
@@ -299,7 +303,8 @@ public class CategoryService {
         category.setSlug(categoryUpdateDTO.getSlug());
         category.setIsActive(categoryUpdateDTO.getIsActive());
         category.setDisplayOrder(categoryUpdateDTO.getDisplayOrder());
-        
+        category.setUpdatedAt(dateUtil.getCurrentDateTime());
+
         // if category doesn't have parent
         if(category.getParentCategory() == null) {
             category.setParentCategory(parentCategory);

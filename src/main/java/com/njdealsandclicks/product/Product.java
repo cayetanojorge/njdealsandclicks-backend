@@ -1,27 +1,28 @@
 package com.njdealsandclicks.product;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
-import java.util.UUID;
 
 import com.njdealsandclicks.category.Category;
+import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.pricehistory.PriceHistory;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 /**
@@ -37,16 +38,17 @@ import lombok.Data;
     @Index(name = "idx_product_category", columnList = "category_id"),
     @Index(name = "idx_product_category_price", columnList = "category_id, currentPrice") /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
 })
-@Data /* @ToString, @EqualsAndHashCode, @Getter / @Setter and @RequiredArgsConstructor */
-public class Product {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class Product extends BaseEntity{
 
-    @Id /* indica chiave primaria */
-    @GeneratedValue(strategy =  GenerationType.UUID) /* indica generazione automatica */
-    private UUID id;
+    // @Id /* indica chiave primaria */
+    // @GeneratedValue(strategy =  GenerationType.UUID) /* indica generazione automatica */
+    // private UUID id;
 
-    @Column(nullable = false, unique = true)
-    @Pattern(regexp = "prod_[a-zA-Z0-9]{10}")
-    private String publicId;
+    // @Column(nullable = false, unique = true)
+    // @Pattern(regexp = "prod_[a-zA-Z0-9]{10}")
+    // private String publicId;
 
     @Column(nullable = false)
     @NotBlank
@@ -54,16 +56,40 @@ public class Product {
 
     private String description;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
+    private Currency currency; // TODO continue to handled it 
+
     @Column(nullable = true)
     @Positive
     private Double currentPrice;
     
-    // TODO consideriamo anche valuta? currency String
-    // creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
+    // future-todo creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
 
     @Column(nullable = false, unique = true)
     @NotBlank
     private String affiliateLink;
+
+    @Column(nullable = true)
+    private Double rating;
+
+    @Column(nullable = true)
+    private Integer reviewCount;
+
+    @Column(nullable = false)
+    private Boolean availability = true;
+
+    @Column(nullable = true)
+    private String brand;
+
+    @Column(nullable = true)
+    private List<String> tags; // migliorare la ricerca e il SEO del sito
+    
+    @Column(nullable = true)
+    private List<String> features; // caratteristiche specifiche, ie: "Schermo OLED", "Batteria da 5000mAh"
+
+    @Column(nullable = true)
+    private String imageUrl;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", referencedColumnName = "id") // name e' nome della colonna, refe...Name e' nome della colonna di tabella Category a cui si fa riferimento
@@ -84,5 +110,17 @@ public class Product {
     // orphanRemoval - Se un record di PriceHistory viene scollegato dal prodotto (rimosso dalla lista priceHistories), verrà eliminato automaticamente dal database.
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PriceHistory> priceHistories = new ArrayList<>();
+
+    @Column(nullable = false, updatable = false)
+    private ZonedDateTime createdAt;
+    
+    @Column(nullable = true)
+    private ZonedDateTime updatedAt;
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    }
 
 }

@@ -17,7 +17,8 @@ import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 import com.njdealsandclicks.pricehistory.PriceHistory;
 import com.njdealsandclicks.pricehistory.PriceHistoryService;
-import com.njdealsandclicks.util.PublicIdGenerator;
+import com.njdealsandclicks.util.DateUtil;
+import com.njdealsandclicks.util.PublicIdGeneratorService;
 
 /**
  * Il servizio contiene la logica per gestire i prodotti e usa il repository.
@@ -26,28 +27,30 @@ import com.njdealsandclicks.util.PublicIdGenerator;
 @Service
 public class ProductService {
 
+    private static final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
+    private static final String PREFIX_PUBLIC_ID = "prod_";
+
     private final ProductRepository productRepository;
-
-    private final PublicIdGenerator publicIdGenerator;
-    private final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
-    private final String PREFIX_PUBLIC_ID = "prod_";
-    
-    private final CategoryService categoryService;
     private final PriceHistoryService priceHistoryService;
+    private final CategoryService categoryService;
+    private final PublicIdGeneratorService publicIdGeneratorService;
+    private final DateUtil dateUtil;
 
 
-    public ProductService(ProductRepository productRepository, PublicIdGenerator publicIdGenerator, CategoryService categoryService, PriceHistoryService priceHistoryService) {
+    public ProductService(ProductRepository productRepository, PriceHistoryService priceHistoryService, CategoryService categoryService,
+                            PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.productRepository = productRepository;
-        this.publicIdGenerator = publicIdGenerator;
-        this.categoryService = categoryService;
         this.priceHistoryService = priceHistoryService;
+        this.categoryService = categoryService;
+        this.publicIdGeneratorService = publicIdGeneratorService;
+        this.dateUtil = dateUtil;
     }
 
     private String createPublicId() {
-        // int batchSize = PublicIdGenerator.INITIAL_BATCH_SIZE; 
+        // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
         for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
-            List<String> publicIdBatch = publicIdGenerator.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
             // Verifica quali ID sono già presenti nel database
             List<String> existingIds = productRepository.findExistingPublicIds(publicIdBatch);
@@ -208,6 +211,7 @@ public class ProductService {
         product.setCurrentPrice(productUpdateDTO.getCurrentPrice());
         product.setAffiliateLink(productUpdateDTO.getAffiliateLink());
         product.setCategory(category);
+        product.setUpdatedAt(dateUtil.getCurrentDateTime());
         
         return mapToProductDTO(productRepository.save(product));
     }
