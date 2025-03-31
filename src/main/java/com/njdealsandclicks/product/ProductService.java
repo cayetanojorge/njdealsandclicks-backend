@@ -1,7 +1,5 @@
 package com.njdealsandclicks.product;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -13,7 +11,6 @@ import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
 import com.njdealsandclicks.currency.Currency;
 import com.njdealsandclicks.currency.CurrencyService;
-import com.njdealsandclicks.dto.category.CategoryCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
@@ -180,7 +177,7 @@ public class ProductService {
 
         PriceHistory priceHistory = new PriceHistory();
         priceHistory.setPrice(savedProduct.getCurrentPrice());
-        priceHistory.setRecordedAt(ZonedDateTime.now(ZoneOffset.UTC));
+        priceHistory.setRecordedAt(dateUtil.getCurrentDateTime());
         priceHistory.setProduct(savedProduct);
         priceHistoryService.createPriceHistory(priceHistory);
 
@@ -191,32 +188,33 @@ public class ProductService {
     public ProductDTO updateProduct(String publicId, ProductCreateUpdateDTO productUpdateDTO) {
         Product product = getProductByPublicId(publicId);
 
-        // handle category
-        Category category = categoryService.getCategoryByName(productUpdateDTO.getName());
-        if(category == null) {
-            CategoryCreateUpdateDTO categoryCreateDTO = new CategoryCreateUpdateDTO();
-            categoryCreateDTO.setName(productUpdateDTO.getCategoryName());
-            category = categoryService.getCategoryByPublicId(categoryService.createCategory(categoryCreateDTO).getPublicId());
-        }
-
-        // create record price history if price changed
-        if(!product.getCurrentPrice().equals(productUpdateDTO.getCurrentPrice())) {
-            PriceHistory priceHistory = new PriceHistory();
-            priceHistory.setPrice(productUpdateDTO.getCurrentPrice());
-            priceHistory.setRecordedAt(ZonedDateTime.now(ZoneOffset.UTC));
-            priceHistory.setProduct(product);
-            priceHistoryService.createPriceHistory(priceHistory);
-        }
+        Double oldPrice = product.getCurrentPrice();
+        Currency currency = currencyService.getCurrencyByCode(productUpdateDTO.getCurrencyCode());
+        Category category = categoryService.getCategoryByName(productUpdateDTO.getCategoryName());
 
         // update product
         product.setName(productUpdateDTO.getName());
         product.setDescription(productUpdateDTO.getDescription());
+        product.setCurrency(currency);
         product.setCurrentPrice(productUpdateDTO.getCurrentPrice());
         product.setAffiliateLink(productUpdateDTO.getAffiliateLink());
+        product.setRating(productUpdateDTO.getRating());
+        product.setReviewCount(productUpdateDTO.getReviewCount());
         product.setCategory(category);
         product.setUpdatedAt(dateUtil.getCurrentDateTime());
         
-        return mapToProductDTO(productRepository.save(product));
+        Product savedProduct = productRepository.save(product);
+
+        // create record price history if price changed
+        if(!oldPrice.equals(productUpdateDTO.getCurrentPrice())) {
+            PriceHistory priceHistory = new PriceHistory();
+            priceHistory.setPrice(productUpdateDTO.getCurrentPrice());
+            priceHistory.setRecordedAt(dateUtil.getCurrentDateTime());
+            priceHistory.setProduct(savedProduct);
+            priceHistoryService.createPriceHistory(priceHistory);
+        }
+
+        return mapToProductDTO(savedProduct);
     }
 
     @Transactional
