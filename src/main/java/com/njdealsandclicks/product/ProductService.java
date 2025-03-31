@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
+import com.njdealsandclicks.currency.Currency;
+import com.njdealsandclicks.currency.CurrencyService;
 import com.njdealsandclicks.dto.category.CategoryCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
@@ -33,22 +35,24 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final PriceHistoryService priceHistoryService;
     private final CategoryService categoryService;
+    private final CurrencyService currencyService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
 
 
     public ProductService(ProductRepository productRepository, PriceHistoryService priceHistoryService, CategoryService categoryService,
-                            PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
+                            CurrencyService currencyService, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.productRepository = productRepository;
         this.priceHistoryService = priceHistoryService;
         this.categoryService = categoryService;
+        this.currencyService = currencyService;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
 
     private String createPublicId() {
         // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-        for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
             List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
@@ -61,7 +65,7 @@ public class ProductService {
                                                   .collect(Collectors.toList());
 
             // Se esiste almeno un ID univoco, lo restituisce
-            if (!uniqueIds.isEmpty()) {
+            if(!uniqueIds.isEmpty()) {
                 return uniqueIds.get(0);
             }
 
@@ -74,7 +78,7 @@ public class ProductService {
 
     /*
     private int adjustBatchSize(int currentSize, int collisionCount) {
-        if (collisionCount > 0) {
+        if(collisionCount > 0) {
             return Math.min(currentSize * 2, 100);
         }
         return currentSize;
@@ -154,25 +158,24 @@ public class ProductService {
     @Transactional
     public ProductDTO createProduct(ProductCreateUpdateDTO productCreateDTO) {
 
-        if (productRepository.existsByAffiliateLink(productCreateDTO.getAffiliateLink())) {
+        if(productRepository.existsByAffiliateLink(productCreateDTO.getAffiliateLink())) {
             throw new RuntimeException("Product with affiliate link " + productCreateDTO.getAffiliateLink() + " already exists.");
         }
         
+        Currency currency = currencyService.getCurrencyByCode(productCreateDTO.getCurrencyCode());
         Category category = categoryService.getCategoryByName(productCreateDTO.getCategoryName());
-        if(category == null) {
-            CategoryCreateUpdateDTO categoryCreateDTO = new CategoryCreateUpdateDTO();
-            categoryCreateDTO.setName(productCreateDTO.getCategoryName());
-            category = categoryService.getCategoryByPublicId(categoryService.createCategory(categoryCreateDTO).getPublicId());
-        }
 
         Product product = new Product();
         product.setPublicId(createPublicId());
         product.setName(productCreateDTO.getName());
         product.setDescription(productCreateDTO.getDescription());
+        product.setCurrency(currency);
         product.setCurrentPrice(productCreateDTO.getCurrentPrice());
         product.setAffiliateLink(productCreateDTO.getAffiliateLink());
+        product.setRating(productCreateDTO.getRating());
+        product.setReviewCount(productCreateDTO.getReviewCount());
         product.setCategory(category);
-        // TODO check in db com'è messo colonna priceHistories
+
         Product savedProduct = productRepository.save(product);
 
         PriceHistory priceHistory = new PriceHistory();

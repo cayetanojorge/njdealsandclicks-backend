@@ -19,8 +19,8 @@ public class DatabaseInitializationService {
 
     public <T> List<T> loadEntitiesFromYaml(String fileName, Class<T> entityType, Function<Map<String, Object>, T> mapper) {
         Yaml yaml = new Yaml();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(initDirectory + "/" + fileName)) {
-            if (inputStream == null) {
+        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(initDirectory + "/" + fileName)) {
+            if(inputStream == null) {
                 throw new RuntimeException("File not found: " + initDirectory + "/" + fileName);
             }
 

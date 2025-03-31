@@ -2,9 +2,11 @@ package com.njdealsandclicks.dto.product;
 
 import java.util.List;
 
+import com.njdealsandclicks.dto.currency.CurrencyDTO;
 import com.njdealsandclicks.dto.pricehistory.PriceHistoryDTO;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
@@ -19,6 +21,9 @@ public class ProductDetailsDTO {
 
     private String description;
 
+    @NotNull
+    private CurrencyDTO currencyDTO;
+    
     @Positive
     private Double currentPrice;
 

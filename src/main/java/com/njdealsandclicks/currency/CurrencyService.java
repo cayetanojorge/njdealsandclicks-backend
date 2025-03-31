@@ -72,7 +72,7 @@ public class CurrencyService {
 
     private String createPublicId() {
         // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-        for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
             List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 

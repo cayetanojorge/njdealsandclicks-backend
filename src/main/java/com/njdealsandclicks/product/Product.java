@@ -3,11 +3,11 @@ package com.njdealsandclicks.product;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.common.BaseEntity;
+import com.njdealsandclicks.currency.Currency;
 import com.njdealsandclicks.pricehistory.PriceHistory;
 
 import jakarta.persistence.CascadeType;
@@ -58,7 +58,7 @@ public class Product extends BaseEntity{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
-    private Currency currency; // TODO continue to handled it 
+    private Currency currency;
 
     @Column(nullable = true)
     @Positive

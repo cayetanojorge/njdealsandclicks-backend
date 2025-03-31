@@ -73,13 +73,13 @@ public class SubscriptionService {
     // // // @PostConstruct
     // // // private void loadSubscriptionsFromYaml() {
     // // //     Yaml yaml = new Yaml();
-    // // //     try (InputStream inputStream = subscriptionsResource.getInputStream()) {
+    // // //     try(InputStream inputStream = subscriptionsResource.getInputStream()) {
     // // //         Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
     // // //         List<Map<String, Object>> subscriptions = data.get("subscriptions");
             
     // // //         subscriptions.forEach(subscriptionData -> {
     // // //             String planName = (String) subscriptionData.get("planName");
-    // // //             if (!subscriptionRepository.existsByPlanName(planName)) {
+    // // //             if(!subscriptionRepository.existsByPlanName(planName)) {
     // // //                 Subscription subscription = new Subscription();
     // // //                 subscription.setPlanName(planName);
     // // //                 subscription.setDescription((String) subscriptionData.get("description"));
@@ -98,13 +98,13 @@ public class SubscriptionService {
     // // // }
 
     private String createPublicId() {
-        for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
             List<String> existingIds = subscriptionRepository.findExistingPublicIds(publicIdBatch);
             List<String> uniqueIds = publicIdBatch.stream()
                                                   .filter(id -> !existingIds.contains(id))
                                                   .collect(Collectors.toList());
-            if (!uniqueIds.isEmpty()) {
+            if(!uniqueIds.isEmpty()) {
                 return uniqueIds.get(0);
             }
         }

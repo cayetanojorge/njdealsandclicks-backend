@@ -49,7 +49,7 @@ public class NewsletterService {
 
     private String createPublicId() {
         // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-        for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
             // Genera un batch di PublicId
             List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
@@ -62,7 +62,7 @@ public class NewsletterService {
                                                   .collect(Collectors.toList());
 
             // Se esiste almeno un ID univoco, lo restituisce
-            if (!uniqueIds.isEmpty()) {
+            if(!uniqueIds.isEmpty()) {
                 return uniqueIds.get(0);
             }
         }
