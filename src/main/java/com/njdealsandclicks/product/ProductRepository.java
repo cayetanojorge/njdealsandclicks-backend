@@ -23,6 +23,28 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
     @Query("SELECT p.publicId FROM Product p WHERE p.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);
+
+    //     @Query(
+    // value = """
+    //     SELECT unnest(:ids) 
+    //     EXCEPT 
+    //     SELECT public_id FROM product WHERE public_id IN (:ids)
+    //     """,
+    // nativeQuery = true
+    // )
+    // List<String> findAvailablePublicIds(@Param("ids") List<String> ids);
+
+
+    /* Data una lista :publicIds, restituisci solo quelli che non sono presenti nella tabella product */
+    @Query(
+        value = 
+            """
+            SELECT unnest(:publicIds) 
+            EXCEPT 
+            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            """,
+        nativeQuery = true)
+    List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
     
     /* data lista di publicIds voglio restituire lista di products presenti in db */
     @Query("SELECT p FROM Product p WHERE p.publicId IN :publicIds")
@@ -30,4 +52,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("SELECT p FROM Product p WHERE p.category.publicId = :categoryPublicId")
     List<Product> findByCategoryPublicId(@Param("categoryPublicId") String categoryPublicId);
+    
 }

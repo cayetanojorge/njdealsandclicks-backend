@@ -53,13 +53,15 @@ public class ProductService {
             // Genera un batch di PublicId
             List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
-            // Verifica quali ID sono già presenti nel database
-            List<String> existingIds = productRepository.findExistingPublicIds(publicIdBatch);
+            // // // // Verifica quali ID sono già presenti nel database
+            // // // List<String> existingIds = productRepository.findExistingPublicIds(publicIdBatch);
 
-            // Filtra gli ID univoci
-            List<String> uniqueIds = publicIdBatch.stream()
-                                                  .filter(id -> !existingIds.contains(id))
-                                                  .collect(Collectors.toList());
+            // // // // Filtra gli ID univoci
+            // // // List<String> uniqueIds = publicIdBatch.stream()
+            // // //                                       .filter(id -> !existingIds.contains(id))
+            // // //                                       .collect(Collectors.toList());
+
+            List<String> uniqueIds = productRepository.filterAvailablePublicIds(publicIdBatch);
 
             // Se esiste almeno un ID univoco, lo restituisce
             if(!uniqueIds.isEmpty()) {
