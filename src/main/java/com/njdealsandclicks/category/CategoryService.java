@@ -22,7 +22,7 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class CategoryService {
 
-    private static final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
+    // // // private static final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
     private static final String PREFIX_PUBLIC_ID = "categ_";
 
     private final CategoryRepository categoryRepository;
@@ -55,7 +55,8 @@ public class CategoryService {
 
         // calculate how many plublicIds we need - produce them - assigned them
         int nCategories = getNcategInitDb(categoriesToSave);
-        List<String> publicIds = getNPublicIds(nCategories);
+        // // // List<String> publicIds = getNPublicIds(nCategories);
+        List<String> publicIds = createBatchPublicIdsV2(nCategories);
         Iterator<String> it = publicIds.iterator();
         for(int i=0; i<categoriesToSave.size(); i++) {
             Category category = categoriesToSave.get(i);
@@ -178,39 +179,47 @@ public class CategoryService {
         return nCategories;
     }
 
-    private List<String> getNPublicIds(int nPublicIds) {
-        List<String> retNpublicIds = new ArrayList<>();
-        while(retNpublicIds.size()<nPublicIds) {
-            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID, nPublicIds);
-            List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
-            List<String> uniqueIds = publicIdBatch.stream()
-                                                      .filter(id -> !existingIds.contains(id))
-                                                      .collect(Collectors.toList());
-            retNpublicIds.addAll(uniqueIds);
-        }
-        return retNpublicIds;
+    // // // private List<String> getNPublicIds(int nPublicIds) {
+    // // //     List<String> retNpublicIds = new ArrayList<>();
+    // // //     while(retNpublicIds.size()<nPublicIds) {
+    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID, nPublicIds);
+    // // //         List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
+    // // //         List<String> uniqueIds = publicIdBatch.stream()
+    // // //                                                   .filter(id -> !existingIds.contains(id))
+    // // //                                                   .collect(Collectors.toList());
+    // // //         retNpublicIds.addAll(uniqueIds);
+    // // //     }
+    // // //     return retNpublicIds;
+    // // // }
+
+    // // // private String createPublicId() {
+    // // //     // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
+    // // //     for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    // // //         // Genera un batch di PublicId
+    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+
+    // // //         // Verifica quali ID sono già presenti nel database
+    // // //         List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
+
+    // // //         // Filtra gli ID univoci
+    // // //         List<String> uniqueIds = publicIdBatch.stream()
+    // // //                                               .filter(id -> !existingIds.contains(id))
+    // // //                                               .collect(Collectors.toList());
+
+    // // //         // Se esiste almeno un ID univoco, lo restituisce
+    // // //         if(!uniqueIds.isEmpty()) {
+    // // //             return uniqueIds.get(0);
+    // // //         }
+    // // //     }
+    // // //     throw new IllegalStateException("CategoryService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
+    // // // }
+
+    private String createPublicIdV2() {
+        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds);
     }
 
-    private String createPublicId() {
-        // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-            // Genera un batch di PublicId
-            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
-
-            // Verifica quali ID sono già presenti nel database
-            List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
-
-            // Filtra gli ID univoci
-            List<String> uniqueIds = publicIdBatch.stream()
-                                                  .filter(id -> !existingIds.contains(id))
-                                                  .collect(Collectors.toList());
-
-            // Se esiste almeno un ID univoco, lo restituisce
-            if(!uniqueIds.isEmpty()) {
-                return uniqueIds.get(0);
-            }
-        }
-        throw new IllegalStateException("CategoryService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
+    private List<String> createBatchPublicIdsV2(int nPublicIds) {
+        return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds, nPublicIds);
     }
 
     private CategoryDTO mapToCategoryDTO(Category category) {
@@ -272,7 +281,7 @@ public class CategoryService {
         }
 
         category = new Category();
-        category.setPublicId(createPublicId());
+        category.setPublicId(createPublicIdV2());
         category.setName(categoryCreateDTO.getName());
         category.setDescription(categoryCreateDTO.getDescription());
         category.setImageUrl(categoryCreateDTO.getImageUrl());

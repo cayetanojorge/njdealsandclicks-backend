@@ -12,6 +12,16 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
     Optional<Subscription> findByPublicId(String publicId);
     boolean existsByPublicId(String publicId);
 
+    @Query(
+        value = 
+            """
+            SELECT unnest(:publicIds) 
+            EXCEPT 
+            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            """,
+        nativeQuery = true)
+    List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
+
     boolean existsByPlanName(String planName);
     
     @Query("SELECT s.planName FROM Subscription s WHERE s.planName IN :planNames")

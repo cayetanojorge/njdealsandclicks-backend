@@ -19,7 +19,7 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class SubscriptionService {
     
-    private static final int MAX_ATTEMPTS = 3;
+    // // // private static final int MAX_ATTEMPTS = 3;
     private static final String PREFIX_PUBLIC_ID = "sub_";
 
     private final SubscriptionRepository subscriptionRepository;
@@ -43,21 +43,20 @@ public class SubscriptionService {
         List<Subscription> allSubscriptions = databaseInitializationService.loadEntitiesFromYaml(
             "subscriptions.yml",
             Subscription.class,
-            this::mapYamlToSubscription
+            this::mapYamlToSubscription            
         );
 
-        List<String> existingPlanNames = subscriptionRepository.findAllPlanNames();
+        List<String> publicIds = createBatchPublicIdsV2(allSubscriptions.size());
+        for(int i=0; i<allSubscriptions.size(); i++) {
+            allSubscriptions.get(i).setPublicId(publicIds.get(i));
+        }
 
-        List<Subscription> subscriptionsToSave = allSubscriptions.stream()
-            .filter(sub -> !existingPlanNames.contains(sub.getPlanName()))
-            .collect(Collectors.toList());
-
-        subscriptionRepository.saveAll(subscriptionsToSave);
+        subscriptionRepository.saveAll(allSubscriptions);
     }
 
     private Subscription mapYamlToSubscription(Map<String, Object> data) {
         Subscription subscription = new Subscription();
-        subscription.setPublicId(createPublicId());
+        // // // subscription.setPublicId(createPublicId());
         subscription.setPlanName((String) data.get("planName"));
         subscription.setDescription((String) data.get("description"));
         subscription.setPrice((Double) data.get("price"));
@@ -97,18 +96,26 @@ public class SubscriptionService {
     // // //     }
     // // // }
 
-    private String createPublicId() {
-        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
-            List<String> existingIds = subscriptionRepository.findExistingPublicIds(publicIdBatch);
-            List<String> uniqueIds = publicIdBatch.stream()
-                                                  .filter(id -> !existingIds.contains(id))
-                                                  .collect(Collectors.toList());
-            if(!uniqueIds.isEmpty()) {
-                return uniqueIds.get(0);
-            }
-        }
-        throw new IllegalStateException("SubscriptionService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
+    // // // private String createPublicId() {
+    // // //     for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+    // // //         List<String> existingIds = subscriptionRepository.findExistingPublicIds(publicIdBatch);
+    // // //         List<String> uniqueIds = publicIdBatch.stream()
+    // // //                                               .filter(id -> !existingIds.contains(id))
+    // // //                                               .collect(Collectors.toList());
+    // // //         if(!uniqueIds.isEmpty()) {
+    // // //             return uniqueIds.get(0);
+    // // //         }
+    // // //     }
+    // // //     throw new IllegalStateException("SubscriptionService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
+    // // // }
+
+    private String createPublicIdV2() {
+        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds);
+    }
+
+    private List<String> createBatchPublicIdsV2(int nPublicIds) {
+        return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds, nPublicIds);
     }
 
     private SubscriptionDTO mapToSubscriptionDTO(Subscription subscription) {
@@ -164,7 +171,8 @@ public class SubscriptionService {
             throw new RuntimeException("Subscription with planName " + subscriptionCreateDTO.getPlanName() + " already exists");
         }
         subscription = new Subscription();
-        subscription.setPublicId(createPublicId());
+        // // // subscription.setPublicId(createPublicId());
+        subscription.setPublicId(createPublicIdV2());
         subscription.setPlanName(subscriptionCreateDTO.getPlanName());
         subscription.setDescription(subscriptionCreateDTO.getDescription());
         subscription.setFeatures(subscriptionCreateDTO.getFeatures());

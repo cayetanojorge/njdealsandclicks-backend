@@ -12,6 +12,16 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
     Optional<Newsletter> findByPublicId(String publicId);
     boolean existsByPublicId(String publicId);
 
+    @Query(
+        value = 
+            """
+            SELECT unnest(:publicIds) 
+            EXCEPT 
+            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            """,
+        nativeQuery = true)
+    List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
+
     /* controllo publicId presente in batch se gia' presente in db  */
     @Query("SELECT n.publicId FROM Newsletter n WHERE n.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);

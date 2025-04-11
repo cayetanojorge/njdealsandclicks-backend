@@ -16,6 +16,16 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
     @Query("SELECT c.publicId FROM Category c WHERE c.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);
+
+    @Query(
+        value = 
+            """
+            SELECT unnest(:publicIds) 
+            EXCEPT 
+            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            """,
+        nativeQuery = true)
+    List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
     
     /* data lista di publicIds voglio restituire lista di category presenti in db */
     @Query("SELECT c FROM Category c WHERE c.publicId IN :publicIds")

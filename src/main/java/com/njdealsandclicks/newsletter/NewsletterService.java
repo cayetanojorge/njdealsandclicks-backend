@@ -26,7 +26,7 @@ import com.njdealsandclicks.dto.product.ProductDTO;
 @Service
 public class NewsletterService {
     
-    private static final int MAX_ATTEMPTS = 3;
+    // // // private static final int MAX_ATTEMPTS = 3;
     private static final String PREFIX_PUBLIC_ID = "news_";
 
     private final NewsletterRepository newsletterRepository;
@@ -47,27 +47,31 @@ public class NewsletterService {
         this.dateUtil = dateUtil;
     }
 
-    private String createPublicId() {
-        // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-        for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-            // Genera un batch di PublicId
-            List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
+    // // // private String createPublicId() {
+    // // //     // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
+    // // //     for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    // // //         // Genera un batch di PublicId
+    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
 
-            // Verifica quali ID sono già presenti nel database
-            List<String> existingIds = newsletterRepository.findExistingPublicIds(publicIdBatch);
+    // // //         // Verifica quali ID sono già presenti nel database
+    // // //         List<String> existingIds = newsletterRepository.findExistingPublicIds(publicIdBatch);
 
-            // Filtra gli ID univoci
-            List<String> uniqueIds = publicIdBatch.stream()
-                                                  .filter(id -> !existingIds.contains(id))
-                                                  .collect(Collectors.toList());
+    // // //         // Filtra gli ID univoci
+    // // //         List<String> uniqueIds = publicIdBatch.stream()
+    // // //                                               .filter(id -> !existingIds.contains(id))
+    // // //                                               .collect(Collectors.toList());
 
-            // Se esiste almeno un ID univoco, lo restituisce
-            if(!uniqueIds.isEmpty()) {
-                return uniqueIds.get(0);
-            }
-        }
+    // // //         // Se esiste almeno un ID univoco, lo restituisce
+    // // //         if(!uniqueIds.isEmpty()) {
+    // // //             return uniqueIds.get(0);
+    // // //         }
+    // // //     }
 
-        throw new IllegalStateException("NewsletterService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
+    // // //     throw new IllegalStateException("NewsletterService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
+    // // // }
+
+    private String createPublicIdV2() {
+        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, newsletterRepository::filterAvailablePublicIds);
     }
 
     private NewsletterDTO mapToNewsletterDTO(Newsletter newsletter) {
@@ -120,7 +124,8 @@ public class NewsletterService {
             return updateNewsletterSubscription(newsletterCreateDTO);
         }
         newsletter = new Newsletter();
-        newsletter.setPublicId(createPublicId());
+        // // // newsletter.setPublicId(createPublicId());
+        newsletter.setPublicId(createPublicIdV2());
         newsletter.setUser(userService.getUserByPublicId(userService.createUser(newsletterCreateDTO.getUserCreateUpdateDTO()).getPublicId()));
         if(newsletterCreateDTO.getGeneralNewsletter() != null) {
             newsletter.setGeneralNewsletter(newsletterCreateDTO.getGeneralNewsletter());

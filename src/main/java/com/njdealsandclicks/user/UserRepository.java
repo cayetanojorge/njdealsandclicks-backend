@@ -14,6 +14,16 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmail(String email);
 
+    @Query(
+        value = 
+            """
+            SELECT unnest(:publicIds) 
+            EXCEPT 
+            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            """,
+        nativeQuery = true)
+    List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
+
     /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
     @Query("SELECT u.publicId FROM User u WHERE u.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);

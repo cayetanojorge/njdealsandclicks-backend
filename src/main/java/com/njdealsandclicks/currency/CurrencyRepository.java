@@ -12,6 +12,16 @@ public interface CurrencyRepository extends JpaRepository<Currency, UUID> {
     Optional<Currency> findByPublicId(String publicId);
     boolean existsByPublicId(String publicId);
 
+    @Query(
+        value = 
+            """
+            SELECT unnest(:publicIds) 
+            EXCEPT 
+            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            """,
+        nativeQuery = true)
+    List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
+
     @Query("SELECT c.publicId FROM Currency c WHERE c.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);
 
