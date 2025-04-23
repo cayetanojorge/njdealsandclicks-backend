@@ -8,18 +8,18 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.njdealsandclicks.product.Product;
-import com.njdealsandclicks.product.ProductService;
-import com.njdealsandclicks.user.User;
-import com.njdealsandclicks.user.UserService;
-import com.njdealsandclicks.util.DateUtil;
-import com.njdealsandclicks.util.PublicIdGeneratorService;
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
 import com.njdealsandclicks.dto.category.CategoryDTO;
 import com.njdealsandclicks.dto.newsletter.NewsletterCreateUpdateDTO;
 import com.njdealsandclicks.dto.newsletter.NewsletterDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
+import com.njdealsandclicks.product.Product;
+import com.njdealsandclicks.product.ProductService;
+import com.njdealsandclicks.user.User;
+import com.njdealsandclicks.user.UserService;
+import com.njdealsandclicks.util.DateUtil;
+import com.njdealsandclicks.util.PublicIdGeneratorService;
 
 
 
@@ -118,58 +118,70 @@ public class NewsletterService {
 
     @Transactional
     public NewsletterDTO createNewsletterSubscription(NewsletterCreateUpdateDTO newsletterCreateDTO) {
-        /* voglio in caso esistesse già, di aggiornare */
         Newsletter newsletter = getNewsletterByUserEmail(newsletterCreateDTO.getUserCreateUpdateDTO().getEmail());
         if(newsletter != null) {
-            return updateNewsletterSubscription(newsletterCreateDTO);
+            throw new RuntimeException("Newsletter with email " + newsletter.getUser().getEmail() + " already exists");
         }
+
         newsletter = new Newsletter();
         // // // newsletter.setPublicId(createPublicId());
         newsletter.setPublicId(createPublicIdV2());
-        newsletter.setUser(userService.getUserByPublicId(userService.createUser(newsletterCreateDTO.getUserCreateUpdateDTO()).getPublicId()));
-        if(newsletterCreateDTO.getGeneralNewsletter() != null) {
-            newsletter.setGeneralNewsletter(newsletterCreateDTO.getGeneralNewsletter());
-        }
+        User user = userService.getUserByEmail(newsletterCreateDTO.getUserCreateUpdateDTO().getEmail());
+        newsletter.setUser(user);
+        newsletter.setGeneralNewsletter(newsletterCreateDTO.getGeneralNewsletter());
 
+        if(newsletterCreateDTO.getProductDTOs().size() > user.getSubscription().getMaxTrackedProducts()) {
+            throw new RuntimeException("Because of your plan " + user.getSubscription().getPlanName() + " cannot add more than "  + user.getSubscription().getMaxTrackedProducts() + " products to favorites.");
+        }
         List<String> productPublicIds = new ArrayList<>();
         for(ProductDTO p : newsletterCreateDTO.getProductDTOs()) {
             productPublicIds.add(p.getPublicId());
         }
         newsletter.setProducts(productService.getProductsByPublicIds(productPublicIds));
 
+        if(newsletterCreateDTO.getCategoryDTOs().size() > user.getSubscription().getMaxTrackedCategories()) {
+            throw new RuntimeException("Because of your plan " + user.getSubscription().getPlanName() + " cannot add more than "  + user.getSubscription().getMaxTrackedProducts() + " categories to favorites.");
+        }
         List<String> categoryPublicIds = new ArrayList<>();
         for(CategoryDTO c : newsletterCreateDTO.getCategoryDTOs()) {
             categoryPublicIds.add(c.getPublicId());
         }
         newsletter.setCategories(categoryService.getCategoriesByPublicIds(categoryPublicIds));
+        
         return mapToNewsletterDTO(newsletterRepository.save(newsletter));
     }
 
     @Transactional
     public NewsletterDTO updateNewsletterSubscription(NewsletterCreateUpdateDTO newsletterUpdateDTO) {
-        Newsletter newsLetter = getNewsletterByUserEmail(newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail());
-        if(newsletterUpdateDTO.getGeneralNewsletter() != null) {
-            newsLetter.setGeneralNewsletter(newsletterUpdateDTO.getGeneralNewsletter());
+        Newsletter newsletter = getNewsletterByUserEmail(newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail());
+        if(newsletter == null) {
+            throw new RuntimeException("Newsletter with email " + newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail() + " doesn't exists");
         }
 
-        // TODO controlli che non eccediamo limite del piano dell' utente
-        if(newsletterUpdateDTO.getProductDTOs() != null) {
-            List<String> productPublicIds = new ArrayList<>();
-            for(ProductDTO p : newsletterUpdateDTO.getProductDTOs()) {
-                productPublicIds.add(p.getPublicId());
-            }
-            newsLetter.setProducts(productService.getProductsByPublicIds(productPublicIds));
-        }
-        if(newsletterUpdateDTO.getCategoryDTOs() != null) {
-            List<String> categoryPublicIds = new ArrayList<>();
-            for(CategoryDTO c : newsletterUpdateDTO.getCategoryDTOs()) {
-                categoryPublicIds.add(c.getPublicId());
-            }
-            newsLetter.setProducts(productService.getProductsByPublicIds(categoryPublicIds));
-        }
+        User user = userService.getUserByEmail(newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail());
+        newsletter.setUser(user);
+        newsletter.setGeneralNewsletter(newsletterUpdateDTO.getGeneralNewsletter());
 
-        newsLetter.setUpdatedAt(dateUtil.getCurrentDateTime());
-        return mapToNewsletterDTO(newsletterRepository.save(newsLetter));
+        if(newsletterUpdateDTO.getProductDTOs().size() > user.getSubscription().getMaxTrackedProducts()) {
+            throw new RuntimeException("Because of your plan " + user.getSubscription().getPlanName() + " cannot add more than "  + user.getSubscription().getMaxTrackedProducts() + " products to favorites.");
+        }
+        List<String> productPublicIds = new ArrayList<>();
+        for(ProductDTO p : newsletterUpdateDTO.getProductDTOs()) {
+            productPublicIds.add(p.getPublicId());
+        }
+        newsletter.setProducts(productService.getProductsByPublicIds(productPublicIds));
+
+        if(newsletterUpdateDTO.getCategoryDTOs().size() > user.getSubscription().getMaxTrackedCategories()) {
+            throw new RuntimeException("Because of your plan " + user.getSubscription().getPlanName() + " cannot add more than "  + user.getSubscription().getMaxTrackedProducts() + " categories to favorites.");
+        }
+        List<String> categoryPublicIds = new ArrayList<>();
+        for(CategoryDTO c : newsletterUpdateDTO.getCategoryDTOs()) {
+            categoryPublicIds.add(c.getPublicId());
+        }
+        newsletter.setProducts(productService.getProductsByPublicIds(categoryPublicIds));
+
+        newsletter.setUpdatedAt(dateUtil.getCurrentDateTime());
+        return mapToNewsletterDTO(newsletterRepository.save(newsletter));
     }
 
     @Transactional
@@ -194,7 +206,7 @@ public class NewsletterService {
         User user = userService.getUserByPublicId(userPublicId);
         Newsletter newsletter = getNewsletterByUserPublicId(userPublicId);
 
-        if(newsletter.getProducts().size() >= user.getSubscription().getMaxTrackedProducts()) {
+        if(newsletter.getProducts().size() > user.getSubscription().getMaxTrackedProducts()) {
             throw new RuntimeException("Because of your plan " + user.getSubscription().getPlanName() + " cannot add more than "  + user.getSubscription().getMaxTrackedProducts() + " products to favorites.");
         }
 
@@ -219,7 +231,7 @@ public class NewsletterService {
         User user = userService.getUserByPublicId(userPublicId);
         Newsletter newsletter = getNewsletterByUserPublicId(userPublicId);
 
-        if(newsletter.getCategories().size() >= user.getSubscription().getMaxTrackedCategories()) {
+        if(newsletter.getCategories().size() > user.getSubscription().getMaxTrackedCategories()) {
             throw new RuntimeException("Because of your plan " + user.getSubscription().getPlanName() + " cannot add more than "  + user.getSubscription().getMaxTrackedProducts() + " categories to favorites.");
         }
 
