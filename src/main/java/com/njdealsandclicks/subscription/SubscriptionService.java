@@ -183,7 +183,6 @@ public class SubscriptionService {
         subscription.setMaxEmailsPerWeek(subscriptionCreateDTO.getMaxEmailsPerWeek());
         subscription.setMaxTrackedCategories(subscriptionCreateDTO.getMaxTrackedCategories());
         subscription.setMaxTrackedCategories(subscriptionCreateDTO.getMaxTrackedCategories());
-        subscription.setIsActive(subscriptionCreateDTO.getIsActive());
         return mapToSubscriptionDTO(subscriptionRepository.save(subscription));
     }
 

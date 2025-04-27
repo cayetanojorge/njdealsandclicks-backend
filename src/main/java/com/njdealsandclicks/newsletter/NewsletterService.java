@@ -118,7 +118,7 @@ public class NewsletterService {
 
     @Transactional
     public NewsletterDTO createNewsletterSubscription(NewsletterCreateUpdateDTO newsletterCreateDTO) {
-        Newsletter newsletter = getNewsletterByUserEmail(newsletterCreateDTO.getUserCreateUpdateDTO().getEmail());
+        Newsletter newsletter = getNewsletterByUserEmail(newsletterCreateDTO.getUserEmail());
         if(newsletter != null) {
             throw new RuntimeException("Newsletter with email " + newsletter.getUser().getEmail() + " already exists");
         }
@@ -126,7 +126,7 @@ public class NewsletterService {
         newsletter = new Newsletter();
         // // // newsletter.setPublicId(createPublicId());
         newsletter.setPublicId(createPublicIdV2());
-        User user = userService.getUserByEmail(newsletterCreateDTO.getUserCreateUpdateDTO().getEmail());
+        User user = userService.getUserByEmail(newsletterCreateDTO.getUserEmail());
         newsletter.setUser(user);
         newsletter.setGeneralNewsletter(newsletterCreateDTO.getGeneralNewsletter());
 
@@ -153,12 +153,12 @@ public class NewsletterService {
 
     @Transactional
     public NewsletterDTO updateNewsletterSubscription(NewsletterCreateUpdateDTO newsletterUpdateDTO) {
-        Newsletter newsletter = getNewsletterByUserEmail(newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail());
+        Newsletter newsletter = getNewsletterByUserEmail(newsletterUpdateDTO.getUserEmail());
         if(newsletter == null) {
-            throw new RuntimeException("Newsletter with email " + newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail() + " doesn't exists");
+            throw new RuntimeException("Newsletter with email " + newsletterUpdateDTO.getUserEmail() + " doesn't exists");
         }
 
-        User user = userService.getUserByEmail(newsletterUpdateDTO.getUserCreateUpdateDTO().getEmail());
+        User user = userService.getUserByEmail(newsletterUpdateDTO.getUserEmail());
         newsletter.setUser(user);
         newsletter.setGeneralNewsletter(newsletterUpdateDTO.getGeneralNewsletter());
 
@@ -178,7 +178,7 @@ public class NewsletterService {
         for(CategoryDTO c : newsletterUpdateDTO.getCategoryDTOs()) {
             categoryPublicIds.add(c.getPublicId());
         }
-        newsletter.setProducts(productService.getProductsByPublicIds(categoryPublicIds));
+        newsletter.setCategories(categoryService.getCategoriesByPublicIds(categoryPublicIds));
 
         newsletter.setUpdatedAt(dateUtil.getCurrentDateTime());
         return mapToNewsletterDTO(newsletterRepository.save(newsletter));

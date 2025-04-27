@@ -76,9 +76,6 @@ public class User extends BaseEntity{
     @Column(nullable = true)
     private ZonedDateTime subscriptionExpirationDate;
 
-    @Column(name = "email_frequency", nullable = true)
-    private String emailFrequency; // LOW, MEDIUM, HIGH
-
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
 

@@ -2,6 +2,8 @@ package com.njdealsandclicks.dto.user;
 
 import java.time.ZonedDateTime;
 
+import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,13 +35,10 @@ public class UserDTO {
     private String timezone; // browser data
 
     @NotBlank
-    private String subscriptionPlanName;
+    private SubscriptionDTO subscriptionDTO;
 
     @NotNull
     private ZonedDateTime subscriptionExpirationDate;
-
-    @NotBlank
-    private String emailFrequency; // LOW, MEDIUM, HIGH
 
     @NotNull
     private ZonedDateTime registrationDate;

@@ -23,4 +23,7 @@ public class CategoryDTO {
     private Boolean isActive;
 
     private Integer displayOrder;
+
+    @NotBlank
+    private String nameParentCategory;
 }

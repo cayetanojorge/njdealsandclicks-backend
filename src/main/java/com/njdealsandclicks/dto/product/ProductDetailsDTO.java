@@ -30,6 +30,10 @@ public class ProductDetailsDTO {
     @NotBlank
     private String affiliateLink;
 
+    private Double rating;
+
+    private Integer reviewCount;
+
     @NotBlank
     private String categoryName;
 

@@ -226,6 +226,12 @@ public class CategoryService {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setPublicId(category.getPublicId());
         categoryDTO.setName(category.getName());
+        categoryDTO.setDescription(category.getDescription());
+        categoryDTO.setImageUrl(category.getImageUrl());
+        categoryDTO.setSlug(category.getSlug());
+        categoryDTO.setIsActive(category.getIsActive());
+        categoryDTO.setDisplayOrder(category.getDisplayOrder());
+        categoryDTO.setNameParentCategory(category.getParentCategory().getName());
         return categoryDTO;
     }
 

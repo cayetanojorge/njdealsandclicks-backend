@@ -9,8 +9,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
 import com.njdealsandclicks.dto.user.UserCreateUpdateDTO;
 import com.njdealsandclicks.dto.user.UserDTO;
+import com.njdealsandclicks.subscription.Subscription;
 import com.njdealsandclicks.subscription.SubscriptionService;
 import com.njdealsandclicks.util.DateUtil;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
@@ -71,9 +73,9 @@ public class UserService {
         userDTO.setEmailVerified(user.getEmailVerified());
         userDTO.setPreferredLanguage(user.getPreferredLanguage());
         userDTO.setTimezone(user.getTimezone());
-        userDTO.setSubscriptionPlanName(user.getSubscription().getPlanName());
+        SubscriptionDTO subscriptionDTO = subscriptionService.getSubscriptionDTOByPublicId(user.getSubscription().getPublicId());
+        userDTO.setSubscriptionDTO(subscriptionDTO);
         userDTO.setSubscriptionExpirationDate(user.getSubscriptionExpirationDate());
-        userDTO.setEmailFrequency(user.getEmailFrequency());
         userDTO.setRegistrationDate(user.getRegistrationDate());
         return userDTO;
     }
@@ -118,14 +120,12 @@ public class UserService {
         user.setEmail(userCreateDTO.getEmail());
         user.setFirstName(userCreateDTO.getFirstName());
         user.setLastName(userCreateDTO.getLastName());
-        // user.setEmailVerified(false); // TODO check se settato come da default
-        // user.setIsActive(true);
         user.setDeactivatedAt(null);
         user.setPreferredLanguage(userCreateDTO.getPreferredLanguage());
         user.setTimezone(userCreateDTO.getTimezone());
-        user.setSubscription(subscriptionService.getSubscriptionByPlanName(userCreateDTO.getSubscriptionPlanName()));
+        Subscription subscription = subscriptionService.getSubscriptionByPlanName(userCreateDTO.getSubscriptionPlanName());
+        user.setSubscription(subscription);
         user.setSubscriptionExpirationDate(null);
-        user.setEmailFrequency("MEDIUM");
         return mapToUserDTO(userRepository.save(user));
     }
 
@@ -139,6 +139,8 @@ public class UserService {
         user.setLastName(userUpdateDTO.getLastName());
         user.setPreferredLanguage(userUpdateDTO.getPreferredLanguage());
         user.setTimezone(userUpdateDTO.getTimezone());
+        Subscription subscription = subscriptionService.getSubscriptionByPlanName(userUpdateDTO.getSubscriptionPlanName());
+        user.setSubscription(subscription);
         user.setUpdatedAt(dateUtil.getCurrentDateTime());
         return mapToUserDTO(userRepository.save(user));
     }
@@ -163,13 +165,6 @@ public class UserService {
         User user = getUserByPublicId(publicId);
         user.setIsActive(false);
         user.setDeactivatedAt(ZonedDateTime.now(ZoneOffset.UTC));
-        return mapToUserDTO(userRepository.save(user));
-    }
-
-    @Transactional
-    public UserDTO updateEmailFrequency(String publicId, String emailFrequency) {
-        User user = getUserByPublicId(publicId);
-        user.setEmailFrequency(emailFrequency);
         return mapToUserDTO(userRepository.save(user));
     }
 

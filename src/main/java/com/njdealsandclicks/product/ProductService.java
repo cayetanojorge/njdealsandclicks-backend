@@ -92,8 +92,11 @@ public class ProductService {
         productDTO.setPublicId(product.getPublicId());
         productDTO.setName(product.getName());
         productDTO.setDescription(product.getDescription());
+        productDTO.setCurrencyDTO(currencyService.getCurrencyDTOByPublicId(product.getCurrency().getPublicId()));
         productDTO.setCurrentPrice(product.getCurrentPrice());
         productDTO.setAffiliateLink(product.getAffiliateLink());
+        productDTO.setRating(product.getRating());
+        productDTO.setReviewCount(product.getReviewCount());
         productDTO.setCategoryName(product.getCategory().getName());
         return productDTO;
     }

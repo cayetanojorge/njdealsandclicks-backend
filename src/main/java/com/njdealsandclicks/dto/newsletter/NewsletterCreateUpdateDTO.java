@@ -4,16 +4,18 @@ import java.util.List;
 
 import com.njdealsandclicks.dto.category.CategoryDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
-import com.njdealsandclicks.dto.user.UserCreateUpdateDTO;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class NewsletterCreateUpdateDTO {
     
-    @NotNull
-    private UserCreateUpdateDTO userCreateUpdateDTO;
+    @Email
+    @NotBlank
+    private String userEmail;
 
     @NotNull
     private Boolean generalNewsletter;
