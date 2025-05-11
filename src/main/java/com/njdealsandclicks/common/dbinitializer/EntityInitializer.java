@@ -5,7 +5,7 @@ public interface EntityInitializer {
 
     String getEntityName();
 
-    String getYamlPath();
+    String getYamlName();
     
     default String getInitializationVersion() { return "1.0"; }
     

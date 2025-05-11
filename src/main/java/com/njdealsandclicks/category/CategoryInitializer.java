@@ -1,20 +1,20 @@
 package com.njdealsandclicks.category;
 
-import java.io.InputStream;
+// import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
+// import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+// import java.util.function.Function;
+// import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.Yaml;
+// import org.yaml.snakeyaml.Yaml;
 
 import com.njdealsandclicks.common.dbinitializer.EntityInitializer;
 import com.njdealsandclicks.entityinitialized.EntityInitializedService;
-import com.njdealsandclicks.util.YamlLoaderService;
+import com.njdealsandclicks.util.YamlService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +23,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryInitializer implements EntityInitializer {
 
-    @Value("${custom.init-directory}")
-    private String initDirectory;
+    // // // @Value("${custom.init-directory}")
+    // // // private String initDirectory;
 
     private final CategoryRepository categoryRepository;
     private final EntityInitializedService entityInitializedService;
-    private final YamlLoaderService yamlLoaderService;
+    private final YamlService yamlService;
     // private final InitializationProperties properties;
     
     @Override
@@ -37,25 +37,25 @@ public class CategoryInitializer implements EntityInitializer {
     }
     
     @Override
-    public String getYamlPath() { 
-        return initDirectory + "/categories.yml";
+    public String getYamlName() { 
+        return "categories.yml";
     }
     
     @Transactional
     public void initialize() {
-        if (!entityInitializedService.needsInitialization(getEntityName(), getYamlPath())) {
+        if (!entityInitializedService.needsInitialization(getEntityName(), getYamlName())) {
             // log.info("Skipping initialization for {}", getEntityName());
             return;
         }
         
-        List<Category> categories = yamlLoaderService.loadEntitiesFromYaml(
-            "categories.yml", 
+        List<Category> categories = yamlService.loadEntitiesFromYaml(
+            getYamlName(),
             Category.class,
             this::mapYamlToCategory
         );
         
         categoryRepository.saveAll(categories);
-        entityInitializedService.markAsInitialized(getEntityName(), getYamlPath(), getInitializationVersion());
+        entityInitializedService.markAsInitialized(getEntityName(), getYamlName(), getInitializationVersion());
     }
 
     private Category mapYamlToCategory(Map<String, Object> data) {
@@ -89,22 +89,22 @@ public class CategoryInitializer implements EntityInitializer {
     }
     
 
-    public <T> List<T> loadEntitiesFromYaml(String fileName, Class<T> entityType, Function<Map<String, Object>, T> mapper) {
-        Yaml yaml = new Yaml();
-        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(initDirectory + "/" + fileName)) {
-            if(inputStream == null) {
-                throw new RuntimeException("File not found: " + initDirectory + "/" + fileName);
-            }
+    // // // public <T> List<T> loadEntitiesFromYaml(String fileName, Class<T> entityType, Function<Map<String, Object>, T> mapper) {
+    // // //     Yaml yaml = new Yaml();
+    // // //     try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(initDirectory + "/" + fileName)) {
+    // // //         if(inputStream == null) {
+    // // //             throw new RuntimeException("File not found: " + initDirectory + "/" + fileName);
+    // // //         }
 
-            Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
-            List<Map<String, Object>> entitiesData = data.get(entityType.getSimpleName().toLowerCase());
+    // // //         Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
+    // // //         List<Map<String, Object>> entitiesData = data.get(entityType.getSimpleName().toLowerCase());
 
-            return entitiesData != null
-                ? entitiesData.stream().map(mapper).collect(Collectors.toList())
-                : Collections.emptyList();
-        } catch (Exception e) {
-            // System.err.println("Errore durante l'inizializzazione del file YAML: " + e.getMessage());
-            throw new RuntimeException("Error loading entities from YAML file: " + fileName, e);
-        }
-    }
+    // // //         return entitiesData != null
+    // // //             ? entitiesData.stream().map(mapper).collect(Collectors.toList())
+    // // //             : Collections.emptyList();
+    // // //     } catch (Exception e) {
+    // // //         // System.err.println("Errore durante l'inizializzazione del file YAML: " + e.getMessage());
+    // // //         throw new RuntimeException("Error loading entities from YAML file: " + fileName, e);
+    // // //     }
+    // // // }
 }

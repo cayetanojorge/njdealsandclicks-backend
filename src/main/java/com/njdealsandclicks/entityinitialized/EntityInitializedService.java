@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.njdealsandclicks.common.dbinitializer.DbInitializationProperties;
 import com.njdealsandclicks.util.DateUtil;
-import com.njdealsandclicks.util.YamlHashService;
+import com.njdealsandclicks.util.YamlService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 public class EntityInitializedService {
 
     private final EntityInitializedRepository entityInitializedRepository;
-    private final YamlHashService yamlHashService;
+    private final YamlService yamlService;
     private final DbInitializationProperties properties;
     private final DateUtil dateUtil;
     // private final YamlLoaderService yamlLoader;
 
-    public boolean needsInitialization(String entityName, String yamlPath) {
+    public boolean needsInitialization(String entityName, String yamlName) {
         if (properties.isForce() || properties.getForceEntities().contains(entityName)) {
             return true;
         }
@@ -30,7 +30,7 @@ public class EntityInitializedService {
             
         if (entityInitialized.isInitialized()) {
             try {
-                return !yamlHashService.calculateYamlHash(yamlPath).equals(entityInitialized.getFileHash());
+                return !yamlService.calculateYamlHash(yamlName).equals(entityInitialized.getFileHash());
             } catch (IOException e) {
                 // log.warn("Failed to calculate YAML hash, forcing initialization", e);
                 return true;
@@ -40,14 +40,13 @@ public class EntityInitializedService {
     }
     
     @Transactional
-    public void markAsInitialized(String entityName, String yamlPath, String version) {
-        try {
+    public void markAsInitialized(String entityName, String yamlName, String version) {
+        try {            
             EntityInitialized entityInitialized = entityInitializedRepository.findById(entityName)
                 .orElse(new EntityInitialized(entityName));
-                
             entityInitialized.setInitialized(true);
             entityInitialized.setLastInitialized(dateUtil.getCurrentDateTime());
-            entityInitialized.setFileHash(yamlHashService.calculateYamlHash(yamlPath));
+            entityInitialized.setFileHash(yamlService.calculateYamlHash(yamlName));
             entityInitialized.setInitializationVersion(version);
             entityInitializedRepository.save(entityInitialized);
         } catch (IOException e) {
