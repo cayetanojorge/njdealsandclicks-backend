@@ -17,7 +17,7 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
             """
             SELECT unnest(:publicIds) 
             EXCEPT 
-            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            SELECT publicId FROM Newsletter n WHERE publicId IN :publicIds
             """,
         nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);

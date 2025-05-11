@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             """
             SELECT unnest(:publicIds) 
             EXCEPT 
-            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            SELECT publicId FROM User u WHERE publicId IN :publicIds
             """,
         nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);

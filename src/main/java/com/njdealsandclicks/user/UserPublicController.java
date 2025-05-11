@@ -1,8 +1,5 @@
 package com.njdealsandclicks.user;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,18 +13,13 @@ import com.njdealsandclicks.dto.user.UserDTO;
 
 
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequestMapping("/api/public/user")
+public class UserPublicController {
     
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public UserPublicController(UserService userService) {
         this.userService = userService;
-    }
-
-    @GetMapping("/")
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
     }
     
     @GetMapping("/{publicId}")
@@ -63,10 +55,5 @@ public class UserController {
     @PutMapping("/{publicId}/deactivate")
     public UserDTO deactivateUser(@PathVariable String publicId) {
         return userService.deactivateUser(publicId);
-    }
-
-    @DeleteMapping("/delete/{publicId}")
-    public void deleteUser(@PathVariable String publicId) {
-        userService.deleteUser(publicId);
     }
 }

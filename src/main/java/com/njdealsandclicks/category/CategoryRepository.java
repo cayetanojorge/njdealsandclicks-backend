@@ -17,15 +17,35 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @Query("SELECT c.publicId FROM Category c WHERE c.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);
 
-    @Query(
-        value = 
-            """
-            SELECT unnest(:publicIds) 
-            EXCEPT 
-            SELECT publicId FROM Product p WHERE publicId IN :publicIds
-            """,
-        nativeQuery = true)
+    // // // // query native too much for postgresql, not portable to another relational db
+    // // // @Query(
+    // // //     value = 
+    // // //         """
+    // // //         SELECT unnest(CAST(ARRAY[:publicIds] AS varchar[])) 
+    // // //         EXCEPT 
+    // // //         SELECT public_id FROM category WHERE public_id IN (:publicIds)
+    // // //         """,
+    // // //     nativeQuery = true)
+    // // // List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
+
+    @Query(value = """
+        SELECT :publicIds AS available_public_id
+        WHERE NOT EXISTS (
+            SELECT 1 FROM category WHERE public_id IN :publicIds
+        )
+        """, nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
+
+    // // // // suggested by deepseek
+    // // //     @Query(value = """
+    // // //     SELECT elem AS available_public_id
+    // // //     FROM unnest(CAST(ARRAY[?1] AS text[])) AS elem
+    // // //     WHERE NOT EXISTS (
+    // // //         SELECT 1 FROM category WHERE public_id = elem
+    // // //     )
+    // // //     """, nativeQuery = true)
+    // // // List<String> filterAvailablePublicIds(List<String> publicIds);
+    
     
     /* data lista di publicIds voglio restituire lista di category presenti in db */
     @Query("SELECT c FROM Category c WHERE c.publicId IN :publicIds")

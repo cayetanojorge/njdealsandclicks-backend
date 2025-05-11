@@ -17,7 +17,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
             """
             SELECT unnest(:publicIds) 
             EXCEPT 
-            SELECT publicId FROM Product p WHERE publicId IN :publicIds
+            SELECT publicId FROM Subscription s WHERE publicId IN :publicIds
             """,
         nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
