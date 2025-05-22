@@ -53,24 +53,5 @@ public class EntityInitializedService {
             throw new RuntimeException("Failed to calculate YAML hash", e);
         }
     }
-
-    // // // TODO magari spostarlo ed usarlo da altra classe
-    // // public <T> List<T> loadEntitiesFromYaml(String fileName, Class<T> entityType, Function<Map<String, Object>, T> mapper) {
-    // //     Yaml yaml = new Yaml();
-    // //     try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(initDirectory + "/" + fileName)) {
-    // //         if(inputStream == null) {
-    // //             throw new RuntimeException("File not found: " + initDirectory + "/" + fileName);
-    // //         }
-
-    // //         Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
-    // //         List<Map<String, Object>> entitiesData = data.get(entityType.getSimpleName().toLowerCase());
-
-    // //         return entitiesData != null
-    // //             ? entitiesData.stream().map(mapper).collect(Collectors.toList())
-    // //             : Collections.emptyList();
-    // //     } catch (Exception e) {
-    // //         // System.err.println("Errore durante l'inizializzazione del file YAML: " + e.getMessage());
-    // //         throw new RuntimeException("Error loading entities from YAML file: " + fileName, e);
-    // //     }
-    // // }
+    
 }

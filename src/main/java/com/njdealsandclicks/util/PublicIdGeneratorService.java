@@ -53,6 +53,15 @@ public class PublicIdGeneratorService {
             List<String> batchPublicIds = generatePublicIdBatch(prefix);
             List<String> uniquePublicIds = filterAvailablePublicIds.apply(batchPublicIds);
 
+            // // se non usiamo postgredb, passiamo publicId generate, troviamo quelle presenti in db poi filtraggio in codice
+            // Set<String> existingPublicIds = new HashSet<>(findExistingPublicIds.apply(batchPublicIds));
+            // List<String> available = batchPublicIds.stream()
+            //     .filter(id -> !existingPublicIds.contains(id))
+            //     .toList();
+            // if (!available.isEmpty()) {
+            //     return available;
+            // }
+
             if(!uniquePublicIds.isEmpty()) {
                 return uniquePublicIds;
             }

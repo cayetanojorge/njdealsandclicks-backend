@@ -1,7 +1,6 @@
 package com.njdealsandclicks.currency;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -10,10 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.dto.currency.CurrencyCreateUpdateDTO;
 import com.njdealsandclicks.dto.currency.CurrencyDTO;
-import com.njdealsandclicks.util.DatabaseInitializationService;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
-
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class CurrencyService {
@@ -22,39 +18,38 @@ public class CurrencyService {
     private static final String PREFIX_PUBLIC_ID = "curren_";
 
     private final CurrencyRepository currencyRepository;
-    private final DatabaseInitializationService databaseInitializationService;
+    // // // private final DatabaseInitializationService databaseInitializationService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     
 
-    public CurrencyService(CurrencyRepository currencyRepository, DatabaseInitializationService databaseInitializationService, PublicIdGeneratorService publicIdGeneratorService) {
+    public CurrencyService(CurrencyRepository currencyRepository, PublicIdGeneratorService publicIdGeneratorService) {
         this.currencyRepository = currencyRepository;
-        this.databaseInitializationService = databaseInitializationService;
         this.publicIdGeneratorService = publicIdGeneratorService;
     }
 
-    @PostConstruct
-    private void initializeCurrencies() {
-        List<Currency> allCurrencies = databaseInitializationService.loadEntitiesFromYaml(
-            "currencies.yml",
-            Currency.class,
-            this::mapYamlToCurrency
-        );
+    // // // @PostConstruct
+    // // // private void initializeCurrencies() {
+    // // //     List<Currency> allCurrencies = databaseInitializationService.loadEntitiesFromYaml(
+    // // //         "currencies.yml",
+    // // //         Currency.class,
+    // // //         this::mapYamlToCurrency
+    // // //     );
 
-        List<String> publicIds = createBatchPublicIdsV2(allCurrencies.size());
-        for(int i=0; i<allCurrencies.size(); i++) {
-            allCurrencies.get(i).setPublicId(publicIds.get(i));
-        }
+    // // //     List<String> publicIds = createBatchPublicIdsV2(allCurrencies.size());
+    // // //     for(int i=0; i<allCurrencies.size(); i++) {
+    // // //         allCurrencies.get(i).setPublicId(publicIds.get(i));
+    // // //     }
 
-        currencyRepository.saveAll(allCurrencies);
-    }
+    // // //     currencyRepository.saveAll(allCurrencies);
+    // // // }
 
-    private Currency mapYamlToCurrency(Map<String, Object> data) {
-        Currency currency = new Currency();
-        currency.setCode((String) data.get("code"));
-        currency.setName((String) data.get("name"));
-        currency.setSymbol((String) data.get("symbol"));
-        return currency;
-    }
+    // // // private Currency mapYamlToCurrency(Map<String, Object> data) {
+    // // //     Currency currency = new Currency();
+    // // //     currency.setCode((String) data.get("code"));
+    // // //     currency.setName((String) data.get("name"));
+    // // //     currency.setSymbol((String) data.get("symbol"));
+    // // //     return currency;
+    // // // }
 
     // // // private List<String> getNPublicIds(int nPublicIds) {
     // // //     List<String> retNpublicIds = new ArrayList<>();
@@ -95,9 +90,9 @@ public class CurrencyService {
         return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, currencyRepository::filterAvailablePublicIds);
     }
 
-    private List<String> createBatchPublicIdsV2(int nPublicIds) {
-        return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, currencyRepository::filterAvailablePublicIds, nPublicIds);
-    }
+    // // // private List<String> createBatchPublicIdsV2(int nPublicIds) {
+    // // //     return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, currencyRepository::filterAvailablePublicIds, nPublicIds);
+    // // // }
 
     private CurrencyDTO mapToCurrencyDTO(Currency currency) {
         CurrencyDTO currencyDTO = new CurrencyDTO();
