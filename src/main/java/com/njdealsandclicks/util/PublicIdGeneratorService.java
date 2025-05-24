@@ -40,14 +40,8 @@ public class PublicIdGeneratorService {
                         .collect(Collectors.toList());
     }
 
-    // // // public List<String> generatePublicIdBatch(String prefix, int customBatch) {
-    // // //     return IntStream.range(0, customBatch)
-    // // //                     .mapToObj(i -> generatorPublicId(prefix, DEFAULT_LENGTH))
-    // // //                     .collect(Collectors.toList());
-    // // // }
-
     // Genera ID univoco chiamando la funzione che filtra quelli esistenti
-    private List<String> generatePublicIdsV2(String prefix, Function<List<String>, List<String>> filterAvailablePublicIds) {
+    private List<String> generatePublicIds(String prefix, Function<List<String>, List<String>> filterAvailablePublicIds) {
         
         for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
 
@@ -77,15 +71,15 @@ public class PublicIdGeneratorService {
         throw new IllegalStateException("Impossibile generare un publicId univoco dopo " + MAX_ATTEMPTS + " tentativi");
     }
 
-    public String generateSinglePublicIdV2(String prefix, Function<List<String>, List<String>> filterAvailablePublicIds) {
-        List<String> listPublicIds = generatePublicIdsV2(prefix, filterAvailablePublicIds);
+    public String generateSinglePublicId(String prefix, Function<List<String>, List<String>> filterAvailablePublicIds) {
+        List<String> listPublicIds = generatePublicIds(prefix, filterAvailablePublicIds);
         return listPublicIds.get(0);
     }
 
-    public List<String> generateBatchPublicIdsV2(String prefix, Function<List<String>, List<String>> filterAvailablePublicIds, int nPublicIds) {
+    public List<String> generateBatchPublicIds(String prefix, Function<List<String>, List<String>> filterAvailablePublicIds, int nPublicIds) {
         List<String> publicIds = new ArrayList<>();
         while(publicIds.size()<nPublicIds) {
-            publicIds.addAll(generatePublicIdsV2(prefix, filterAvailablePublicIds));
+            publicIds.addAll(generatePublicIds(prefix, filterAvailablePublicIds));
         }
         return publicIds;
     }

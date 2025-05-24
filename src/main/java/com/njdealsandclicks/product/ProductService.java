@@ -47,7 +47,7 @@ public class ProductService {
     }
 
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, productRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, productRepository::filterAvailablePublicIds);
     }
 
     private ProductDTO mapToProductDTO(Product product) {

@@ -29,7 +29,7 @@ public class SubscriptionService {
     }
 
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds);
     }
 
     private SubscriptionDTO mapToSubscriptionDTO(Subscription subscription) {

@@ -26,7 +26,7 @@ public class CurrencyService {
     }
     
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, currencyRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, currencyRepository::filterAvailablePublicIds);
     }
 
     private CurrencyDTO mapToCurrencyDTO(Currency currency) {

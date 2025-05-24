@@ -30,7 +30,7 @@ public class CategoryService {
     }
 
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds);
     }
 
     private CategoryDTO mapToCategoryDTO(Category category) {

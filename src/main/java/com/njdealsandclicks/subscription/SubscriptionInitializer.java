@@ -77,6 +77,6 @@ public class SubscriptionInitializer implements EntityInitializer {
     }
 
     private List<String> createBatchPublicIdsV2(int nPublicIds) {
-        return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds, nPublicIds);
+        return publicIdGeneratorService.generateBatchPublicIds(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds, nPublicIds);
     }
 }

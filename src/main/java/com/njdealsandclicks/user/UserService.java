@@ -37,7 +37,7 @@ public class UserService {
     }
 
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, userRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, userRepository::filterAvailablePublicIds);
     }
 
     private UserDTO mapToUserDTO(User user) {

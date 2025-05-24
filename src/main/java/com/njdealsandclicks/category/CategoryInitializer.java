@@ -192,7 +192,7 @@ public class CategoryInitializer implements EntityInitializer {
     }
 
     private List<String> createBatchPublicIdsV2(int nPublicIds) {
-        return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds, nPublicIds);
+        return publicIdGeneratorService.generateBatchPublicIds(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds, nPublicIds);
     }
 
 }

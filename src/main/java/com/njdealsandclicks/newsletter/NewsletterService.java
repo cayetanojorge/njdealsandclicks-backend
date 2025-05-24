@@ -47,7 +47,7 @@ public class NewsletterService {
     }
 
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, newsletterRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, newsletterRepository::filterAvailablePublicIds);
     }
 
     private NewsletterDTO mapToNewsletterDTO(Newsletter newsletter) {
