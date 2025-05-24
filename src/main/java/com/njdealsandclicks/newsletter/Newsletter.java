@@ -25,14 +25,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Newsletter extends BaseEntity{
 
-    // @Id
-    // @GeneratedValue(strategy =  GenerationType.UUID)
-    // private UUID id;
-
-    // @Column(nullable = false, unique = true)
-    // @Pattern(regexp = "news_[a-zA-Z0-9]{10}")
-    // private String publicId;
-
     // cascade se elimino user elimino rispettive riga in tab newsletter
     // orphanRemoval che se record in tab newsletter è orfano di user allora elimino
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)

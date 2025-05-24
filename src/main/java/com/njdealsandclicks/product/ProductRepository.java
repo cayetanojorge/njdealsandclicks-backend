@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
  * Il repository gestisce l'interazione con il database per l'entità Product
  */
 
-
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     /* JpaRepository: Fornisce metodi CRUD predefiniti (es. findAll(), save(), deleteById()) */
 

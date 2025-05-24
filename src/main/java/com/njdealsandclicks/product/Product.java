@@ -42,14 +42,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Product extends BaseEntity{
 
-    // @Id /* indica chiave primaria */
-    // @GeneratedValue(strategy =  GenerationType.UUID) /* indica generazione automatica */
-    // private UUID id;
-
-    // @Column(nullable = false, unique = true)
-    // @Pattern(regexp = "prod_[a-zA-Z0-9]{10}")
-    // private String publicId;
-
     @Column(nullable = false)
     @NotBlank
     private String name;

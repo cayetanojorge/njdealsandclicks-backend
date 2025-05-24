@@ -29,14 +29,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity{
-    
-    // @Id
-    // @GeneratedValue(strategy =  GenerationType.UUID)
-    // private UUID id;
-
-    // @Column(nullable = false, unique = true)
-    // @Pattern(regexp = "user_[a-zA-Z0-9]{10}")
-    // private String publicId;
 
     @Column(nullable = false, unique = true)
     @Email

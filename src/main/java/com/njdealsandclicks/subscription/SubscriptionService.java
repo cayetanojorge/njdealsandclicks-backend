@@ -15,103 +15,22 @@ import com.njdealsandclicks.util.PublicIdGeneratorService;
 @Service
 public class SubscriptionService {
     
-    // // // private static final int MAX_ATTEMPTS = 3;
     private static final String PREFIX_PUBLIC_ID = "sub_";
 
     private final SubscriptionRepository subscriptionRepository;
-    // private final DatabaseInitializationService databaseInitializationService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
 
     
-    public SubscriptionService(SubscriptionRepository subscriptionRepository,// DatabaseInitializationService databaseInitializationService,
-                                PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.subscriptionRepository = subscriptionRepository;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
 
-    /* ************ initialize db ************ */
-    // // // @PostConstruct
-    // // // private void initializeSubscriptions() {
-    // // //     // System.out.println("|- initializeSubscriptions() - Inizializzazione del database in corso...");
-    // // //     List<Subscription> allSubscriptions = databaseInitializationService.loadEntitiesFromYaml(
-    // // //         "subscriptions.yml",
-    // // //         Subscription.class,
-    // // //         this::mapYamlToSubscription            
-    // // //     );
-
-    // // //     List<String> publicIds = createBatchPublicIdsV2(allSubscriptions.size());
-    // // //     for(int i=0; i<allSubscriptions.size(); i++) {
-    // // //         allSubscriptions.get(i).setPublicId(publicIds.get(i));
-    // // //     }
-
-    // // //     subscriptionRepository.saveAll(allSubscriptions);
-    // // // }
-
-    // // // private Subscription mapYamlToSubscription(Map<String, Object> data) {
-    // // //     Subscription subscription = new Subscription();
-    // // //     // // // subscription.setPublicId(createPublicId());
-    // // //     subscription.setPlanName((String) data.get("planName"));
-    // // //     subscription.setDescription((String) data.get("description"));
-    // // //     subscription.setPrice((Double) data.get("price"));
-    // // //     subscription.setDurationInDays((Integer) data.get("durationInDays"));
-    // // //     subscription.setMaxEmailsPerWeek((Integer) data.get("maxEmailsPerWeek"));
-    // // //     subscription.setMaxTrackedProducts((Integer) data.get("maxTrackedProducts"));
-    // // //     subscription.setMaxTrackedCategories((Integer) data.get("maxTrackedCategories"));
-    // // //     subscription.setIsActive((Boolean) data.get("isActive"));
-    // // //     return subscription;
-    // // // }
-    /* ************************************************ */
-
-    // // // @PostConstruct
-    // // // private void loadSubscriptionsFromYaml() {
-    // // //     Yaml yaml = new Yaml();
-    // // //     try(InputStream inputStream = subscriptionsResource.getInputStream()) {
-    // // //         Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
-    // // //         List<Map<String, Object>> subscriptions = data.get("subscriptions");
-            
-    // // //         subscriptions.forEach(subscriptionData -> {
-    // // //             String planName = (String) subscriptionData.get("planName");
-    // // //             if(!subscriptionRepository.existsByPlanName(planName)) {
-    // // //                 Subscription subscription = new Subscription();
-    // // //                 subscription.setPlanName(planName);
-    // // //                 subscription.setDescription((String) subscriptionData.get("description"));
-    // // //                 subscription.setPrice((Double) subscriptionData.get("price"));
-    // // //                 subscription.setDurationInDays((Integer) subscriptionData.get("durationInDays"));
-    // // //                 subscription.setMaxEmailsPerWeek((Integer) subscriptionData.get("maxEmailsPerWeek"));
-    // // //                 subscription.setMaxTrackedProducts((Integer) subscriptionData.get("maxTrackedProducts"));
-    // // //                 subscription.setMaxTrackedCategories((Integer) subscriptionData.get("maxTrackedCategories"));
-    // // //                 subscription.setIsActive((Boolean) subscriptionData.get("isActive"));
-    // // //                 subscriptionRepository.save(subscription);
-    // // //             }
-    // // //         });
-    // // //     } catch (Exception e) {
-    // // //         throw new RuntimeException("Error loading subscriptions from YAML", e);
-    // // //     }
-    // // // }
-
-    // // // private String createPublicId() {
-    // // //     for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
-    // // //         List<String> existingIds = subscriptionRepository.findExistingPublicIds(publicIdBatch);
-    // // //         List<String> uniqueIds = publicIdBatch.stream()
-    // // //                                               .filter(id -> !existingIds.contains(id))
-    // // //                                               .collect(Collectors.toList());
-    // // //         if(!uniqueIds.isEmpty()) {
-    // // //             return uniqueIds.get(0);
-    // // //         }
-    // // //     }
-    // // //     throw new IllegalStateException("SubscriptionService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
-    // // // }
-
-    private String createPublicIdV2() {
+    private String createPublicId() {
         return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds);
     }
-
-    // // // private List<String> createBatchPublicIdsV2(int nPublicIds) {
-    // // //     return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, subscriptionRepository::filterAvailablePublicIds, nPublicIds);
-    // // // }
 
     private SubscriptionDTO mapToSubscriptionDTO(Subscription subscription) {
         SubscriptionDTO subscriptionDTO = new SubscriptionDTO();
@@ -166,8 +85,7 @@ public class SubscriptionService {
             throw new RuntimeException("Subscription with planName " + subscriptionCreateDTO.getPlanName() + " already exists");
         }
         subscription = new Subscription();
-        // // // subscription.setPublicId(createPublicId());
-        subscription.setPublicId(createPublicIdV2());
+        subscription.setPublicId(createPublicId());
         subscription.setPlanName(subscriptionCreateDTO.getPlanName());
         subscription.setDescription(subscriptionCreateDTO.getDescription());
         subscription.setFeatures(subscriptionCreateDTO.getFeatures());

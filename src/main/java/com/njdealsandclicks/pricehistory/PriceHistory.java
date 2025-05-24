@@ -28,14 +28,10 @@ public class PriceHistory {
     @GeneratedValue(strategy =  GenerationType.UUID)
     private UUID id;
 
-    // @Column(nullable = false, unique = true)
-    // @Pattern(regexp = "prod_[a-zA-Z0-9]{10}")
-    // private String publicId;
-
     @Positive
     private Double price;
     
-    // String currency 
+    // String currency // TODO
 
     @Column(name = "recorded_at", nullable = false)
     private ZonedDateTime recordedAt;

@@ -19,7 +19,6 @@ public class EntityInitializedService {
     private final YamlService yamlService;
     private final DbInitializationProperties properties;
     private final DateUtil dateUtil;
-    // private final YamlLoaderService yamlLoader;
 
     public boolean needsInitialization(String entityName, String yamlName) {
         if (properties.isForce() || properties.getForceEntities().contains(entityName)) {

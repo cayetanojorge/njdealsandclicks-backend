@@ -26,7 +26,6 @@ import com.njdealsandclicks.util.PublicIdGeneratorService;
 @Service
 public class ProductService {
 
-    // // // private static final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
     private static final String PREFIX_PUBLIC_ID = "prod_";
 
     private final ProductRepository productRepository;
@@ -47,43 +46,7 @@ public class ProductService {
         this.dateUtil = dateUtil;
     }
 
-    // // // private String createPublicId() {
-    // // //     // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-    // // //     for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    // // //         // Genera un batch di PublicId
-    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
-
-    // // //         // // // // Verifica quali ID sono già presenti nel database
-    // // //         // // // List<String> existingIds = productRepository.findExistingPublicIds(publicIdBatch);
-
-    // // //         // // // // Filtra gli ID univoci
-    // // //         // // // List<String> uniqueIds = publicIdBatch.stream()
-    // // //         // // //                                       .filter(id -> !existingIds.contains(id))
-    // // //         // // //                                       .collect(Collectors.toList());
-
-    // // //         List<String> uniqueIds = productRepository.filterAvailablePublicIds(publicIdBatch);
-
-    // // //         // Se esiste almeno un ID univoco, lo restituisce
-    // // //         if(!uniqueIds.isEmpty()) {
-    // // //             return uniqueIds.get(0);
-    // // //         }
-
-    // // //         // Aumenta dinamicamente il batch size per il prossimo tentativo
-    // // //         // batchSize = adjustBatchSize(batchSize, existingIds.size()); // e passarlo al generatePublicIdBatch()
-    // // //     }
-
-    // // //     throw new IllegalStateException("ProductService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
-    // // // }
-
-    // // // /*
-    // // // private int adjustBatchSize(int currentSize, int collisionCount) {
-    // // //     if(collisionCount > 0) {
-    // // //         return Math.min(currentSize * 2, 100);
-    // // //     }
-    // // //     return currentSize;
-    // // // */
-
-    private String createPublicIdV2() {
+    private String createPublicId() {
         return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, productRepository::filterAvailablePublicIds);
     }
 
@@ -172,8 +135,7 @@ public class ProductService {
         Category category = categoryService.getCategoryByName(productCreateDTO.getCategoryName());
 
         Product product = new Product();
-        // // // product.setPublicId(createPublicId());
-        product.setPublicId(createPublicIdV2());
+        product.setPublicId(createPublicId());
         product.setName(productCreateDTO.getName());
         product.setDescription(productCreateDTO.getDescription());
         product.setCurrency(currency);

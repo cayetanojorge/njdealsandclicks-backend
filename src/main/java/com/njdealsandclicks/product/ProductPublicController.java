@@ -10,9 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 
-/**
- * Il controller definisce gli endpoint per gestire i prodotti.
- */
 
 @RestController
 @RequestMapping("/api/public/products")

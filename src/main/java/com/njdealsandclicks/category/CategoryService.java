@@ -16,205 +16,22 @@ import com.njdealsandclicks.util.PublicIdGeneratorService;
 @Service
 public class CategoryService {
 
-    // // // private static final int MAX_ATTEMPTS = 3; // n massimo di tentativi di batch per generare publicId
     private static final String PREFIX_PUBLIC_ID = "categ_";
 
     private final CategoryRepository categoryRepository;
-    // private final DatabaseInitializationService databaseInitializationService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
     
 
-    public CategoryService(CategoryRepository categoryRepository, //DatabaseInitializationService databaseInitializationService, 
-                            PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
+    public CategoryService(CategoryRepository categoryRepository, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.categoryRepository = categoryRepository;
-        // this.databaseInitializationService = databaseInitializationService;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
 
-    // // // @PostConstruct
-    // // // private void initializeCategories() {
-    // // //     List<Category> allCategories = databaseInitializationService.loadEntitiesFromYaml(
-    // // //         "categories.yml",
-    // // //         Category.class,
-    // // //         this::mapYamlToCategory
-    // // //     );
-
-    // // //     List<String> existingCategoryNames = categoryRepository.findAllNames();
-
-    // // //     // filter sub and parent categories
-    // // //     allCategories = filterSubCategoriesInitDb(allCategories, existingCategoryNames);
-    // // //     List<Category> categoriesToSave = filterParentCategoriesInitDb(allCategories, existingCategoryNames);
-
-    // // //     // calculate how many plublicIds we need - produce them - assigned them
-    // // //     int nCategories = getNcategInitDb(categoriesToSave);
-    // // //     // // // List<String> publicIds = getNPublicIds(nCategories);
-    // // //     List<String> publicIds = createBatchPublicIdsV2(nCategories);
-    // // //     Iterator<String> it = publicIds.iterator();
-    // // //     for(int i=0; i<categoriesToSave.size(); i++) {
-    // // //         Category category = categoriesToSave.get(i);
-    // // //         category.setPublicId(it.next());
-    // // //         if(category.getSubCategories()!=null) {
-    // // //             for(Category sub : category.getSubCategories()) {
-    // // //                 sub.setPublicId(it.next());
-    // // //             }
-    // // //         }
-    // // //     }
-
-    // // //     // saved parents and map subcategories with their parent's name
-    // // //     List<Category> parentsToSave = new ArrayList<>();
-    // // //     Map<String, List<Category>> mapParentSubs = new HashMap<>();
-    // // //     for(int i=0; i<categoriesToSave.size(); i++) {
-    // // //         Category category = categoriesToSave.get(i);
-    // // //         if(category.getSubCategories()!=null) {
-    // // //             List<Category> subsToSave = new ArrayList<>();
-    // // //             for(Category sub : category.getSubCategories()) {
-    // // //                 // mapParentSubs.put(category.getName(), sub);
-    // // //                 subsToSave.add(sub);
-    // // //             }
-    // // //             mapParentSubs.put(category.getName(), subsToSave);
-    // // //             category.setSubCategories(null);
-    // // //         }
-    // // //         parentsToSave.add(category);
-    // // //     }
-    // // //     categoryRepository.saveAll(parentsToSave);
-
-    // // //     // map get parent's name-subs - then update sub's parentCategory and parent's subCategories after saved of subs
-    // // //     for(var entry : mapParentSubs.entrySet()) {
-    // // //         Category parent = getCategoryByName(entry.getKey());
-    // // //         List<Category> subCategories =  entry.getValue();
-    // // //         for(int i=0; i<subCategories.size(); i++) {
-    // // //             subCategories.get(i).setParentCategory(parent);
-    // // //         }
-    // // //         List<Category> subCategoriesSaved = categoryRepository.saveAll(subCategories);
-    // // //         parent.setSubCategories(subCategoriesSaved);
-    // // //         categoryRepository.save(parent);
-    // // //     }
-    // // // }
-
-    // // // private Category mapYamlToCategory(Map<String, Object> data) {
-    // // //     Category category = new Category();
-    // // //     category.setName((String) data.get("name"));
-    // // //     category.setDescription((String) data.get("description"));
-    // // //     category.setImageUrl((String) data.get("imageUrl"));
-    // // //     category.setSlug((String) data.get("slug"));
-    // // //     category.setIsActive((Boolean) data.get("isActive"));
-    // // //     category.setDisplayOrder((Integer) data.get("displayOrder"));
-
-    // // //     // se categoria ha subCategories 
-    // // //     @SuppressWarnings("unchecked")
-    // // //     List<Map<String, Object>> dataSubCategories = (List<Map<String, Object>>) data.get("subCategories");
-    // // //     if(dataSubCategories!=null) {
-    // // //         List<Category> subCategories = new ArrayList<>();
-    // // //         for(Map<String, Object> dataSub : dataSubCategories) {
-    // // //             Category subCategory = new Category();
-    // // //             subCategory.setName((String) dataSub.get("name"));
-    // // //             subCategory.setDescription((String) dataSub.get("description"));
-    // // //             subCategory.setImageUrl((String) dataSub.get("imageUrl"));
-    // // //             subCategory.setSlug((String) dataSub.get("slug"));
-    // // //             subCategory.setIsActive((Boolean) dataSub.get("isActive"));
-    // // //             subCategory.setDisplayOrder((Integer) dataSub.get("displayOrder"));
-    // // //             subCategories.add(subCategory);
-    // // //         }
-    // // //         category.setSubCategories(subCategories);
-    // // //     }
-    
-    // // //     return category;
-    // // // }
-
-    // // // private List<Category> filterSubCategoriesInitDb(List<Category> allCategories, List<String> existingCategoryNames) {
-    // // //     for(int i=0; i<allCategories.size(); i++) {
-    // // //         Category category = allCategories.get(i);
-    // // //         if(category.getSubCategories()!=null) {
-    // // //             List<Category> filteredSubCategories = category.getSubCategories().stream()
-    // // //                 .filter(sub -> !existingCategoryNames.contains(sub.getName()))
-    // // //                 .collect(Collectors.toList());
-                
-    // // //             if(filteredSubCategories.isEmpty()) {
-    // // //                 category.setSubCategories(null);
-    // // //             }
-    // // //             else {
-    // // //                 category.setSubCategories(filteredSubCategories);
-    // // //             }
-    // // //         }
-    // // //     }
-    // // //     return allCategories;
-    // // // }
-
-    // // // private List<Category> filterParentCategoriesInitDb(List<Category> allCategories, List<String> existingCategoryNames) {
-    // // //     List<Category> categoriesToSave = new ArrayList<>();
-    // // //     for(int i=0; i<allCategories.size(); i++) {
-    // // //         // se padre gia' presente in db mi tengo solo le sue sottocategorie
-    // // //         Category category = allCategories.get(i);
-    // // //         if(existingCategoryNames.contains(category.getName())) {
-    // // //             if(category.getSubCategories()!=null) {
-    // // //                 Category parent = getCategoryByName(category.getName());
-    // // //                 for(Category sub : category.getSubCategories()) {
-    // // //                     sub.setParentCategory(parent);
-    // // //                     categoriesToSave.add(sub);
-    // // //                 }
-    // // //             }
-    // // //             continue;
-    // // //         }
-    // // //         // padre non presente e lo aggiungo come da salvare, avendo eventuali subcategories
-    // // //         categoriesToSave.add(category);
-    // // //     }
-    // // //     return categoriesToSave;
-    // // // }
-
-    // // // private int getNcategInitDb(List<Category> categoriesToSave) {
-    // // //     int nCategories = categoriesToSave.size();
-    // // //     for(Category category : categoriesToSave) {
-    // // //         if(category.getSubCategories()!=null) {
-    // // //             nCategories = nCategories + category.getSubCategories().size();
-    // // //         }
-    // // //     }
-    // // //     return nCategories;
-    // // // }
-
-    // // // private List<String> getNPublicIds(int nPublicIds) {
-    // // //     List<String> retNpublicIds = new ArrayList<>();
-    // // //     while(retNpublicIds.size()<nPublicIds) {
-    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID, nPublicIds);
-    // // //         List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
-    // // //         List<String> uniqueIds = publicIdBatch.stream()
-    // // //                                                   .filter(id -> !existingIds.contains(id))
-    // // //                                                   .collect(Collectors.toList());
-    // // //         retNpublicIds.addAll(uniqueIds);
-    // // //     }
-    // // //     return retNpublicIds;
-    // // // }
-
-    // // // private String createPublicId() {
-    // // //     // int batchSize = publicIdGeneratorService.INITIAL_BATCH_SIZE; 
-    // // //     for(int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    // // //         // Genera un batch di PublicId
-    // // //         List<String> publicIdBatch = publicIdGeneratorService.generatePublicIdBatch(PREFIX_PUBLIC_ID);
-
-    // // //         // Verifica quali ID sono già presenti nel database
-    // // //         List<String> existingIds = categoryRepository.findExistingPublicIds(publicIdBatch);
-
-    // // //         // Filtra gli ID univoci
-    // // //         List<String> uniqueIds = publicIdBatch.stream()
-    // // //                                               .filter(id -> !existingIds.contains(id))
-    // // //                                               .collect(Collectors.toList());
-
-    // // //         // Se esiste almeno un ID univoco, lo restituisce
-    // // //         if(!uniqueIds.isEmpty()) {
-    // // //             return uniqueIds.get(0);
-    // // //         }
-    // // //     }
-    // // //     throw new IllegalStateException("CategoryService - failed to generate unique publicId after " + MAX_ATTEMPTS + " batch attempts.");
-    // // // }
-
-    private String createPublicIdV2() {
+    private String createPublicId() {
         return publicIdGeneratorService.generateSinglePublicIdV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds);
     }
-
-    // // // private List<String> createBatchPublicIdsV2(int nPublicIds) {
-    // // //     return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds, nPublicIds);
-    // // // }
 
     private CategoryDTO mapToCategoryDTO(Category category) {
         CategoryDTO categoryDTO = new CategoryDTO();
@@ -233,8 +50,6 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryDTO> getAllCategories() {
-        // return categoryRepository.findAll();
-
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
             .map(this::mapToCategoryDTO)
@@ -283,7 +98,7 @@ public class CategoryService {
         }
 
         category = new Category();
-        category.setPublicId(createPublicIdV2());
+        category.setPublicId(createPublicId());
         category.setName(categoryCreateDTO.getName());
         category.setDescription(categoryCreateDTO.getDescription());
         category.setImageUrl(categoryCreateDTO.getImageUrl());

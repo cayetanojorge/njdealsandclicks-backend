@@ -19,7 +19,6 @@ public class DbInitializationConfig {
     private final CategoryInitializer categoryInitializer;
     private final CurrencyInitializer currencyInitializer;
     private final SubscriptionInitializer subscriptionInitializer;
-    // private final SubscriptionInitializer subscriptionInitializer;
     
     @Bean
     public List<EntityInitializer> entityInitializers() {

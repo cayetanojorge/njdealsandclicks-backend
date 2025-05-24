@@ -27,14 +27,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Category extends BaseEntity {
-    
-    // @Id
-    // @GeneratedValue(strategy =  GenerationType.UUID)
-    // private UUID id;
-
-    // @Column(nullable = false, unique = true)
-    // @Pattern(regexp = "categ_[a-zA-Z0-9]{10}")
-    // private String publicId;
 
     @Column(nullable = false, unique = true)
     private String name;

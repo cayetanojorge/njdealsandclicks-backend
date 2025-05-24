@@ -1,19 +1,13 @@
 package com.njdealsandclicks.category;
 
-// import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-// import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-// import java.util.function.Function;
-// import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
-// import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-// import org.yaml.snakeyaml.Yaml;
 
 import com.njdealsandclicks.common.dbinitializer.EntityInitializer;
 import com.njdealsandclicks.entityinitialized.EntityInitializedService;
@@ -21,7 +15,7 @@ import com.njdealsandclicks.util.PublicIdGeneratorService;
 import com.njdealsandclicks.util.YamlService;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;;;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +23,12 @@ public class CategoryInitializer implements EntityInitializer {
 
     private static final String PREFIX_PUBLIC_ID = "categ_";
 
-    // // // @Value("${custom.init-directory}")
-    // // // private String initDirectory;
-
     private final CategoryRepository categoryRepository;
     private final CategoryService categoryService;
     private final EntityInitializedService entityInitializedService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final YamlService yamlService;
-    // private final InitializationProperties properties;
+
     
     @Override
     public String getEntityName() { 
@@ -76,7 +67,6 @@ public class CategoryInitializer implements EntityInitializer {
 
         // calculate how many plublicIds we need - produce them - assigned them
         int nCategories = getNcategInitDb(categoriesToSave);
-        // // // List<String> publicIds = getNPublicIds(nCategories);
         List<String> publicIds = createBatchPublicIdsV2(nCategories);
         Iterator<String> it = publicIds.iterator();
         for(int i=0; i<categoriesToSave.size(); i++) {
@@ -97,7 +87,6 @@ public class CategoryInitializer implements EntityInitializer {
             if(category.getSubCategories()!=null) {
                 List<Category> subsToSave = new ArrayList<>();
                 for(Category sub : category.getSubCategories()) {
-                    // mapParentSubs.put(category.getName(), sub);
                     subsToSave.add(sub);
                 }
                 mapParentSubs.put(category.getName(), subsToSave);
@@ -119,7 +108,6 @@ public class CategoryInitializer implements EntityInitializer {
             categoryRepository.save(parent);
         }
         
-        // categoryRepository.saveAll(categories);
         entityInitializedService.markAsInitialized(getEntityName(), getYamlName(), getInitializationVersion());
     }
 
@@ -207,22 +195,4 @@ public class CategoryInitializer implements EntityInitializer {
         return publicIdGeneratorService.generateBatchPublicIdsV2(PREFIX_PUBLIC_ID, categoryRepository::filterAvailablePublicIds, nPublicIds);
     }
 
-    // // // public <T> List<T> loadEntitiesFromYaml(String fileName, Class<T> entityType, Function<Map<String, Object>, T> mapper) {
-    // // //     Yaml yaml = new Yaml();
-    // // //     try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream(initDirectory + "/" + fileName)) {
-    // // //         if(inputStream == null) {
-    // // //             throw new RuntimeException("File not found: " + initDirectory + "/" + fileName);
-    // // //         }
-
-    // // //         Map<String, List<Map<String, Object>>> data = yaml.load(inputStream);
-    // // //         List<Map<String, Object>> entitiesData = data.get(entityType.getSimpleName().toLowerCase());
-
-    // // //         return entitiesData != null
-    // // //             ? entitiesData.stream().map(mapper).collect(Collectors.toList())
-    // // //             : Collections.emptyList();
-    // // //     } catch (Exception e) {
-    // // //         // System.err.println("Errore durante l'inizializzazione del file YAML: " + e.getMessage());
-    // // //         throw new RuntimeException("Error loading entities from YAML file: " + fileName, e);
-    // // //     }
-    // // // }
 }

@@ -18,5 +18,4 @@ public class DbInitializationProperties {
     
     private List<String> forceEntities = List.of();
     
-    // private String initDirectory = "db-init/develop";
 }
