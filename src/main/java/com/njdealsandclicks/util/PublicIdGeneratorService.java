@@ -1,6 +1,7 @@
 package com.njdealsandclicks.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -52,6 +53,12 @@ public class PublicIdGeneratorService {
 
             List<String> batchPublicIds = generatePublicIdBatch(prefix);
             List<String> uniquePublicIds = filterAvailablePublicIds.apply(batchPublicIds);
+            
+            // parsiamo perche' query restituisce lista string di 1 string, contenente tupla che continere tutte le chiavi filtrate
+            List<String> uniquePublicIdsParsed = Arrays.asList(uniquePublicIds.get(0)
+                                    .replace("(", "")
+                                    .replace(")", "")
+                                    .split(","));
 
             // // se non usiamo postgredb, passiamo publicId generate, troviamo quelle presenti in db poi filtraggio in codice
             // Set<String> existingPublicIds = new HashSet<>(findExistingPublicIds.apply(batchPublicIds));
@@ -62,8 +69,8 @@ public class PublicIdGeneratorService {
             //     return available;
             // }
 
-            if(!uniquePublicIds.isEmpty()) {
-                return uniquePublicIds;
+            if(!uniquePublicIdsParsed.isEmpty()) {
+                return uniquePublicIdsParsed;
             }
         }
 

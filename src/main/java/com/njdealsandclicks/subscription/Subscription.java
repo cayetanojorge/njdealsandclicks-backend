@@ -10,7 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -43,7 +45,7 @@ public class Subscription extends BaseEntity{
     private String features; // Funzionalità in formato JSON o stringa delimitata
 
     @Column(nullable = false)
-    @Positive // >=0.00
+    @PositiveOrZero // >=0.00
     private Double price;
 
     @Column(nullable = true)
@@ -54,7 +56,7 @@ public class Subscription extends BaseEntity{
     private ZonedDateTime promotionEndDate; // Fine della promozione
 
     @Column(nullable = false)
-    @Positive
+    @Min(0)
     private Integer durationInDays; // Durata del piano in giorni
 
     @Column(nullable = false)

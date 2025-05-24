@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 @Data
@@ -21,14 +22,14 @@ public class SubscriptionDTO {
     @NotBlank
     private String features;
 
-    @Positive
+    @PositiveOrZero
     private Double price;
 
     private Double promotionalPrice;
 
     private ZonedDateTime promotionEndDate;
 
-    @Positive
+    @PositiveOrZero
     private Integer durationInDays;
 
     @Positive
