@@ -35,6 +35,11 @@ public class CurrencyInitializer implements EntityInitializer {
     public String getYamlName() {
         return "currencies.yml";
     }
+    
+    @Override
+    public String getInitializationVersion() {
+        return "1.0"; 
+    }
 
     @Override
     @Transactional

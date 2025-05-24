@@ -7,7 +7,7 @@ public interface EntityInitializer {
 
     String getYamlName();
     
-    default String getInitializationVersion() { return "1.0"; }
+    String getInitializationVersion();
     
     void initialize();
     

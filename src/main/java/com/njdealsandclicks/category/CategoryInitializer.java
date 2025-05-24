@@ -48,6 +48,11 @@ public class CategoryInitializer implements EntityInitializer {
     public String getYamlName() { 
         return "categories.yml";
     }
+
+    @Override
+    public String getInitializationVersion() {
+        return "1.0"; 
+    }
     
     @Override
     @Transactional
