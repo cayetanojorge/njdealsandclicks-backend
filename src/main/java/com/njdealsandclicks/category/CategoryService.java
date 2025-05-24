@@ -1,6 +1,7 @@
 package com.njdealsandclicks.category;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -224,7 +225,9 @@ public class CategoryService {
         categoryDTO.setSlug(category.getSlug());
         categoryDTO.setIsActive(category.getIsActive());
         categoryDTO.setDisplayOrder(category.getDisplayOrder());
-        categoryDTO.setNameParentCategory(category.getParentCategory().getName());
+        if (Objects.nonNull(category.getParentCategory())) {
+            categoryDTO.setNameParentCategory(category.getParentCategory().getName());
+        }
         return categoryDTO;
     }
 
