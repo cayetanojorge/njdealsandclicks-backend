@@ -56,7 +56,7 @@ public class Product extends BaseEntity{
     @Positive
     private Double currentPrice;
     
-    // future-todo creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
+    // TODO creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
 
     @Column(nullable = false, unique = true)
     @NotBlank
