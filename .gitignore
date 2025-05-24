@@ -38,3 +38,9 @@ out/
 
 ### macbook ###
 .Ds_Store
+
+### custom ###
+.env
+.env.local
+.env.compose
+.env.prod
