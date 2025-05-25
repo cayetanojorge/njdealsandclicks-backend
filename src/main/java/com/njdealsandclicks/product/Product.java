@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.common.BaseEntity;
-import com.njdealsandclicks.currency.Currency;
+import com.njdealsandclicks.country.Country;
 import com.njdealsandclicks.pricehistory.PriceHistory;
 import com.njdealsandclicks.util.StringListToJsonConverterUtil;
 
@@ -21,6 +21,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -37,6 +38,7 @@ import lombok.EqualsAndHashCode;
 @Entity /* per indicate che sia tabella in db */
 @Table(
     name = "product",
+    uniqueConstraints = { @UniqueConstraint(columnNames = {"affiliate_link", "country_id"}) },
     indexes = {
         @Index(name = "idx_product_public_id", columnList = "public_id"),
         @Index(name = "idx_product_current_price", columnList = "current_price"),
@@ -56,14 +58,14 @@ public class Product extends BaseEntity {
     private String description;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
-    private Currency currency;
+    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
+    private Country country;
 
     @Positive
     @Column(name = "current_price", nullable = true)
     private Double currentPrice;
     
-    // TODO creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
+    // todo-future creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
 
     @NotBlank
     @Column(name = "affiliate_link", nullable = false, unique = true)

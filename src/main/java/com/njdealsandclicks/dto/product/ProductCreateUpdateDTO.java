@@ -13,7 +13,7 @@ public class ProductCreateUpdateDTO {
     private String description;
 
     @NotBlank
-    private String currencyCode;
+    private String countryCode;
 
     @Positive
     private Double currentPrice;

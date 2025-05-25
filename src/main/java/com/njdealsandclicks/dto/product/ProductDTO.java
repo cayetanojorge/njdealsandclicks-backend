@@ -1,6 +1,6 @@
 package com.njdealsandclicks.dto.product;
 
-import com.njdealsandclicks.dto.currency.CurrencyDTO;
+import com.njdealsandclicks.dto.country.CountryDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class ProductDTO {
     private String description;
 
     @NotNull
-    private CurrencyDTO currencyDTO;
+    private CountryDTO countryDTO;
     
     @Positive
     private Double currentPrice;

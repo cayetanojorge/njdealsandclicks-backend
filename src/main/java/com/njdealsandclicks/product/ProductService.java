@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
-import com.njdealsandclicks.currency.Currency;
-import com.njdealsandclicks.currency.CurrencyService;
+import com.njdealsandclicks.country.Country;
+import com.njdealsandclicks.country.CountryService;
 import com.njdealsandclicks.dto.product.ProductCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
@@ -31,17 +31,19 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final PriceHistoryService priceHistoryService;
     private final CategoryService categoryService;
-    private final CurrencyService currencyService;
+    // private final CurrencyService currencyService;
+    private final CountryService countryService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
 
 
     public ProductService(ProductRepository productRepository, PriceHistoryService priceHistoryService, CategoryService categoryService,
-                            CurrencyService currencyService, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
+                            /*CurrencyService currencyService*/ CountryService countryService, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.productRepository = productRepository;
         this.priceHistoryService = priceHistoryService;
         this.categoryService = categoryService;
-        this.currencyService = currencyService;
+        // this.currencyService = currencyService;
+        this.countryService = countryService;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
@@ -55,7 +57,7 @@ public class ProductService {
         productDTO.setPublicId(product.getPublicId());
         productDTO.setName(product.getName());
         productDTO.setDescription(product.getDescription());
-        productDTO.setCurrencyDTO(currencyService.getCurrencyDTOByPublicId(product.getCurrency().getPublicId()));
+        productDTO.setCountryDTO(countryService.getCountryDTOByPublicId(product.getCountry().getPublicId()));
         productDTO.setCurrentPrice(product.getCurrentPrice());
         productDTO.setAffiliateLink(product.getAffiliateLink());
         productDTO.setRating(product.getRating());
@@ -131,14 +133,14 @@ public class ProductService {
             throw new RuntimeException("Product with affiliate link " + productCreateDTO.getAffiliateLink() + " already exists.");
         }
         
-        Currency currency = currencyService.getCurrencyByCode(productCreateDTO.getCurrencyCode());
+        Country country = countryService.getCountryByCode(productCreateDTO.getCountryCode());
         Category category = categoryService.getCategoryByName(productCreateDTO.getCategoryName());
 
         Product product = new Product();
         product.setPublicId(createPublicId());
         product.setName(productCreateDTO.getName());
         product.setDescription(productCreateDTO.getDescription());
-        product.setCurrency(currency);
+        product.setCountry(country);
         product.setCurrentPrice(productCreateDTO.getCurrentPrice());
         product.setAffiliateLink(productCreateDTO.getAffiliateLink());
         product.setRating(productCreateDTO.getRating());
@@ -161,13 +163,13 @@ public class ProductService {
         Product product = getProductByPublicId(publicId);
 
         Double oldPrice = product.getCurrentPrice();
-        Currency currency = currencyService.getCurrencyByCode(productUpdateDTO.getCurrencyCode());
+        Country country = countryService.getCountryByCode(productUpdateDTO.getCountryCode());
         Category category = categoryService.getCategoryByName(productUpdateDTO.getCategoryName());
 
         // update product
         product.setName(productUpdateDTO.getName());
         product.setDescription(productUpdateDTO.getDescription());
-        product.setCurrency(currency);
+        product.setCountry(country);
         product.setCurrentPrice(productUpdateDTO.getCurrentPrice());
         product.setAffiliateLink(productUpdateDTO.getAffiliateLink());
         product.setRating(productUpdateDTO.getRating());

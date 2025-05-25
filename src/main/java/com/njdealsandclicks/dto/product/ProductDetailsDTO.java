@@ -2,7 +2,7 @@ package com.njdealsandclicks.dto.product;
 
 import java.util.List;
 
-import com.njdealsandclicks.dto.currency.CurrencyDTO;
+import com.njdealsandclicks.dto.country.CountryDTO;
 import com.njdealsandclicks.dto.pricehistory.PriceHistoryDTO;
 
 import jakarta.validation.constraints.NotBlank;
@@ -22,7 +22,7 @@ public class ProductDetailsDTO {
     private String description;
 
     @NotNull
-    private CurrencyDTO currencyDTO;
+    private CountryDTO countryDTO;
     
     @Positive
     private Double currentPrice;
