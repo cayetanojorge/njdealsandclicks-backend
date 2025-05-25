@@ -17,10 +17,13 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
+@Table(name = "newsletter")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Newsletter extends BaseEntity{
@@ -31,15 +34,11 @@ public class Newsletter extends BaseEntity{
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @NotNull
+    @Column(name = "general_newsletter", nullable = false)
     private Boolean generalNewsletter = false; // true se iscrizione tutti prodotti, default false
 
-
-    // quando era possibile solo 1 prodotto specifico
-    // // @ManyToOne(optional = true)
-    // // @JoinColumn(name = "product_id", referencedColumnName = "id")
-    // // private Product product;
-
-    // ora possibilità a più prodotti
+    // ora possibilità a più prodotti - creera' una tabella newsletter_product(newsletter_id, product_id)
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "newsletter_product",
@@ -70,10 +69,10 @@ public class Newsletter extends BaseEntity{
     )
     private List<Category> categories;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     
-    @Column(nullable = true)
+    @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
 
     

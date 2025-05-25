@@ -9,9 +9,11 @@ import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.currency.Currency;
 import com.njdealsandclicks.pricehistory.PriceHistory;
+import com.njdealsandclicks.util.StringListToJsonConverterUtil;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
@@ -20,6 +22,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,59 +35,66 @@ import lombok.EqualsAndHashCode;
 
 // Se il prezzo corrente viene utilizzato spesso per ordinare i prodotti (es., "ordina dal più economico al più costoso"):
 @Entity /* per indicate che sia tabella in db */
-@Table(indexes = {
-    @Index(name = "idx_product_public_id", columnList = "publicId"),
-    @Index(name = "idx_product_current_price", columnList = "currentPrice"),
-    @Index(name = "idx_product_category", columnList = "category_id"),
-    @Index(name = "idx_product_category_price", columnList = "category_id, currentPrice") /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
-})
+@Table(
+    name = "product",
+    indexes = {
+        @Index(name = "idx_product_public_id", columnList = "public_id"),
+        @Index(name = "idx_product_current_price", columnList = "current_price"),
+        @Index(name = "idx_product_category", columnList = "category_id"),
+        @Index(name = "idx_product_category_price", columnList = "category_id, current_price") /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
+    }
+)
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Product extends BaseEntity{
+public class Product extends BaseEntity {
 
-    @Column(nullable = false)
     @NotBlank
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "description")
     private String description;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
     private Currency currency;
 
-    @Column(nullable = true)
     @Positive
+    @Column(name = "current_price", nullable = true)
     private Double currentPrice;
     
     // TODO creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
 
-    @Column(nullable = false, unique = true)
     @NotBlank
+    @Column(name = "affiliate_link", nullable = false, unique = true)
     private String affiliateLink;
 
-    @Column(nullable = true)
+    @Column(name = "rating", nullable = true)
     private Double rating;
 
-    @Column(nullable = true)
+    @Column(name = "review_count", nullable = true)
     private Integer reviewCount;
 
-    @Column(nullable = false)
-    private Boolean availability = true;
+    @NotNull
+    @Column(name = "is_available", nullable = false)
+    private Boolean isAvailable = true;
 
-    @Column(nullable = true)
+    @Column(name = "brand", nullable = true)
     private String brand;
 
-    @Column(nullable = true)
+    @Convert(converter = StringListToJsonConverterUtil.class)
+    @Column(name = "tags", columnDefinition = "jsonb", nullable = true)
     private List<String> tags; // migliorare la ricerca e il SEO del sito
     
-    @Column(nullable = true)
+    @Convert(converter = StringListToJsonConverterUtil.class)
+    @Column(name = "features", columnDefinition = "jsonb", nullable = true)
     private List<String> features; // caratteristiche specifiche, ie: "Schermo OLED", "Batteria da 5000mAh"
 
-    @Column(nullable = true)
+    @Column(name = "image_url", nullable = true)
     private String imageUrl;
     
     @ManyToOne(optional = false)
-    @JoinColumn(name = "category_id", referencedColumnName = "id") // name e' nome della colonna, refe...Name e' nome della colonna di tabella Category a cui si fa riferimento
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false) // name e' nome della colonna, refe...Name e' nome della colonna di tabella Category a cui si fa riferimento
     private Category category;
     
     // lato NON proprietario
@@ -103,10 +113,10 @@ public class Product extends BaseEntity{
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PriceHistory> priceHistories = new ArrayList<>();
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     
-    @Column(nullable = true)
+    @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
 
 

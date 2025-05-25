@@ -14,21 +14,28 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Entity
-@Table(indexes = {
-    @Index(name = "idx_price_history_product", columnList = "product_id")
-})
+@Table(
+    name = "price_history",
+    indexes = {
+        @Index(name = "idx_price_history_product", columnList = "product_id")
+    }
+)
 @Data
 public class PriceHistory {
     
     @Id
     @GeneratedValue(strategy =  GenerationType.UUID)
+    @Column(name = "id")
     private UUID id;
 
+    @NotNull
     @Positive
+    @Column(name = "price")
     private Double price;
     
     // String currency // TODO
@@ -38,7 +45,8 @@ public class PriceHistory {
 
     // lato PROPRIETARIO della relazione
     // colonna di nome 'product_id' di questa tab è fk che collega record di PriceHistory a record di Product
-    // @JsonIgnore sotto joincolumn così al servizio get non ci sia ricorsione di oggetti ma si ferma qua 
+    // @JsonIgnore sotto joincolumn così al servizio get non ci sia ricorsione di oggetti ma si ferma qua
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
     private Product product;

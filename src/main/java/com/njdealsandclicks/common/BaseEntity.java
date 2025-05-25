@@ -16,11 +16,12 @@ public abstract class BaseEntity {
     @Getter
     @Id
     @GeneratedValue(strategy =  GenerationType.UUID)
+    @Column(name = "id", unique = true, updatable = false, nullable = false)
     private UUID id;
 
     @Getter
     @Setter
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(name = "public_id", nullable = false, unique = true, updatable = false)
     private String publicId;
     
 }

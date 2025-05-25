@@ -20,30 +20,33 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(indexes = {
-    @Index(name = "idx_category_public_id", columnList = "publicId"),
-    @Index(name = "idx_category_name", columnList = "name")
-})
+@Table(
+    name = "category",
+    indexes = {
+        @Index(name = "idx_category_public_id", columnList = "public_id"),
+        @Index(name = "idx_category_name", columnList = "name")
+    }
+)
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Category extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = true, length = 500)
+    @Column(name = "description", nullable = true, length = 500)
     private String description;
 
-    @Column(nullable = true)
+    @Column(name = "image_url", nullable = true)
     private String imageUrl;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "slug", nullable = false, unique = true)
     private String slug;
 
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @Column(nullable = true)
+    @Column(name = "display_order", nullable = true)
     private Integer displayOrder; // per ordinare le categorie in una lista o un menu
 
     /*
@@ -67,10 +70,10 @@ public class Category extends BaseEntity {
     // // // @Column(nullable = true)
     // // // private User user;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     
-    @Column(nullable = true)
+    @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
 
     // utile per recuperare lista prodotto da tabella Category, ogni prodotto aggiunto poi aggiunto a specifica categoria

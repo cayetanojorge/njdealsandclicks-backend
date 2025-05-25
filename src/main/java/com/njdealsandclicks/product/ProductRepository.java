@@ -51,5 +51,21 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("SELECT p FROM Product p WHERE p.category.publicId = :categoryPublicId")
     List<Product> findByCategoryPublicId(@Param("categoryPublicId") String categoryPublicId);
+
+
+    /* per le query sui tags e features che sono json in db postgresql */
+    // // // Ricerca prodotti che contengono un tag specifico nel JSONB
+    // // // Richiede index GIN per efficienza con molti dati
+    // // @Query(value = "SELECT * FROM product WHERE tags @> CAST(:tag AS jsonb)", nativeQuery = true)
+    // // List<Product> findByTag(String tag);
+    // // // in service
+    // // List<Product> products = productRepository.findByTag("[\"oled\"]");
+    // // // Oppure, puoi dinamizzare il valore in controller o service:
+    // // String tag = objectMapper.writeValueAsString(List.of("oled")); // => '["oled"]'
+    // // // ---------
+    // // // Future: ricerca per JSONB tag
+    // // @Query(value = "SELECT * FROM product WHERE tags @> CAST(:tag AS jsonb)", nativeQuery = true)
+    // // List<Product> findByTag(String tag);
+
     
 }

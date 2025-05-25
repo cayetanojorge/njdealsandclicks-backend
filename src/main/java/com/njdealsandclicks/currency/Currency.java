@@ -4,20 +4,22 @@ import com.njdealsandclicks.common.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
+@Table(name = "currency")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Currency extends BaseEntity{
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "code", nullable = false, unique = true)
     private String code; // "EUR", "USD", "GBP", etc.
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name; // "Euro", "US Dollar", etc.
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "symbol", nullable = false, unique = true)
     private String symbol; // "€", "$", "£"
 }

@@ -15,13 +15,15 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "app_user",
+@Table(
+    name = "app_user",
     indexes = {
-        @Index(name = "idx_user_public_id", columnList = "publicId"),
+        @Index(name = "idx_user_public_id", columnList = "public_id"),
         @Index(name = "idx_user_email", columnList = "email"),
         @Index(name = "idx_user_subscription", columnList = "subscription_id")
     }
@@ -30,18 +32,21 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity{
 
-    @Column(nullable = false, unique = true)
     @Email
     @NotBlank
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @NotBlank
+    @Column(name = "first_name", nullable = false)
     private String firstName;
     
-    @Column(nullable = false)
+    @NotBlank
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+    @NotNull
+    @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
 
     // per 2FA
@@ -49,29 +54,29 @@ public class User extends BaseEntity{
     // // private String phoneNumber;
 
     // per non eliminare i record degli utenti, filtro per escludere gli utenti disattivati
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
-    @Column(nullable = true)
+    @Column(name = "deactivated_at", nullable = true)
     private ZonedDateTime deactivatedAt;
 
-    @Column(nullable = false)
+    @Column(name = "preferred_language", nullable = false)
     private String preferredLanguage; // browser data
     
-    @Column(nullable = false)
+    @Column(name = "timezone", nullable = false)
     private String timezone; // browser data
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "subscription_id", referencedColumnName = "id", nullable = false)
     private Subscription subscription;
 
-    @Column(nullable = true)
+    @Column(name = "subscription_expiration_date", nullable = true)
     private ZonedDateTime subscriptionExpirationDate;
 
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
 
-    @Column(nullable = true)
+    @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
 
     /* annotazione PrePersist metodo chiamato automaticamente prima che nuovo record user salvato in db */

@@ -1,6 +1,7 @@
 package com.njdealsandclicks.dto.subscription;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -20,7 +21,7 @@ public class SubscriptionDTO {
     private String description;
 
     @NotBlank
-    private String features;
+    private List<String> features;
 
     @PositiveOrZero
     private Double price;

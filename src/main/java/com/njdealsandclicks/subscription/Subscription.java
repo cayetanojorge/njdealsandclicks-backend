@@ -2,10 +2,13 @@ package com.njdealsandclicks.subscription;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import com.njdealsandclicks.common.BaseEntity;
+import com.njdealsandclicks.util.StringListToJsonConverterUtil;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
@@ -17,59 +20,61 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
-@Table(name = "subscription", 
+@Table(
+    name = "subscription", 
     indexes = {
-        @Index(name = "idx_subscription_public_id", columnList = "publicId"),
-        @Index(name = "idx_subscription_plan_name", columnList = "planName")
+        @Index(name = "idx_subscription_public_id", columnList = "public_id"),
+        @Index(name = "idx_subscription_plan_name", columnList = "plan_name")
     }
 )
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Subscription extends BaseEntity{
+public class Subscription extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "plan_name", nullable = false, unique = true)
     private String planName; // FREE, PREMIUM, PRO
 
-    @Column(nullable = false)
+    @Column(name = "description", nullable = false)
     private String description; // Descrizione del piano
 
-    @Column(nullable = true)
-    private String features; // Funzionalità in formato JSON o stringa delimitata
+    @Convert(converter = StringListToJsonConverterUtil.class)
+    @Column(name = "features", columnDefinition = "jsonb", nullable = true)
+    private List<String> features;
 
-    @Column(nullable = false)
     @PositiveOrZero // >=0.00
+    @Column(name = "price", nullable = false)
     private Double price;
 
-    @Column(nullable = true)
     @Positive
+    @Column(name = "promotional_price", nullable = true)
     private Double promotionalPrice; // Prezzo promozionale (opzionale)
 
-    @Column(nullable = true)
+    @Column(name = "promotion_end_date", nullable = true)
     private ZonedDateTime promotionEndDate; // Fine della promozione
 
-    @Column(nullable = false)
     @Min(0)
+    @Column(name = "duration_in_days", nullable = false)
     private Integer durationInDays; // Durata del piano in giorni
 
-    @Column(nullable = false)
     @Positive
+    @Column(name = "max_emails_per_week", nullable = false)
     private Integer maxEmailsPerWeek; // Email settimanali massime
 
-    @Column(nullable = false)
     @Positive
+    @Column(name = "max_tracked_products", nullable = false)
     private Integer maxTrackedProducts; // Prodotti monitorati massimi
 
-    @Column(nullable = false)
     @Positive
+    @Column(name = "max_tracked_categories", nullable = false)
     private Integer maxTrackedCategories; // Categorie monitorati massimi
 
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive = true; // Indica se il piano è attivo
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     
-    @Column(nullable = true)
+    @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
 
 
