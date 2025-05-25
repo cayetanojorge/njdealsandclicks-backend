@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -33,8 +34,15 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
     @Query("SELECT n FROM Newsletter n WHERE n.user.email = :userEmail")
     Optional<Newsletter> findByUserEmail(@Param("userEmail") String userEmail);
 
-    // metodo 2 delete
-    // @Modifying
-    // @Query("DELETE FROM newsletter_category WHERE newsletter_id = :newsletterId")
-    // void deleteNewsletterCategories(@Param("newsletterId") Long newsletterId);
+
+
+    /* --- DELETE --- */
+    /* quando elimino newsletter e abbiamo molti product e category per newsletter meglio procedere con le query */
+    @Modifying
+    @Query(value = "DELETE FROM newsletter_category WHERE newsletter_id = :id", nativeQuery = true)
+    void deleteNewsletterCategories(@Param("id") UUID id);
+
+    @Modifying
+    @Query(value = "DELETE FROM newsletter_product WHERE newsletter_id = :id", nativeQuery = true)
+    void deleteNewsletterProducts(@Param("id") UUID id);
 }

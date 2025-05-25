@@ -161,14 +161,17 @@ public class NewsletterService {
 
     @Transactional
     public void deleteNewsletter(String publicId) {
-        // metodo 1
         Newsletter newsletter = getNewsletterByPublicId(publicId);
-        newsletter.getProducts().clear();
-        newsletter.getCategories().clear(); // Svuota la lista di categorie associate (rimuove dalla tabella di join)
-        
-        // metodo 2
-        // newsletterRepository.deleteNewsletterCategories(id);
 
+        /* --- cancella da tabelle di join (newsletter_category, newsletter_product) --- */
+        // // // method 1 - manuale: contro carica in memoria
+        // // newsletter.getProducts().clear();
+        // // newsletter.getCategories().clear();
+        // method 2 - query: pro executed in db, not in memory
+        newsletterRepository.deleteNewsletterCategories(newsletter.getId());
+        newsletterRepository.deleteNewsletterProducts(newsletter.getId());
+
+        // ora elimino newsletter normalmente
         newsletterRepository.deleteById(newsletter.getId());
     }
 
