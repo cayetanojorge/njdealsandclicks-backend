@@ -40,9 +40,9 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
     /* quando elimino newsletter e abbiamo molti product e category per newsletter meglio procedere con le query */
     @Modifying
     @Query(value = "DELETE FROM newsletter_category WHERE newsletter_id = :id", nativeQuery = true)
-    void deleteNewsletterCategories(@Param("id") UUID id);
+    int deleteNewsletterCategories(@Param("id") UUID id);
 
     @Modifying
     @Query(value = "DELETE FROM newsletter_product WHERE newsletter_id = :id", nativeQuery = true)
-    void deleteNewsletterProducts(@Param("id") UUID id);
+    int deleteNewsletterProducts(@Param("id") UUID id);
 }

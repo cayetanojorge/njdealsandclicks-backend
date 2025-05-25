@@ -21,8 +21,10 @@ import com.njdealsandclicks.user.UserService;
 import com.njdealsandclicks.util.DateUtil;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
 
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 @Service
 public class NewsletterService {
     
@@ -168,8 +170,11 @@ public class NewsletterService {
         // // newsletter.getProducts().clear();
         // // newsletter.getCategories().clear();
         // method 2 - query: pro executed in db, not in memory
-        newsletterRepository.deleteNewsletterCategories(newsletter.getId());
-        newsletterRepository.deleteNewsletterProducts(newsletter.getId());
+        int deletedProducts = newsletterRepository.deleteNewsletterProducts(newsletter.getId());
+        int deletedCategories = newsletterRepository.deleteNewsletterCategories(newsletter.getId());
+
+        log.info("|- newsletter_product: deleted_records={}", deletedProducts);
+        log.info("|- newsletter_category: deleted_records={}", deletedCategories);
 
         // ora elimino newsletter normalmente
         newsletterRepository.deleteById(newsletter.getId());
