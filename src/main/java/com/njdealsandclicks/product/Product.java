@@ -43,7 +43,9 @@ import lombok.EqualsAndHashCode;
         @Index(name = "idx_product_public_id", columnList = "public_id"),
         @Index(name = "idx_product_current_price", columnList = "current_price"),
         @Index(name = "idx_product_category", columnList = "category_id"),
-        @Index(name = "idx_product_category_price", columnList = "category_id, current_price") /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
+        @Index(name = "idx_product_category_price", columnList = "category_id, current_price"), /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
+        @Index(name = "idx_product_tags_gin", columnList = "tags"), // (solo descrittivo, fare con query in db)
+        @Index(name = "idx_product_features_gin", columnList = "features") // (solo descrittivo, fare con query in db)
     }
 )
 @Data
@@ -83,6 +85,17 @@ public class Product extends BaseEntity {
 
     @Column(name = "brand", nullable = true)
     private String brand;
+
+    /* 
+     * GIN sta per Generalized Inverted Index. È un tipo di indice PostgreSQL specifico per colonne JSONB, array, full-text search. 
+     * Ti serve se vorrai eseguire query come:
+     *  SELECT * FROM product WHERE tags @> '["offerta", "gaming"]';
+     *  SELECT * FROM product WHERE features @> '["oled"]';
+     * abilitarlo:
+     * Puoi farlo direttamente via migration Flyway o liquibase o uno script SQL manuale:
+     *  CREATE INDEX idx_product_tags_gin ON product USING GIN (tags); 
+     *  CREATE INDEX idx_product_features_gin ON product USING GIN (features);
+    */
 
     @Convert(converter = StringListToJsonConverterUtil.class)
     @Column(name = "tags", columnDefinition = "jsonb", nullable = true)
