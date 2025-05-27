@@ -31,7 +31,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Subscription extends BaseEntity {
 
-    @Column(name = "plan_name", nullable = false, unique = true)
+    @Column(name = "plan_name", nullable = false, unique = true, updatable = false)
     private String planName; // FREE, PREMIUM, PRO
 
     @Column(name = "description", nullable = false)

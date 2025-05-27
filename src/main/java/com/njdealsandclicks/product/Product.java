@@ -70,14 +70,14 @@ public class Product extends BaseEntity {
     // todo-future creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
 
     @NotBlank
-    @Column(name = "affiliate_link", nullable = false, unique = true)
+    @Column(name = "affiliate_link", nullable = false)
     private String affiliateLink;
 
-    @Column(name = "rating", nullable = true)
-    private Double rating;
+    @Column(name = "rating", nullable = false)
+    private Double rating = 0.0;
 
-    @Column(name = "review_count", nullable = true)
-    private Integer reviewCount;
+    @Column(name = "review_count", nullable = false)
+    private Integer reviewCount = 0;
 
     @NotNull
     @Column(name = "is_available", nullable = false)

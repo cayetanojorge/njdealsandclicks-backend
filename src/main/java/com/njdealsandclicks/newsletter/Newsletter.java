@@ -31,7 +31,7 @@ public class Newsletter extends BaseEntity{
     // cascade se elimino user elimino rispettive riga in tab newsletter
     // orphanRemoval che se record in tab newsletter è orfano di user allora elimino
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     @NotNull

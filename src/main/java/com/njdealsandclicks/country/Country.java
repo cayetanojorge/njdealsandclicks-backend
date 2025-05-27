@@ -37,11 +37,11 @@ public class Country extends BaseEntity{
     private String language; // es: "it", "en", "es"
 
     @NotBlank
-    @Column(name = "locale", nullable = true)
+    @Column(name = "locale", nullable = false)
     private String locale; // es: "it_IT", "en_GB", "es_ES"
 
     @NotBlank
-    @Column(name = "timezone", nullable = true)
+    @Column(name = "timezone", nullable = false)
     private String timezone; // es: "Europe/Rome"
 
     @Column(name = "flag_emoji", nullable = true)

@@ -11,6 +11,7 @@ import com.njdealsandclicks.dto.subscription.SubscriptionCreateUpdateDTO;
 import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
 import com.njdealsandclicks.util.DateUtil;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
+import com.njdealsandclicks.util.enums.EnumSubscriptionPlan;
 
 @Service
 public class SubscriptionService {
@@ -101,6 +102,8 @@ public class SubscriptionService {
 
     @Transactional
     public SubscriptionDTO updateSubscription(String publicId, SubscriptionCreateUpdateDTO subscriptionUpdateDTO) {
+        EnumSubscriptionPlan.fromName(subscriptionUpdateDTO.getPlanName()); // if not exists plan name throws error
+        
         Subscription subscription = getSubscriptionByPublicId(publicId);
         subscription.setPlanName(subscriptionUpdateDTO.getPlanName());
         subscription.setDescription(subscriptionUpdateDTO.getDescription());

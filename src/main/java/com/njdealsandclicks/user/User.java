@@ -19,13 +19,22 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+
+/*
+index per:
+public_id - Cerchi utenti tramite publicId (es. API REST pubbliche)
+email - Cerchi utenti per login, autenticazione o admin panel
+subscription_id - Vuoi sapere quali utenti hanno un certo piano
+subscription_expiration_date - Vuoi fare query tipo "quali utenti scadono oggi?" o cron job
+ */
 @Entity
 @Table(
     name = "app_user",
     indexes = {
         @Index(name = "idx_user_public_id", columnList = "public_id"),
         @Index(name = "idx_user_email", columnList = "email"),
-        @Index(name = "idx_user_subscription", columnList = "subscription_id")
+        @Index(name = "idx_user_subscription", columnList = "subscription_id"),
+        @Index(name = "idx_user_subscription_expiration_date", columnList = "subscription_expiration_date")
     }
 )
 @Data
