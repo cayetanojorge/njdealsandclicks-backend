@@ -38,8 +38,6 @@ public class PriceHistory {
     @Column(name = "price")
     private Double price;
     
-    // String currency // TODO
-
     @Column(name = "recorded_at", nullable = false)
     private ZonedDateTime recordedAt;
 
