@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class PriceHistoryDTO {
     
+    @NotNull
     @Positive
     private Double price;
     

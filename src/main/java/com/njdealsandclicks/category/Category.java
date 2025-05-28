@@ -16,6 +16,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -40,9 +42,11 @@ public class Category extends BaseEntity {
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
 
+    @NotBlank
     @Column(name = "slug", nullable = false, unique = true)
     private String slug;
 
+    @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
@@ -70,6 +74,7 @@ public class Category extends BaseEntity {
     // // // @Column(nullable = true)
     // // // private User user;
 
+    @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     

@@ -33,6 +33,7 @@ public class Country extends BaseEntity{
     @Column(name = "name", nullable = false)
     private String name; // "Italy", "United Kingdom", "Spain"
 
+    @NotBlank
     @Column(name = "language", nullable = false, length = 2)
     private String language; // es: "it", "en", "es"
 
@@ -47,6 +48,7 @@ public class Country extends BaseEntity{
     @Column(name = "flag_emoji", nullable = true)
     private String flagEmoji; // es: "🇮🇹", "🇬🇧", "🇪🇸"
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "currency_id", referencedColumnName = "id", nullable = false)
     private Currency currency;

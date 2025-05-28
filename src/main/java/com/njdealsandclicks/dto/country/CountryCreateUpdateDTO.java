@@ -12,6 +12,10 @@ public class CountryCreateUpdateDTO {
     @NotBlank
     private String name; // "Euro", "US Dollar", etc.
 
+    @NotBlank
+    private String language; // es: "it", "en", "es"
+
+    @NotBlank
     private String locale; // es: "it_IT", "en_GB", "es_ES"
 
     @NotBlank

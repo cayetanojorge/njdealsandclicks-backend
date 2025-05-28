@@ -69,6 +69,7 @@ public class Newsletter extends BaseEntity{
     )
     private List<Category> categories;
 
+    @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     

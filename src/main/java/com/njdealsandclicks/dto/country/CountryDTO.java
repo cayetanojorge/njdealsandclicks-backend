@@ -15,6 +15,10 @@ public class CountryDTO {
     @NotBlank
     private String name; // "Italy", "United Kingdom", "Spain"
 
+    @NotBlank
+    private String language; // es: "it", "en", "es"
+
+    @NotBlank
     private String locale; // es: "it_IT", "en_GB", "es_ES"
 
     @NotBlank

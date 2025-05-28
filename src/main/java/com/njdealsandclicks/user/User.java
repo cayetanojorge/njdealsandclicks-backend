@@ -41,8 +41,8 @@ subscription_expiration_date - Vuoi fare query tipo "quali utenti scadono oggi?"
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity{
 
-    @Email
     @NotBlank
+    @Email
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
@@ -63,18 +63,22 @@ public class User extends BaseEntity{
     // // private String phoneNumber;
 
     // per non eliminare i record degli utenti, filtro per escludere gli utenti disattivati
+    @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
     @Column(name = "deactivated_at", nullable = true)
     private ZonedDateTime deactivatedAt;
 
+    @NotBlank
     @Column(name = "preferred_language", nullable = false)
     private String preferredLanguage; // browser data
     
+    @NotBlank
     @Column(name = "timezone", nullable = false)
     private String timezone; // browser data
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "subscription_id", referencedColumnName = "id", nullable = false)
     private Subscription subscription;
@@ -82,6 +86,7 @@ public class User extends BaseEntity{
     @Column(name = "subscription_expiration_date", nullable = true)
     private ZonedDateTime subscriptionExpirationDate;
 
+    @NotNull
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
 

@@ -15,8 +15,8 @@ public class UserDTO {
     @NotBlank
     private String publicId;
 
-    @Email
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank
@@ -28,16 +28,20 @@ public class UserDTO {
     @NotNull
     private Boolean emailVerified;
 
+    @NotNull
+    private Boolean isActive;
+
+    private ZonedDateTime deactivatedAt;
+
     @NotBlank
     private String preferredLanguage; // browser data
     
     @NotBlank
     private String timezone; // browser data
 
-    @NotBlank
+    @NotNull
     private SubscriptionDTO subscriptionDTO;
 
-    @NotNull
     private ZonedDateTime subscriptionExpirationDate;
 
     @NotNull

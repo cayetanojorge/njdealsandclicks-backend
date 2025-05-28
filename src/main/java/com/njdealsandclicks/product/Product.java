@@ -56,15 +56,17 @@ public class Product extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = true)
     private String description;
 
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
     private Country country;
 
+    @NotNull
     @Positive
-    @Column(name = "current_price", nullable = true)
+    @Column(name = "current_price", nullable = false)
     private Double currentPrice;
     
     // todo-future creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
@@ -73,9 +75,11 @@ public class Product extends BaseEntity {
     @Column(name = "affiliate_link", nullable = false)
     private String affiliateLink;
 
+    @NotNull
     @Column(name = "rating", nullable = false)
     private Double rating = 0.0;
 
+    @NotNull
     @Column(name = "review_count", nullable = false)
     private Integer reviewCount = 0;
 
@@ -83,6 +87,9 @@ public class Product extends BaseEntity {
     @Column(name = "is_available", nullable = false)
     private Boolean isAvailable = true;
 
+    @Column(name = "image_url", nullable = true)
+    private String imageUrl;
+    
     @Column(name = "brand", nullable = true)
     private String brand;
 
@@ -104,10 +111,8 @@ public class Product extends BaseEntity {
     @Convert(converter = StringListToJsonConverterUtil.class)
     @Column(name = "features", columnDefinition = "jsonb", nullable = true)
     private List<String> features; // caratteristiche specifiche, ie: "Schermo OLED", "Batteria da 5000mAh"
-
-    @Column(name = "image_url", nullable = true)
-    private String imageUrl;
     
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false) // name e' nome della colonna, refe...Name e' nome della colonna di tabella Category a cui si fa riferimento
     private Category category;
@@ -128,6 +133,7 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PriceHistory> priceHistories = new ArrayList<>();
 
+    @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     

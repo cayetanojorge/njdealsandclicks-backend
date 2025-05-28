@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class UserCreateUpdateDTO {
-    
-    @Email
+
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank

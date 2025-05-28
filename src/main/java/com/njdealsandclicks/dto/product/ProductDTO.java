@@ -1,5 +1,7 @@
 package com.njdealsandclicks.dto.product;
 
+import java.util.List;
+
 import com.njdealsandclicks.dto.country.CountryDTO;
 
 import jakarta.validation.constraints.NotBlank;
@@ -21,15 +23,26 @@ public class ProductDTO {
     @NotNull
     private CountryDTO countryDTO;
     
+    @NotNull
     @Positive
     private Double currentPrice;
 
     @NotBlank
     private String affiliateLink;
 
+    @NotNull
     private Double rating;
 
+    @NotNull
     private Integer reviewCount;
+
+    private String imageUrl;
+    
+    private String brand;
+
+    private List<String> tags;
+
+    private List<String> features;
 
     @NotBlank
     private String categoryName;

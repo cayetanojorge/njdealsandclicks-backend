@@ -24,15 +24,26 @@ public class ProductDetailsDTO {
     @NotNull
     private CountryDTO countryDTO;
     
+    @NotNull
     @Positive
     private Double currentPrice;
 
     @NotBlank
     private String affiliateLink;
 
+    @NotNull
     private Double rating;
 
+    @NotNull
     private Integer reviewCount;
+
+    private String imageUrl;
+    
+    private String brand;
+
+    private List<String> tags;
+
+    private List<String> features;
 
     @NotBlank
     private String categoryName;

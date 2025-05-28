@@ -13,7 +13,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
@@ -31,9 +32,11 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Subscription extends BaseEntity {
 
+    @NotBlank
     @Column(name = "plan_name", nullable = false, unique = true, updatable = false)
     private String planName; // FREE, PREMIUM, PRO
 
+    @NotBlank
     @Column(name = "description", nullable = false)
     private String description; // Descrizione del piano
 
@@ -41,6 +44,7 @@ public class Subscription extends BaseEntity {
     @Column(name = "features", columnDefinition = "jsonb", nullable = true)
     private List<String> features;
 
+    @NotNull
     @PositiveOrZero // >=0.00
     @Column(name = "price", nullable = false)
     private Double price;
@@ -52,25 +56,31 @@ public class Subscription extends BaseEntity {
     @Column(name = "promotion_end_date", nullable = true)
     private ZonedDateTime promotionEndDate; // Fine della promozione
 
-    @Min(0)
+    @NotNull
+    @PositiveOrZero
     @Column(name = "duration_in_days", nullable = false)
     private Integer durationInDays; // Durata del piano in giorni
 
+    @NotNull
     @Positive
     @Column(name = "max_emails_per_week", nullable = false)
     private Integer maxEmailsPerWeek; // Email settimanali massime
 
+    @NotNull
     @Positive
     @Column(name = "max_tracked_products", nullable = false)
     private Integer maxTrackedProducts; // Prodotti monitorati massimi
 
+    @NotNull
     @Positive
     @Column(name = "max_tracked_categories", nullable = false)
     private Integer maxTrackedCategories; // Categorie monitorati massimi
 
+    @NotNull
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true; // Indica se il piano è attivo
 
+    @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     

@@ -35,9 +35,10 @@ public class PriceHistory {
 
     @NotNull
     @Positive
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private Double price;
     
+    @NotNull
     @Column(name = "recorded_at", nullable = false)
     private ZonedDateTime recordedAt;
 
