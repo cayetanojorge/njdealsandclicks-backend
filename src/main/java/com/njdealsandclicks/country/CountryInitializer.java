@@ -71,6 +71,7 @@ public class CountryInitializer implements EntityInitializer {
         Country country = new Country();
         country.setCode((String) data.get("code"));
         country.setName((String) data.get("name"));
+        country.setLanguage((String) data.get("language"));
         country.setLocale((String) data.get("locale"));
         country.setTimezone((String) data.get("timezone"));
         country.setFlagEmoji((String) data.get("flagEmoji"));

@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
 import com.njdealsandclicks.dto.user.UserCreateUpdateDTO;
 import com.njdealsandclicks.dto.user.UserDTO;
 import com.njdealsandclicks.subscription.Subscription;
@@ -47,10 +46,11 @@ public class UserService {
         userDTO.setFirstName(user.getFirstName());
         userDTO.setLastName(user.getLastName());
         userDTO.setEmailVerified(user.getEmailVerified());
+        userDTO.setIsActive(user.getIsActive());
+        userDTO.setDeactivatedAt(user.getDeactivatedAt());
         userDTO.setPreferredLanguage(user.getPreferredLanguage());
         userDTO.setTimezone(user.getTimezone());
-        SubscriptionDTO subscriptionDTO = subscriptionService.getSubscriptionDTOByPublicId(user.getSubscription().getPublicId());
-        userDTO.setSubscriptionDTO(subscriptionDTO);
+        userDTO.setSubscriptionDTO(subscriptionService.getSubscriptionDTOByPublicId(user.getSubscription().getPublicId()));
         userDTO.setSubscriptionExpirationDate(user.getSubscriptionExpirationDate());
         userDTO.setRegistrationDate(user.getRegistrationDate());
         return userDTO;

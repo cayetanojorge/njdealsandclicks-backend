@@ -62,6 +62,10 @@ public class ProductService {
         productDTO.setAffiliateLink(product.getAffiliateLink());
         productDTO.setRating(product.getRating());
         productDTO.setReviewCount(product.getReviewCount());
+        productDTO.setImageUrl(product.getImageUrl());
+        productDTO.setBrand(product.getBrand());
+        productDTO.setTags(product.getTags());
+        productDTO.setFeatures(product.getFeatures());
         productDTO.setCategoryName(product.getCategory().getName());
         return productDTO;
     }
@@ -71,8 +75,15 @@ public class ProductService {
         productDetailsDTO.setPublicId(product.getPublicId());
         productDetailsDTO.setName(product.getName());
         productDetailsDTO.setDescription(product.getDescription());
+        productDetailsDTO.setCountryDTO(countryService.getCountryDTOByPublicId(product.getCountry().getPublicId()));
         productDetailsDTO.setCurrentPrice(product.getCurrentPrice());
         productDetailsDTO.setAffiliateLink(product.getAffiliateLink());
+        productDetailsDTO.setRating(product.getRating());
+        productDetailsDTO.setReviewCount(product.getReviewCount());
+        productDetailsDTO.setImageUrl(product.getImageUrl());
+        productDetailsDTO.setBrand(product.getBrand());
+        productDetailsDTO.setTags(product.getTags());
+        productDetailsDTO.setFeatures(product.getFeatures());
         productDetailsDTO.setCategoryName(product.getCategory().getName());
         productDetailsDTO.setPriceHistoryDTOs(priceHistoryService.getPriceHistoriesDTOsByProductPublicId(product.getPublicId()));
         return productDetailsDTO;

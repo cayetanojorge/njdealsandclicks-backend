@@ -38,6 +38,7 @@ public class CountryService {
         countryDTO.setPublicId(country.getPublicId());
         countryDTO.setCode(country.getCode());
         countryDTO.setName(country.getName());
+        countryDTO.setLanguage(country.getLanguage());
         countryDTO.setLocale(country.getLocale());
         countryDTO.setTimezone(country.getTimezone());
         countryDTO.setFlagEmoji(country.getFlagEmoji());
