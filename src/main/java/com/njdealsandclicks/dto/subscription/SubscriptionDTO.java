@@ -3,6 +3,7 @@ package com.njdealsandclicks.dto.subscription;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -34,6 +35,7 @@ public class SubscriptionDTO {
     @Positive
     private Double promotionalPrice;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING) // per avere ISO invece di timestamp
     private ZonedDateTime promotionEndDate;
 
     @NotNull

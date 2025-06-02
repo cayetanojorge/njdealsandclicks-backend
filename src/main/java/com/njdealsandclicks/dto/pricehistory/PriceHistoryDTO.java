@@ -2,6 +2,7 @@ package com.njdealsandclicks.dto.pricehistory;
 
 import java.time.ZonedDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -18,5 +19,6 @@ public class PriceHistoryDTO {
     private Double price;
     
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING) // per avere ISO invece di timestamp
     private ZonedDateTime recordedAt;
 }

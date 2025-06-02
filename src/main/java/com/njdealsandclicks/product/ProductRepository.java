@@ -35,14 +35,13 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
 
     /* Data una lista :publicIds, restituisci solo quelli che non sono presenti nella tabella product */
-    @Query(
-        value = 
-            """
-            SELECT unnest(:publicIds) 
-            EXCEPT 
-            SELECT publicId FROM Product p WHERE publicId IN :publicIds
-            """,
-        nativeQuery = true)
+    @Query(value = """
+        SELECT elem AS available_public_id
+        FROM unnest(CAST(ARRAY[?1] AS text[])) AS elem
+        WHERE NOT EXISTS (
+            SELECT 1 FROM category WHERE public_id = elem
+        )
+        """, nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
     
     /* data lista di publicIds voglio restituire lista di products presenti in db */

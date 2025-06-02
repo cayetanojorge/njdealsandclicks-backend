@@ -88,16 +88,16 @@ public class CategoryService {
 
     @Transactional
     public CategoryDTO createCategory(CategoryCreateUpdateDTO categoryCreateDTO) {
-        Category category = getCategoryByName(categoryCreateDTO.getName());
-        if(category != null) {
+        if(categoryRepository.existsByName(categoryCreateDTO.getName())) {
             throw new RuntimeException("Category with name " + categoryCreateDTO.getName() + " already exists.");
         }
-        Category parentCategory = getCategoryByName(categoryCreateDTO.getNameParentCategory());
-        if(parentCategory == null) {
-            throw new RuntimeException("Parent Category with name " + categoryCreateDTO.getNameParentCategory() + " doesn't exists.");
+
+        Category parentCategory = null;
+        if(Objects.nonNull(categoryCreateDTO.getNameParentCategory()) && categoryRepository.existsByName(categoryCreateDTO.getNameParentCategory())) {
+            parentCategory = getCategoryByName(categoryCreateDTO.getNameParentCategory());
         }
 
-        category = new Category();
+        Category category = new Category();
         category.setPublicId(createPublicId());
         category.setName(categoryCreateDTO.getName());
         category.setDescription(categoryCreateDTO.getDescription());
@@ -109,8 +109,10 @@ public class CategoryService {
         category = categoryRepository.save(category);
         
         // update subcategories of category parent of category just created
-        parentCategory.getSubCategories().add(category);
-        categoryRepository.save(parentCategory);
+        if(Objects.nonNull(parentCategory)) {
+            parentCategory.getSubCategories().add(category);
+            categoryRepository.save(parentCategory);
+        }
 
         return mapToCategoryDTO(category);
     }

@@ -13,14 +13,13 @@ public interface NewsletterRepository extends JpaRepository<Newsletter, UUID> {
     Optional<Newsletter> findByPublicId(String publicId);
     boolean existsByPublicId(String publicId);
 
-    @Query(
-        value = 
-            """
-            SELECT unnest(:publicIds) 
-            EXCEPT 
-            SELECT publicId FROM Newsletter n WHERE publicId IN :publicIds
-            """,
-        nativeQuery = true)
+    @Query(value = """
+        SELECT elem AS available_public_id
+        FROM unnest(CAST(ARRAY[?1] AS text[])) AS elem
+        WHERE NOT EXISTS (
+            SELECT 1 FROM category WHERE public_id = elem
+        )
+        """, nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
 
     /* controllo publicId presente in batch se gia' presente in db  */

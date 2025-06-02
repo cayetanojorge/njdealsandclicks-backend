@@ -27,7 +27,7 @@ public class PriceHistoryController {
     }
 
     @GetMapping("/product/{productPublicId}")
-    public List<PriceHistoryDTO> getPriceHistoriesByProductPublicId(@PathVariable String productPublicId) {
+    public List<PriceHistoryDTO> getPriceHistoriesByProductPublicId(@PathVariable("productPublicId") String productPublicId) {
         return priceHistoryService.getPriceHistoriesDTOsByProductPublicId(productPublicId);
     }
 
@@ -42,7 +42,7 @@ public class PriceHistoryController {
     }
 
     @DeleteMapping("/product/{productPublicId}")
-    public void deletePriceHistoriesByProductId(@PathVariable String productPublicId) {
+    public void deletePriceHistoriesByProductId(@PathVariable("productPublicId") String productPublicId) {
         priceHistoryService.deletePriceHistoriesByProductPublicId(productPublicId);
     }
     

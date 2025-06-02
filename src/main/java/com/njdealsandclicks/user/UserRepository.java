@@ -14,14 +14,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByEmail(String email);
 
-    @Query(
-        value = 
-            """
-            SELECT unnest(:publicIds) 
-            EXCEPT 
-            SELECT publicId FROM User u WHERE publicId IN :publicIds
-            """,
-        nativeQuery = true)
+    @Query(value = """
+        SELECT elem AS available_public_id
+        FROM unnest(CAST(ARRAY[?1] AS text[])) AS elem
+        WHERE NOT EXISTS (
+            SELECT 1 FROM category WHERE public_id = elem
+        )
+        """, nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
 
     /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */

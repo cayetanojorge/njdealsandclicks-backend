@@ -27,12 +27,12 @@ public class ProductPublicController {
     }
 
     @GetMapping("/{publicId}")
-    public ProductDetailsDTO getProductByPublicId(@PathVariable String publicId) {
+    public ProductDetailsDTO getProductByPublicId(@PathVariable("publicId") String publicId) {
         return productService.getProductDetailsDTOsByPublicId(publicId);
     }
 
     @GetMapping("/category/{categoryPublicId}")
-    public List<ProductDTO> getProductsByCategoryId(@PathVariable String categoryPublicId) {
+    public List<ProductDTO> getProductsByCategoryId(@PathVariable("categoryPublicId") String categoryPublicId) {
         return productService.getProductDTOsByCategoryId(categoryPublicId);
     }
 }

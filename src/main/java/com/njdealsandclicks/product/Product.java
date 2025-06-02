@@ -5,6 +5,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.country.Country;
@@ -104,10 +107,12 @@ public class Product extends BaseEntity {
      *  CREATE INDEX idx_product_features_gin ON product USING GIN (features);
     */
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = StringListToJsonConverterUtil.class)
     @Column(name = "tags", columnDefinition = "jsonb", nullable = true)
     private List<String> tags; // migliorare la ricerca e il SEO del sito
     
+    @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = StringListToJsonConverterUtil.class)
     @Column(name = "features", columnDefinition = "jsonb", nullable = true)
     private List<String> features; // caratteristiche specifiche, ie: "Schermo OLED", "Batteria da 5000mAh"

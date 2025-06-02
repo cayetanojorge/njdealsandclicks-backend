@@ -2,6 +2,7 @@ package com.njdealsandclicks.dto.user;
 
 import java.time.ZonedDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
@@ -34,6 +35,7 @@ public class UserDTO {
     @NotNull
     private Boolean isActive;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING) // per avere ISO invece di timestamp
     private ZonedDateTime deactivatedAt;
 
     @NotBlank
@@ -45,8 +47,10 @@ public class UserDTO {
     @NotNull
     private SubscriptionDTO subscriptionDTO;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING) // per avere ISO invece di timestamp
     private ZonedDateTime subscriptionExpirationDate;
 
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING) // per avere ISO invece di timestamp
     private ZonedDateTime registrationDate;
 }

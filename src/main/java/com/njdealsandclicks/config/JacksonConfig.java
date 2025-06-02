@@ -11,6 +11,8 @@ public class JacksonConfig {
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
-        return builder -> builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        return builder -> {
+            builder.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        };
     }
 }
