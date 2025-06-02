@@ -55,12 +55,12 @@ public class ProductController {
     }
     
     @PutMapping("/{publicId}")
-    public ProductDTO updateProduct(@PathVariable String publicId, @RequestBody ProductCreateUpdateDTO productUpdateDTO) {
+    public ProductDTO updateProduct(@PathVariable("publicId") String publicId, @RequestBody ProductCreateUpdateDTO productUpdateDTO) {
         return productService.updateProduct(publicId, productUpdateDTO);
     }
 
     @DeleteMapping("/delete/{publicId}")
-    public void deleteProduct(@PathVariable String publicId) {
+    public void deleteProduct(@PathVariable("publicId") String publicId) {
         productService.deleteProduct(publicId);
     }
 }
