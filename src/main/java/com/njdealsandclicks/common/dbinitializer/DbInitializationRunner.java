@@ -1,5 +1,6 @@
 package com.njdealsandclicks.common.dbinitializer;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ public class DbInitializationRunner {
     
     @PostConstruct
     public void initializeAll() {
-        initializers.forEach(EntityInitializer::initialize);
+        //initializers.forEach(EntityInitializer::initialize); // non garantisce che currency avvenga prima di country
+        initializers.stream()
+        .sorted(Comparator.comparing(EntityInitializer::getExecutionOrder))
+        .forEach(EntityInitializer::initialize);
     }
 }

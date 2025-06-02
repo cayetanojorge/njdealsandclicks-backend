@@ -10,5 +10,7 @@ public interface EntityInitializer {
     String getInitializationVersion();
     
     void initialize();
+
+    int getExecutionOrder();
     
 }

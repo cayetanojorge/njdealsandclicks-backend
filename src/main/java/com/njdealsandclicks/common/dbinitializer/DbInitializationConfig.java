@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.njdealsandclicks.category.CategoryInitializer;
+import com.njdealsandclicks.country.CountryInitializer;
 import com.njdealsandclicks.currency.CurrencyInitializer;
 import com.njdealsandclicks.subscription.SubscriptionInitializer;
 
@@ -18,13 +19,15 @@ public class DbInitializationConfig {
     
     private final CategoryInitializer categoryInitializer;
     private final CurrencyInitializer currencyInitializer;
+    private final CountryInitializer countryInitializer;
     private final SubscriptionInitializer subscriptionInitializer;
     
     @Bean
     public List<EntityInitializer> entityInitializers() {
         return List.of(
             categoryInitializer,
-            currencyInitializer,
+            currencyInitializer, // deve essere eseguito prima perche' usato in country
+            countryInitializer,
             subscriptionInitializer
         );
     }

@@ -42,6 +42,11 @@ public class CurrencyInitializer implements EntityInitializer {
     }
 
     @Override
+    public int getExecutionOrder() {
+        return 2;
+    }
+
+    @Override
     @Transactional
     public void initialize() {
 

@@ -7,6 +7,7 @@ subscription:
     maxTrackedProducts: 10
     maxTrackedCategories: 5
     isActive: true
+    features: []
   - planName: Premium
     description: Piano premium con funzionalità avanzate
     price: 9.99
@@ -15,6 +16,7 @@ subscription:
     maxTrackedProducts: 50
     maxTrackedCategories: 25
     isActive: true
+    features: []
   - planName: Pro
     description: Piano pro con tutte le funzionalità
     price: 29.99
@@ -23,3 +25,4 @@ subscription:
     maxTrackedProducts: 100
     maxTrackedCategories: 50
     isActive: true
+    features: []

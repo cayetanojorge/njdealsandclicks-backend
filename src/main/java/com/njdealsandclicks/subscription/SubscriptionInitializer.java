@@ -1,5 +1,6 @@
 package com.njdealsandclicks.subscription;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,11 @@ public class SubscriptionInitializer implements EntityInitializer {
     }
 
     @Override
+    public int getExecutionOrder() {
+        return 4;
+    }
+
+    @Override
     @Transactional
     public void initialize() {
         
@@ -63,6 +69,7 @@ public class SubscriptionInitializer implements EntityInitializer {
         entityInitializedService.markAsInitialized(getEntityName(), getYamlName(), getInitializationVersion());
     }
     
+    @SuppressWarnings("unchecked")
     private Subscription mapYamlToSubscription(Map<String, Object> data) {
         Subscription subscription = new Subscription();
         subscription.setPlanName((String) data.get("planName"));
@@ -73,6 +80,12 @@ public class SubscriptionInitializer implements EntityInitializer {
         subscription.setMaxTrackedProducts((Integer) data.get("maxTrackedProducts"));
         subscription.setMaxTrackedCategories((Integer) data.get("maxTrackedCategories"));
         subscription.setIsActive((Boolean) data.get("isActive"));
+        Object featuresRaw = data.get("features");
+        if (featuresRaw instanceof List) {
+            subscription.setFeatures((List<String>) featuresRaw);
+        } else {
+            subscription.setFeatures(Collections.emptyList());
+        }
         return subscription;
     }
 

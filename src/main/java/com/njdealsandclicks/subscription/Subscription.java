@@ -4,6 +4,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.util.StringListToJsonConverterUtil;
 
@@ -40,6 +43,7 @@ public class Subscription extends BaseEntity {
     @Column(name = "description", nullable = false)
     private String description; // Descrizione del piano
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = StringListToJsonConverterUtil.class)
     @Column(name = "features", columnDefinition = "jsonb", nullable = true)
     private List<String> features;

@@ -44,6 +44,11 @@ public class CountryInitializer implements EntityInitializer {
     }
 
     @Override
+    public int getExecutionOrder() {
+        return 3;
+    }
+
+    @Override
     @Transactional
     public void initialize() {
 

@@ -44,6 +44,11 @@ public class CategoryInitializer implements EntityInitializer {
     public String getInitializationVersion() {
         return "1.0"; 
     }
+
+    @Override
+    public int getExecutionOrder() {
+        return 1;
+    }
     
     @Override
     @Transactional

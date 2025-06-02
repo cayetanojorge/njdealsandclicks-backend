@@ -2,6 +2,8 @@ package com.njdealsandclicks.dto.user;
 
 import java.time.ZonedDateTime;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.njdealsandclicks.dto.subscription.SubscriptionDTO;
 
 import jakarta.validation.constraints.Email;
@@ -10,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserDTO {
 
     @NotBlank

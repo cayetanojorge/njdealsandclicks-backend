@@ -2,6 +2,8 @@ package com.njdealsandclicks.dto.product;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.njdealsandclicks.dto.country.CountryDTO;
 import com.njdealsandclicks.dto.pricehistory.PriceHistoryDTO;
 
@@ -11,6 +13,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 @Data
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ProductDetailsDTO {
 
     @NotBlank
