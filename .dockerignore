@@ -1,0 +1,39 @@
+# per evitare di copiare cose inutili in container
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Build output
+build/
+.gradle/
+bin/
+out/
+
+# IDE e ambienti di sviluppo
+*.iml
+.idea/
+.vscode/
+*.class
+
+# File temporanei o di sistema
+*.log
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+
+# File di configurazione e ambienti
+*.env
+.env.*
+.env
+
+# Markdown e documentazione (opzionale)
+*.md
+HELP.md
+README.md
+
+# fly
+set-fly-secrets.sh
+set-fly-secrets.example.sh

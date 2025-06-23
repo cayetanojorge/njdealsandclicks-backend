@@ -44,3 +44,6 @@ out/
 .env.local
 .env.compose
 .env.prod
+
+### fly ###
+set-fly-secrets.sh
