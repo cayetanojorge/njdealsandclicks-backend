@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         // Frontend (accesso limitato)
         // registry.addMapping("/api/public/**")
         registry.addMapping("/api/public/**")
-                .allowedOrigins("https://www.njdealsandclicks.com/", "http://localhost:5173")
+                .allowedOrigins("https://www.njdealsandclicks.com", "http://localhost:5173")
                 // .allowedMethods("GET", "POST")
                 .allowedMethods("*")
                 .allowedHeaders("*")
