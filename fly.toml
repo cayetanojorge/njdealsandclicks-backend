@@ -1,15 +1,25 @@
-app = "njdealsandclicks-backend"
-primary_region = "fra"  # Puoi cambiare: fra = Francoforte, cdg = Parigi, lhr = Londra
+# fly.toml app configuration file generated for njdealsandclicks-backend on 2025-06-24T15:45:25+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'njdealsandclicks-backend'
+primary_region = 'fra'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  SPRING_PROFILES_ACTIVE = "prod"
+  SPRING_PROFILES_ACTIVE = 'prod'
 
 [http_service]
-  internal_port = 8080  # deve combaciare con quella esposta nel Dockerfile
+  internal_port = 8080
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
