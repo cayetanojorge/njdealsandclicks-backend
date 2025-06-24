@@ -1,0 +1,32 @@
+country:
+  - code: IT
+    name: Italy
+    language: it
+    locale: it_IT
+    timezone: Europe/Rome
+    flagEmoji: "🇮🇹"
+    currencyCode: EUR
+
+  - code: ES
+    name: Spain
+    language: es
+    locale: es_ES
+    timezone: Europe/Madrid
+    flagEmoji: "🇪🇸"
+    currencyCode: EUR
+
+  - code: UK
+    name: United Kingdom
+    language: en
+    locale: en_GB
+    timezone: Europe/London
+    flagEmoji: "🇬🇧"
+    currencyCode: GBP
+
+  - code: US
+    name: United States
+    language: en
+    locale: en_US
+    timezone: America/New_York
+    flagEmoji: "🇺🇸"
+    currencyCode: USD
