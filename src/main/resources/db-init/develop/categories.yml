@@ -1,4 +1,11 @@
 category:
+  - name: test
+    description: "Categoria di test"
+    imageUrl: NULL
+    slug: "test"
+    isActive: false
+    displayOrder: 999
+
   - name: Informatica
     description: "Categorie legate al mondo dell'informatica e tecnologia"
     imageUrl: "https://example.com/images/informatica.jpg"
