@@ -50,6 +50,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryDTO> getAllCategories() {
+        // List<Category> categories = categoryRepository.findAllActiveCategoriesOrderByDisplayOrder(); // TODO provare a usarla perche' presemte category test
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
             .map(this::mapToCategoryDTO)
