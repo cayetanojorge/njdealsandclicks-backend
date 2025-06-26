@@ -2,6 +2,7 @@ package com.njdealsandclicks.dto.country;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.njdealsandclicks.dto.currency.CurrencyDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -31,5 +32,5 @@ public class CountryDTO {
     private String flagEmoji; // es: "🇮🇹", "🇬🇧", "🇪🇸"
 
     @NotBlank
-    private String currencyCode;
+    private CurrencyDTO currencyDTO;
 }

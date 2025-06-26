@@ -42,7 +42,7 @@ public class CountryService {
         countryDTO.setLocale(country.getLocale());
         countryDTO.setTimezone(country.getTimezone());
         countryDTO.setFlagEmoji(country.getFlagEmoji());
-        countryDTO.setCurrencyCode(country.getCurrency().getCode());
+        countryDTO.setCurrencyDTO(currencyService.getCurrencyDTOByPublicId(country.getCurrency().getPublicId()));
         return countryDTO;
     }
 

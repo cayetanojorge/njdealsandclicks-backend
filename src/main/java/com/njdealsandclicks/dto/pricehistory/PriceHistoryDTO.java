@@ -5,6 +5,8 @@ import java.time.ZonedDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.njdealsandclicks.config.TwoDecimalDoubleSerializer;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -16,6 +18,7 @@ public class PriceHistoryDTO {
     
     @NotNull
     @Positive
+    @JsonSerialize(using = TwoDecimalDoubleSerializer.class)
     private Double price;
     
     @NotNull

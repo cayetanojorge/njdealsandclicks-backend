@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.njdealsandclicks.config.TwoDecimalDoubleSerializer;
 import com.njdealsandclicks.dto.country.CountryDTO;
 
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +30,7 @@ public class ProductDTO {
     
     @NotNull
     @Positive
+    @JsonSerialize(using = TwoDecimalDoubleSerializer.class)
     private Double currentPrice;
 
     @NotBlank
