@@ -1,0 +1,8 @@
+TODO
+
+- DOMANI (quando avrai utenti registrati o funzionalità sensibili):
+Implementa JWT Authentication
+
+Spring Boot: spring-security + jwt
+
+Frontend: salva il token in localStorage o cookie httpOnly

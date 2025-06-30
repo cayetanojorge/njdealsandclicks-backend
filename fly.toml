@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for njdealsandclicks-backend on 2025-06-24T15:45:25+02:00
+# fly.toml app configuration file generated for njdealsandclicks-backend on 2025-06-30T16:01:54+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -11,6 +11,7 @@ primary_region = 'fra'
 
 [env]
   SPRING_PROFILES_ACTIVE = 'prod'
+  SERVER_ADDRESS = '0.0.0.0'
 
 [http_service]
   internal_port = 8080
@@ -18,8 +19,10 @@ primary_region = 'fra'
   auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  concurrency.soft_limit = 10
-  concurrency.hard_limit = 20
+
+  [http_service.concurrency]
+    hard_limit = 20
+    soft_limit = 10
 
 [[vm]]
   memory = '1gb'

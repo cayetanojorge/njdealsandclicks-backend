@@ -24,6 +24,8 @@ public class OriginHeaderFilter extends OncePerRequestFilter {
     private static final List<String> ALLOWED_ORIGINS = List.of(
         "https://njdealsandclicks.com",
         "https://www.njdealsandclicks.com",
+        "https://njdealsandclicks.com/",
+        "https://www.njdealsandclicks.com/",
         "http://localhost:5173"
     );
 
@@ -43,12 +45,18 @@ public class OriginHeaderFilter extends OncePerRequestFilter {
                 return;
             }
 
+            if (origin == null && "GET".equalsIgnoreCase(request.getMethod())) {
+                filterChain.doFilter(request, response); // GET da Postman, SSR ecc.
+                return;
+            }
+
             if (origin != null && ALLOWED_ORIGINS.contains(origin)) {
                 filterChain.doFilter(request, response); // solo da dominio valido
                 return;
             }
 
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Origin not allowed");
+
             return;
         }
 
