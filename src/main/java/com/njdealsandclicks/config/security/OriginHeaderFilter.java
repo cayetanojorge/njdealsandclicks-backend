@@ -1,4 +1,4 @@
-package com.njdealsandclicks.config;
+package com.njdealsandclicks.config.security;
 
 import java.io.IOException;
 import java.util.List;

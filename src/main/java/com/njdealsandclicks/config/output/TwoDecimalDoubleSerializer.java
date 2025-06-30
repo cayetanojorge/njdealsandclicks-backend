@@ -1,4 +1,4 @@
-package com.njdealsandclicks.config;
+package com.njdealsandclicks.config.output;
 
 import java.io.IOException;
 

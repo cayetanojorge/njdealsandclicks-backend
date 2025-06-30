@@ -1,4 +1,4 @@
-package com.njdealsandclicks.config;
+package com.njdealsandclicks.config.output;
 
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;

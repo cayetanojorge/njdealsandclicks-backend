@@ -1,4 +1,4 @@
-package com.njdealsandclicks.config;
+package com.njdealsandclicks.config.swagger;
 
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.Contact;

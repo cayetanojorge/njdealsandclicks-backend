@@ -1,4 +1,4 @@
-package com.njdealsandclicks.config;
+package com.njdealsandclicks.config.security;
 
 
 import org.springframework.beans.factory.annotation.Value;
