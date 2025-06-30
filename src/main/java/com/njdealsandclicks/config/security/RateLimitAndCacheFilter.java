@@ -81,7 +81,7 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                String body = wrapper.getContent();
+                String body = wrapper.getContentAsString();
                 response.setStatus(wrapper.getStatus());
                 response.setContentType("application/json"); // oppure copia dinamicamente se serve
                 response.setHeader("Cache-Control", "public, max-age=" + CACHE_TTL_SECONDS);
@@ -91,7 +91,7 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
                 if (wrapper.getStatus() == HttpServletResponse.SC_OK) {
                     cache.put(key, new CachedResponse(body, Instant.now().plusSeconds(CACHE_TTL_SECONDS)));
                 }
-                
+
                 return;
             }
         }
