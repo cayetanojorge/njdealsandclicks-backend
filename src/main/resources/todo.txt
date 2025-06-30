@@ -8,4 +8,6 @@ Spring Boot: spring-security + jwt
 Frontend: salva il token in localStorage o cookie httpOnly
 
 
-- inserire rate limiting su Fly.io
+- inserire rate limiting su Fly.io:
+da modificare/avere: Dockerfile, nginx.conf, fly.toml
+per njdealsandclicks-proxy
