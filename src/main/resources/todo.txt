@@ -8,7 +8,4 @@ Spring Boot: spring-security + jwt
 Frontend: salva il token in localStorage o cookie httpOnly
 
 
-- x RateLimitAndCacheFilter e CachingHttpServletResponseWrapper: 
-✏️ Aggiungi configurabilità (@Value o .properties) per limiti, TTL, IP esclusi.
-📊 Salva IP sospetti su DB per analisi.
-🛡️ Estendi rate limit anche a POST e PUT se servisse.
+- inserire rate limiting su Fly.io
