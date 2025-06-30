@@ -22,6 +22,7 @@ public class OriginHeaderFilter extends OncePerRequestFilter {
     private String activeProfile;
 
     private static final List<String> ALLOWED_ORIGINS = List.of(
+        "https://njdealsandclicks.com",
         "https://www.njdealsandclicks.com",
         "http://localhost:5173"
     );
