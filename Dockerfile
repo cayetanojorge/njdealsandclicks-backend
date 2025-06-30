@@ -19,4 +19,4 @@ COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
 EXPOSE 8080
 
 # Esegui l'app
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "/app.jar"]
