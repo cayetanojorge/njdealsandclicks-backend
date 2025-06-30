@@ -4,6 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Component
 @Order(2)
 public class RateLimitAndCacheFilter extends OncePerRequestFilter {
@@ -48,7 +51,7 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
                 } else {
                     counter.count++;
                     if (counter.count == MAX_REQUESTS_PER_IP + 1) {
-                        System.out.println("BLOCKED IP: " + clientIp + " - User-Agent: " + userAgent);
+                        log.warn("BLOCKED IP: {} - User-Agent: {}", clientIp, userAgent);
                     }
                     if (counter.count > MAX_REQUESTS_PER_IP) {
                         response.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded");
