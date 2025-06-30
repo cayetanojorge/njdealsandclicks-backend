@@ -16,7 +16,7 @@ public interface PriceHistoryRepository extends JpaRepository<PriceHistory, UUID
     /* JPA mi crea automatico questa query grazie a parola chiave 'findBy' e poi 'ProductId' entità per filtrare */
     List<PriceHistory> findByProductId(UUID productId);
     
-    @Query("SELECT ph FROM PriceHistory ph WHERE ph.product.publicId = :productPublicId")
+    @Query("SELECT ph FROM PriceHistory ph WHERE ph.product.publicId = :productPublicId ORDER BY ph.recordedAt DESC")
     List<PriceHistory> findByProductPublicId(@Param("productPublicId") String productPublicId);
 
     @Modifying // Indica che questa è un'operazione di modifica (non solo lettura).
