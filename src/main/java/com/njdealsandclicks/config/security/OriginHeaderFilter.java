@@ -43,7 +43,7 @@ public class OriginHeaderFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (origin != null && ALLOWED_ORIGINS.contains(origin)) {
+            if (origin == null && ALLOWED_ORIGINS.contains(origin)) {
                 filterChain.doFilter(request, response); // solo da dominio valido
                 return;
             }
