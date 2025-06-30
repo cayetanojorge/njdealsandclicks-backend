@@ -38,9 +38,8 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
         String clientIp = request.getRemoteAddr();
         String userAgent = request.getHeader("User-Agent");
 
-        // Rate limit e cache solo su API pubbliche GET/HEAD
-        if ((HttpMethod.GET.matches(method) || HttpMethod.HEAD.matches(method)) && path.startsWith("/api/public/")) {
-            // 1. Rate limiting
+        if (path.startsWith("/api/public/")) {
+            // 1. Rate limiting su qualunque metodo
             RequestCounter counter = ipRequestCounts.computeIfAbsent(clientIp, k -> new RequestCounter());
             synchronized (counter) {
                 long now = System.currentTimeMillis();
@@ -58,8 +57,8 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
                 }
             }
 
-            // 2. Caching solo per /products (anche con query string)
-            if (path.startsWith("/api/public/products")) {
+            // 2. Cache solo su /products + GET (anche con query string)
+            if (HttpMethod.GET.matches(method) && path.startsWith("/api/public/products")) {
                 String key = path + "?" + (request.getQueryString() != null ? request.getQueryString() : "");
                 CachedResponse cached = cache.get(key);
                 if (cached != null && Instant.now().isBefore(cached.expiry)) {
@@ -70,11 +69,10 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                // Avvolgi la response
                 CachingHttpServletResponseWrapper wrapper = new CachingHttpServletResponseWrapper(response);
                 filterChain.doFilter(request, wrapper);
 
-                if (wrapper.getStatus() == HttpServletResponse.SC_OK) {
+                if (wrapper.getStatus() == HttpServletResponse.SC_OK) { // if get 200 ok -> cache
                     String body = wrapper.getContent();
                     response.setHeader("Cache-Control", "public, max-age=" + CACHE_TTL_SECONDS);
                     cache.put(key, new CachedResponse(body, Instant.now().plusSeconds(CACHE_TTL_SECONDS)));
