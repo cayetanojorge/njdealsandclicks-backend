@@ -73,13 +73,25 @@ public class RateLimitAndCacheFilter extends OncePerRequestFilter {
                 }
 
                 CachingHttpServletResponseWrapper wrapper = new CachingHttpServletResponseWrapper(response);
-                filterChain.doFilter(request, wrapper);
+                try {
+                    filterChain.doFilter(request, wrapper);
+                } catch (Exception e) {
+                    e.printStackTrace(); // oppure loggalo con logger
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error occurred");
+                    return;
+                }
 
-                if (wrapper.getStatus() == HttpServletResponse.SC_OK) { // if get 200 ok -> cache
-                    String body = wrapper.getContent();
-                    response.setHeader("Cache-Control", "public, max-age=" + CACHE_TTL_SECONDS);
+                String body = wrapper.getContent();
+                response.setStatus(wrapper.getStatus());
+                response.setContentType("application/json"); // oppure copia dinamicamente se serve
+                response.setHeader("Cache-Control", "public, max-age=" + CACHE_TTL_SECONDS);
+                response.getWriter().write(body);
+
+                // solo se è 200, allora salvi in cache
+                if (wrapper.getStatus() == HttpServletResponse.SC_OK) {
                     cache.put(key, new CachedResponse(body, Instant.now().plusSeconds(CACHE_TTL_SECONDS)));
                 }
+                
                 return;
             }
         }
