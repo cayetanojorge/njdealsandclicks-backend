@@ -1,13 +1,19 @@
 TODO
 
 - DOMANI (quando avrai utenti registrati o funzionalità sensibili):
-Implementa JWT Authentication
+  ✅ Implementa JWT Authentication
+    - Backend: Spring Boot (spring-security + jjwt / jose4j / nimbus-jose-jwt)
+    - Configura rotte sicure per /api/user/** e simili
+    - Usa filter per validare il token in ogni richiesta
+    - Crea endpoint: /auth/register, /auth/login (restituisce JWT), /auth/refresh (se serve)
+  
+  ✅ Frontend:
+    - Salva il token JWT in localStorage (o in cookie httpOnly se serve maggiore sicurezza)
+    - Aggiungi il token nell’Authorization header (Bearer <token>) in ogni richiesta autenticata
+    - Gestisci scadenza token e logout automatico
 
-Spring Boot: spring-security + jwt
-
-Frontend: salva il token in localStorage o cookie httpOnly
-
-
-- inserire rate limiting su Fly.io:
-da modificare/avere: Dockerfile, nginx.conf, fly.toml
-per njdealsandclicks-proxy
+- Inserire rate limiting su Fly.io:
+  ✅ Configura nginx come reverse proxy con limit_req per IP
+    - Modifica/aggiungi: Dockerfile, nginx.conf, fly.toml
+    - Servizio: `njdealsandclicks-proxy`
+    - Definisci burst e limite/s (es. 10 richieste/s con burst 20 per IP)
