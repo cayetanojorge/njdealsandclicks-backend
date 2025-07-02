@@ -12,8 +12,38 @@ TODO
     - Aggiungi il token nell’Authorization header (Bearer <token>) in ogni richiesta autenticata
     - Gestisci scadenza token e logout automatico
 
+
 - Inserire rate limiting su Fly.io:
   ✅ Configura nginx come reverse proxy con limit_req per IP
     - Modifica/aggiungi: Dockerfile, nginx.conf, fly.toml
     - Servizio: `njdealsandclicks-proxy`
     - Definisci burst e limite/s (es. 10 richieste/s con burst 20 per IP)
+
+
+- QUANDO IL BACKEND SARÀ PRONTO AL DEPLOY STABILE:
+  ✅ Opzione A - Google Cloud Run (consigliata se vuoi scalabilità automatica, niente manutenzione):
+    - Scrivi Dockerfile ottimizzato per Spring Boot (con JAR fat o native image GraalVM se vuoi avvio istantaneo)
+    - Registra account Google Cloud e crea un progetto
+    - Abilita Cloud Run API
+    - Installa e configura `gcloud CLI`
+    - Builda e pusha immagine backend su Google Container Registry (GCR) o Artifact Registry
+    - Esegui `gcloud run deploy` scegliendo regione `europe-west3` (Francoforte)
+    - Configura:
+        - accesso pubblico (no autenticazione richiesta)
+        - 512MB RAM, 1 vCPU
+        - max instances: 1–2 (per evitare esplosione costi)
+    - (Opzionale) Aggiungi cron job su Vercel o servizio esterno per pingare e prevenire cold start
+  ✅ Opzione B - Oracle Cloud Free Tier (consigliata se vuoi controllo totale a costo zero):
+    - Registra account Oracle Cloud con dati reali e verifica identità
+    - Crea una Compute Instance ARM gratuita (`VM.Standard.A1.Flex`)
+    - Configura: 1 OCPU + 2 o 4 GB RAM
+    - Abilita porte pubbliche (es. 8080) in regole di sicurezza
+    - Connettiti via SSH
+    - Installa Docker e Java nella VM
+    - Esegui Spring Boot come container o JAR standalone
+    - Aggiungi systemd service o script avvio automatico
+    - (Opzionale) Proteggi VM con fail2ban o firewall base (UFW)
+  ❗️In entrambi i casi:
+    - Assicurati che il backend NON dipenda da filesystem locale o DB locale (usa solo Supabase o esterni)
+    - Verifica che tutte le rotte rispondano correttamente da Vercel → backend
+    - Aggiorna frontend per usare il nuovo dominio backend (Cloud Run URL o IP Oracle)
