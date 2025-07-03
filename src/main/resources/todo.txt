@@ -1,5 +1,7 @@
 TODO
 
+- fare struttura per blog: tabelle e come relazionare blog a prodotti menzionati nell'articolo
+
 - DOMANI (quando avrai utenti registrati o funzionalità sensibili):
   ✅ Implementa JWT Authentication
     - Backend: Spring Boot (spring-security + jjwt / jose4j / nimbus-jose-jwt)
@@ -13,7 +15,7 @@ TODO
     - Gestisci scadenza token e logout automatico
 
 
-- Inserire rate limiting su Fly.io:
+- Inserire rate limiting su Fly.io (evitare mutli richieste da stesso ip e scraping, evita aumento costo fly io):
   ✅ Configura nginx come reverse proxy con limit_req per IP
     - Modifica/aggiungi: Dockerfile, nginx.conf, fly.toml
     - Servizio: `njdealsandclicks-proxy`
