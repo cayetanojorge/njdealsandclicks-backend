@@ -93,7 +93,8 @@ TODO
            - Rimuovere manualmente i riferimenti o disattivare (es. isAvailable = false)
       ➤ (Futuro) Passare a entità ponte con campo deletedAt per gestione soft delete
 
-- ✅ Implementare Soft Delete e gestione sicura delle relazioni critiche (Product, Category, Article)
+- ✅ Implementare Soft Delete (coem fatto in entity User e Article isDeleted isActive deleted_at deactivated_at)
+  e gestione sicura delle relazioni critiche (Product, Category, Article)
   ❗ Evita cancellazioni fisiche di entità referenziate (Product, Category) per non rompere integrità delle relazioni (Newsletter, Article, ecc.)
   ✅ Passaggi:
   Aggiungi campo is_deleted (boolean, default false) o deleted_at (timestamp) alle entità Product, Category, Article, ecc.
