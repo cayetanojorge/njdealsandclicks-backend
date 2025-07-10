@@ -78,3 +78,37 @@ TODO
     . record newsletter, allora eliminato tutte record in entrambi tab newsletter_... che gli fanno riferimento
     . record product, eliminato riferimento a tale prodotto in tabella newsletter_product
     . record category, eliminato riferimento a tale prodotto in tabella newsletter_category
+  così anche per article_product, quando elimino prodotto, se c'è record in tale tabella allora eliminata
+  (però come fare per tracciare/avvisare a utente che tale prodotto/categoria che voleva seguire non esiste più?
+   o come fare a controllare che se articolo che faceva riferimento a tale prodotto eliminato me ne accorga così da eliminare o modificare articolo?
+   forse meglio non mettere on delete cascade?)
+  soluzione:
+  -> Implementare gestione sicura della cancellazione di Product/Category:
+      ➤ Evitare ON DELETE CASCADE automatico nei join @ManyToMany
+      ➤ Prima di cancellare, verificare se il record è referenziato da Newsletter o Article
+        boolean isUsedInNewsletter = newsletterRepository.existsByProductsContains(product);
+        boolean isUsedInArticle = articleRepository.existsByProductsContains(product);
+      ➤ In caso positivo:
+           - Notificare utente/admin
+           - Rimuovere manualmente i riferimenti o disattivare (es. isAvailable = false)
+      ➤ (Futuro) Passare a entità ponte con campo deletedAt per gestione soft delete
+
+- ✅ Implementare Soft Delete e gestione sicura delle relazioni critiche (Product, Category, Article)
+  ❗ Evita cancellazioni fisiche di entità referenziate (Product, Category) per non rompere integrità delle relazioni (Newsletter, Article, ecc.)
+  ✅ Passaggi:
+  Aggiungi campo is_deleted (boolean, default false) o deleted_at (timestamp) alle entità Product, Category, Article, ecc.
+  Modifica la logica di eliminazione in service:
+  Invece di repository.delete(...), esegui setIsDeleted(true) o setDeletedAt(...)
+  Filtra nei repository solo gli elementi attivi (is_deleted = false)
+  Non utilizzare ON DELETE CASCADE nelle tabelle intermedie (newsletter_product, article_product, ecc.)
+  💡 Controlli preventivi prima di eliminare Product o Category:
+    boolean usedInNewsletter = newsletterRepository.existsByProductsContains(product);
+    boolean usedInArticle = articleRepository.existsByProductsContains(product);
+  ➡ In caso positivo:
+  Mostrare avviso/admin o log
+  Rimuovere manualmente i riferimenti oppure disattivare (isAvailable = false)
+  📌 Benefici:
+  Maggiore controllo sulle dipendenze
+  Nessuna perdita accidentale di dati
+  Tracciabilità e rollback più semplice
+  📅 Tempistica: prima di andare live o alla prima gestione massiva di prodotti/categorie
