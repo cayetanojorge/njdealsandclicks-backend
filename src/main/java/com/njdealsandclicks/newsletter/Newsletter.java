@@ -39,29 +39,27 @@ public class Newsletter extends BaseEntity{
     private Boolean generalNewsletter = false; // true se iscrizione tutti prodotti, default false
 
     // ora possibilità a più prodotti - creera' una tabella newsletter_product(newsletter_id, product_id)
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
         name = "newsletter_product",
         joinColumns = @JoinColumn(name = "newsletter_id"),
         inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private List<Product> products;
-
     
     /*
     @ManyToMany con categories:
     Permette a un utente di iscriversi a più categorie.
-    Hibernate creerà una tabella di join intermedia chiamata newsletter_product, come specificato con @JoinTable. Questa tabella avrà due colonne: newsletter_id, product_id
+    Hibernate creerà una tabella di join intermedia chiamata newsletter_product, come specificato con @JoinTable.
+    Questa tabella avrà due colonne: newsletter_id, product_id
     Questa soluzione è scalabile perché supporta l'aggiunta di nuove categorie senza dover modificare la struttura delle tabelle.
-    PERSIST: Crea nuovi record nella tabella di join newsletter_category quando aggiungi categorie a una newsletter.
-    MERGE: Sincronizza le modifiche a Newsletter con la tabella di join.
     */
     // quando elimino record in newsletter voglio che si elimino record in tabella newsletter_category, 2 modi:
     //   . metodo 1: in service prima di eliminare newsletter, recuperare i record della tab newsletter_category far clear e poi eliminare record in newsletter
     //   . metodo 2: in repository con query personalizzata.
     // se numero record in newsletter_category riferito a certa newsletter è limintato allora meglio metodo 1,
     // se invece abbiamo newsletter a cui associato molte categorie, allora meglio metodo 2, piu' veloce, evita caricare entita' in memoria
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
         name = "newsletter_category",
         joinColumns = @JoinColumn(name = "newsletter_id"),
