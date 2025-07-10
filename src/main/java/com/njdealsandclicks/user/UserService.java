@@ -145,7 +145,9 @@ public class UserService {
     @Transactional
     public void deleteUser(String publicId) {
         User user = getUserByPublicId(publicId);
-        userRepository.deleteById(user.getId());
+        user.setIsActive(false);
+        user.setDeactivatedAt(ZonedDateTime.now(ZoneOffset.UTC));
+        // userRepository.deleteById(user.getId());
     }
 
 }
