@@ -205,6 +205,11 @@ public class ProductService {
     @Transactional
     public void deleteProduct(String publicId) {
         Product product = getProductByPublicId(publicId);
+
+        // prima elimino referenze al record eliminando i record da price history
+        product.getPriceHistories().clear(); // oppure priceHistoryRepository.deleteByProduct(product);
+        
+        // poi posso procedere ad eliminare a eliminare il prodotto
         // productRepository.delete(getProductById(id));
         productRepository.deleteById(product.getId());
     }
