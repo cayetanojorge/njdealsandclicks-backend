@@ -49,3 +49,32 @@ TODO
     - Assicurati che il backend NON dipenda da filesystem locale o DB locale (usa solo Supabase o esterni)
     - Verifica che tutte le rotte rispondano correttamente da Vercel → backend
     - Aggiorna frontend per usare il nuovo dominio backend (Cloud Run URL o IP Oracle)
+
+- 🔄 TODO FUTURO: Sostituire @ManyToMany con entità ponte (es. NewsletterProduct, ArticleProduct)
+  Attualmente stai usando @ManyToMany per mappare newsletter → prodotti e articoli → prodotti.
+  Quando il progetto evolverà, valuta di passare a entità intermedie dedicate per ottenere:
+  maggiore flessibilità (es. aggiungere campi come subscribed_at, priority, note, mercato ecc.)
+  controllo totale su creazione/modifica/eliminazione
+  performance migliorata con indici mirati
+  📌 Priorità: media
+  📅 Tempistica: quando inizierai ad avere iscrizioni utenti reali o blog attivi in più mercati
+
+- ✅ Inizializzare gestione schema DB con Flyway (migrazioni versionate)
+  Attualmente stai usando spring.jpa.hibernate.ddl-auto=update, ma per un'app solida e scalabile è meglio mantenere lo schema con migrazioni esplicite.
+  ✅ Passi:
+  Aggiungi dipendenza Flyway (flyway-core) nel backend
+  Disattiva ddl-auto (validate o none) in application.yml
+  Crea cartella src/main/resources/db/migration
+  Crea file V1__init_schema.sql con lo stato attuale delle tabelle
+  Usa Flyway per ogni modifica futura (es. V2__add_slug_to_article.sql)
+  📌 Benefici:
+  Gestione tracciabile e sicura dello schema DB
+  Allineamento automatico tra ambienti dev/test/prod
+  Compatibile con Supabase (PostgreSQL)
+  📅 Tempistica: Subito, prima che il progetto cresca troppo e sia difficile esportare lo schema corrente
+  --> USO:
+  così posso creare in tabella intermedia newsletter_product e newsletter_category il ON DELETE CASCADE a id newsletter e id product.
+  così in caso eliminato:
+    . record newsletter, allora eliminato tutte record in entrambi tab newsletter_... che gli fanno riferimento
+    . record product, eliminato riferimento a tale prodotto in tabella newsletter_product
+    . record category, eliminato riferimento a tale prodotto in tabella newsletter_category
