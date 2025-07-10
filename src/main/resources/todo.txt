@@ -113,3 +113,18 @@ TODO
   Nessuna perdita accidentale di dati
   Tracciabilità e rollback più semplice
   📅 Tempistica: prima di andare live o alla prima gestione massiva di prodotti/categorie
+
+- 📚 Implementare suggerimento "Articoli Simili" nel frontend
+  ➤ Obiettivo: mentre un utente legge un articolo, mostrare un elenco di articoli simili per aumentare engagement e tempo sul sito.
+  ✅ Logica Backend:
+    Restituire articoli simili tramite endpoint dedicato:
+      GET /api/articles/{publicId}/related
+    Criteri consigliati:
+      .Match su tags (con tags && :currentTags in PostgreSQL)
+      .Match su categorie dei prodotti associati all’articolo corrente
+      .(Futuro) Match combinato o ranking per rilevanza
+  ✅ Frontend:
+    Integra sezione "Articoli Consigliati" sotto o accanto all’articolo
+    Mostra titolo, immagine, breve excerpt e link
+  📌 Priorità: media
+  📅 Tempistica: quando hai almeno 5–10 articoli pubblicati per categoria o tag
