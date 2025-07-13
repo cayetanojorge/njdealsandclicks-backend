@@ -1,5 +1,6 @@
 package com.njdealsandclicks.product;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -186,7 +187,8 @@ public class ProductService {
         product.setRating(productUpdateDTO.getRating());
         product.setReviewCount(productUpdateDTO.getReviewCount());
         product.setCategory(category);
-        product.setUpdatedAt(dateUtil.getCurrentDateTime());
+        ZonedDateTime currentDateTime = dateUtil.getCurrentDateTime();
+        product.setUpdatedAt(currentDateTime);
         
         Product savedProduct = productRepository.save(product);
 
@@ -194,7 +196,7 @@ public class ProductService {
         if(!oldPrice.equals(productUpdateDTO.getCurrentPrice())) {
             PriceHistory priceHistory = new PriceHistory();
             priceHistory.setPrice(productUpdateDTO.getCurrentPrice());
-            priceHistory.setRecordedAt(dateUtil.getCurrentDateTime());
+            priceHistory.setRecordedAt(currentDateTime);
             priceHistory.setProduct(savedProduct);
             priceHistoryService.createPriceHistory(priceHistory);
         }
