@@ -120,12 +120,18 @@ category:
       slug: "proiettori"
       isActive: true
       displayOrder: 3
+    - name: Microfoni e Audio
+      description: "Microfoni USB, cuffie e accessori per registrazione, streaming e podcast"
+      imageUrl: "https://example.com/images/microfoni-audio.jpg"
+      slug: "microfoni-audio"
+      isActive: true
+      displayOrder: 4
     - name: Accessori Multimedia
       description: "Accessori per dispositivi multimedia"
       imageUrl: "https://example.com/images/accessori-informatica.jpg"
       slug: "accessori-multimedia"
       isActive: true
-      displayOrder: 4
+      displayOrder: 5
 
   - name: Fotografia e Video
     description: "Fotocamere, videocamere e accessori per professionisti e appassionati"
