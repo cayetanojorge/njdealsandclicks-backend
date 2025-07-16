@@ -128,3 +128,45 @@ TODO
     Mostra titolo, immagine, breve excerpt e link
   📌 Priorità: media
   📅 Tempistica: quando hai almeno 5–10 articoli pubblicati per categoria o tag
+
+
+
+-------- attivare cambio market in sito --------
+- utente sceglie mercato da bottone un frontend
+➕ Permettere all’utente di cambiare mercato
+📌 Obiettivo: mostrare selettore paese (con bandiera), salvare scelta e reindirizzare alla pagina corrispondente
+Backend:
+ . Aggiungi campo is_active in entità Country
+ . Esporre endpoint /api/available-countries
+ . Restituire bandiera, codice, nome, lingua, ecc.
+Frontend (SvelteKit):
+ . All’avvio, carica mercati attivi via /api/available-countries
+ . Mostra selettore con bandierina e codice (es. 🇮🇹 IT)
+ . Al cambio paese, aggiorna localStorage e naviga a /${country}/...
+ . Tutte le pagine usano params.country per fetch filtrato
+📅 Tempistica: Subito, per rendere il sito multi-market e pronto al traffico
+
+- product page:
+➕ Filtrare prodotti per mercato nella pagina /products
+📌 Obiettivo: mostrare solo i prodotti del mercato selezionato
+Backend:
+. Aggiungi findAllByCountry_CodeAndIsDeletedFalse(String) in ProductRepository
+. Aggiungi getAllByCountry(String) in ProductService
+. Aggiungi endpoint /api/products?country=XX
+Frontend (SvelteKit):
+. Crea/aggiorna routing /[country]/products
+. In load(), chiama /api/products?country=XX
+. Mostra ProductDTO solo per paese selezionato
+
+- article
+➕ Gestione prodotti per mercato selezionato
+📌 Obiettivo: filtrare prodotti collegati a un articolo in base al mercato (IT, UK, ES, US)
+Backend:
+. Associa ogni Product a un Country
+. Aggiungi getDTOsByCountry(List<Product>, countryCode) in ProductService
+. Modifica mapToArticleDTO(Article, countryCode) per filtrare prodotti
+. Endpoint REST /api/article/{publicId}?country=IT accetta country
+Frontend (SvelteKit):
+. Adotta struttura URL /[country]/blog/[publicId]/[slug]
+. In load(), passa countryCode come query param
+. Usa store globale (es. marketStore) se serve memorizzare mercato attivo
