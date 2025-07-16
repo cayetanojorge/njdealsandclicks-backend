@@ -1,6 +1,6 @@
 package com.njdealsandclicks.article;
 
-import java.time.ZoneId;
+// import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -13,7 +13,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.PrePersist;
+// import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +31,7 @@ import lombok.EqualsAndHashCode;
 @Table(name = "article",
     indexes = {
         @Index(name = "idx_article_public_id", columnList = "public_id"),
+        @Index(name = "idx_article_slug", columnList = "slug"),
         @Index(name = "idx_article_published_at", columnList = "published_at")
     }
 )
@@ -39,12 +40,12 @@ import lombok.EqualsAndHashCode;
 public class Article extends BaseEntity {
 
     @NotBlank
-    @Column(name = "slug", nullable = false)
-    private String slug;
-
-    @NotBlank
     @Column(name = "title", nullable = false)
     private String title;
+
+    @NotBlank
+    @Column(name = "slug", nullable = false, unique = true)
+    private String slug;
 
     /*
     excerpt è un riassunto breve del contenuto del l’articolo, usato per:
@@ -74,7 +75,19 @@ public class Article extends BaseEntity {
     @Column(name = "is_published", nullable = false)
     private Boolean isPublished = true; // per gestire articoli in bozza, mostrare nel frontend solo quando is_published = true
 
-    @Column(name = "published_at", nullable = false, updatable = false)
+    /*
+    * createdAt     → data di creazione dell'articolo (per tracciamento interno e ordinamento)
+    * updatedAt     → data ultima modifica (utile per badge "aggiornato", SEO, controllo versioni)
+    * publishedAt   → data di pubblicazione reale (mostrata nel frontend e usata per ordinamento/SEO)
+    */
+    @NotNull
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private ZonedDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = true, updatable = true)
+    private ZonedDateTime updatedAt;
+
+    @Column(name = "published_at", nullable = true, updatable = true)
     private ZonedDateTime publishedAt;
 
     @NotNull
@@ -100,8 +113,8 @@ public class Article extends BaseEntity {
     private List<Product> products;
 
 
-    @PrePersist
-    protected void onCreate() {
-        this.publishedAt = ZonedDateTime.now(ZoneId.of("UTC"));
-    }
+    // @PrePersist
+    // protected void onCreate() {
+    //     this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    // }
 }
