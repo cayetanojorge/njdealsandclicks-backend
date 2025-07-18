@@ -44,8 +44,8 @@ public class ArticleController {
         articleService.softDeleteArticle(publicId);
     }
 
-    // @DeleteMapping("/delete/{publicId}")
-    // public void deleteCategory(@PathVariable String publicId) {
-    //     articleService.deleteArticle(publicId);
-    // }
+    @DeleteMapping("/delete/{publicId}")
+    public void deleteCategory(@PathVariable String publicId) {
+        articleService.deleteArticle(publicId);
+    }
 }

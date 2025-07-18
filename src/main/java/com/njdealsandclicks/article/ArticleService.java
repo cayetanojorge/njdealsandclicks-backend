@@ -2,6 +2,7 @@ package com.njdealsandclicks.article;
 
 import java.text.Normalizer;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.dto.article.ArticleCreateUpdateDTO;
 import com.njdealsandclicks.dto.article.ArticleDTO;
+import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.product.ProductService;
 import com.njdealsandclicks.util.DateUtil;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
@@ -48,7 +50,12 @@ public class ArticleService {
         articleDTO.setUpdatedAt(article.getUpdatedAt());
         articleDTO.setPublishedAt(article.getPublishedAt());
         articleDTO.setReadingTimeMinutes(article.getContent().split(" ").length / 200);
-        articleDTO.setProductDTOs(productService.getAllProducts());
+
+        List<String> productPublicIds = new ArrayList<>();
+        for(Product product : article.getProducts()) {
+            productPublicIds.add(product.getPublicId());
+        }
+        articleDTO.setProductDTOs(productService.productsToProductDTOs(productService.getProductsByPublicIds(productPublicIds)));
         return articleDTO;
     }
 
@@ -85,7 +92,8 @@ public class ArticleService {
 
     @Transactional(readOnly = true)
     public Article getArticleBySlug(String slug) {
-        return articleRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Article with slug " + slug + " not found"));
+        // return articleRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Article with slug " + slug + " not found"));
+        return articleRepository.findBySlug(slug);
     }
 
     @Transactional
@@ -145,11 +153,11 @@ public class ArticleService {
         article.setDeletedAt(dateUtil.getCurrentDateTime());
     }
 
-    // @Transactional
-    // public void deleteArticle(String publicId) {
-    //     Article currency = getArticleByPublicId(publicId);
-    //     articleRepository.deleteById(currency.getId());
-    // }
+    @Transactional
+    public void deleteArticle(String publicId) {
+        Article currency = getArticleByPublicId(publicId);
+        articleRepository.deleteById(currency.getId());
+    }
 
     private String titleToSlug(String title) {
         return Normalizer.normalize(title, Normalizer.Form.NFD)

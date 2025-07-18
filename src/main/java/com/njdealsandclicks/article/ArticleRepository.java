@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
     Optional<Article> findByPublicId(String publicId);
-    Optional<Article> findBySlug(String slug);
+    Article findBySlug(String slug);
     List<Article> findAllByIsDeletedFalseAndIsPublishedTrue();
 
 
