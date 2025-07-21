@@ -96,6 +96,12 @@ public class ArticleService {
         return articleRepository.findBySlug(slug);
     }
 
+    @Transactional(readOnly = true)
+    public ArticleDTO getArticleDTOBySlug(String slug) {
+        // return articleRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Article with slug " + slug + " not found"));
+        return mapToArticleDTO(getArticleBySlug(slug));
+    }
+
     @Transactional
     public ArticleDTO createArticle(ArticleCreateUpdateDTO articleCreateDTO) {
         String slug = titleToSlug(articleCreateDTO.getTitle());
