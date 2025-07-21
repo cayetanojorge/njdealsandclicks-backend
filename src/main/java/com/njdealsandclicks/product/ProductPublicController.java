@@ -12,7 +12,7 @@ import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 
 
 @RestController
-@RequestMapping("/api/public/products")
+@RequestMapping("/api/public/product")
 public class ProductPublicController {
     
     private final ProductService productService;
