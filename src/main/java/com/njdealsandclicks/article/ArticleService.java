@@ -161,8 +161,8 @@ public class ArticleService {
 
     @Transactional
     public void deleteArticle(String publicId) {
-        Article currency = getArticleByPublicId(publicId);
-        articleRepository.deleteById(currency.getId());
+        Article article = getArticleByPublicId(publicId);
+        articleRepository.deleteById(article.getId());
     }
 
     private String titleToSlug(String title) {
