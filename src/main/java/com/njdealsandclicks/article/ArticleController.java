@@ -40,12 +40,12 @@ public class ArticleController {
     }
 
     @DeleteMapping("/deletesoft/{publicId}")
-    public void softDeleteCategory(@PathVariable String publicId) {
+    public void softDeleteCategory(@PathVariable("publicId") String publicId) {
         articleService.softDeleteArticle(publicId);
     }
 
     @DeleteMapping("/delete/{publicId}")
-    public void deleteCategory(@PathVariable String publicId) {
+    public void deleteCategory(@PathVariable("publicId") String publicId) {
         articleService.deleteArticle(publicId);
     }
 }
