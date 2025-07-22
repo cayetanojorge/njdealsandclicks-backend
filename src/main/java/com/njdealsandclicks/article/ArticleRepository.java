@@ -13,6 +13,15 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     Article findBySlug(String slug);
     List<Article> findAllByIsDeletedFalseAndIsPublishedTrue();
 
+    /*
+    oppure con sql:
+        SELECT a.*
+        FROM article a
+        JOIN article_products ap ON a.id = ap.article_id
+        JOIN product p ON ap.product_id = p.id
+        WHERE p.public_id = :publicId
+     */
+    List<Article> findByProductPublicId(String productPublicId); // per mostrare in pag product details gli articoli dove menziono product
 
     @Query(value = """
         SELECT elem AS available_public_id
