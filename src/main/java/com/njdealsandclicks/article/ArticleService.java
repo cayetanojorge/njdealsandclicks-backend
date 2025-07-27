@@ -4,6 +4,7 @@ import java.text.Normalizer;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.dto.article.ArticleCreateUpdateDTO;
 import com.njdealsandclicks.dto.article.ArticleDTO;
+import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.product.ProductService;
 import com.njdealsandclicks.util.DateUtil;
@@ -163,6 +165,44 @@ public class ArticleService {
     public void deleteArticle(String publicId) {
         Article article = getArticleByPublicId(publicId);
         articleRepository.deleteById(article.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArticleDTO> findRelatedArticlesByArticle(Article article, int maxResults) {
+        // Raccogli categoria da uno dei prodotti,
+        // futuro: considera piu' cagetorie, dato i prodotti in lista
+        String mainCategory = article.getProducts().stream()
+            .map(p -> p.getCategory() != null ? p.getCategory().getName() : null)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
+
+        return articleRepository.findRelatedArticles(
+                article.getPublicId(),
+                article.getTags() != null ? article.getTags() : List.of(),
+                mainCategory,
+                maxResults
+            ).stream()
+            .map(this::mapToArticleDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArticleDTO> findArticlesThatMentionProduct(String productPublicId) {
+        return articleRepository.findPublishedArticlesByProductPublicId(productPublicId)
+            .stream()
+            .map(this::mapToArticleDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<ProductDTO> getRelatedProductsByArticleSlug(String slug, int maxResults) {
+        Article article = getArticleBySlug(slug);
+        return productService.findRelatedProductsByArticle(article, maxResults);
+    }
+
+    public List<ArticleDTO> getRelatedArticlesByArticleSlug(String slug, int maxResults) {
+        Article article = getArticleBySlug(slug);
+        return findRelatedArticlesByArticle(article, maxResults);
     }
 
     private String titleToSlug(String title) {

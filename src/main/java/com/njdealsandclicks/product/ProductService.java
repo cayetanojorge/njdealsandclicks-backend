@@ -1,17 +1,23 @@
 package com.njdealsandclicks.product;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.njdealsandclicks.article.Article;
+import com.njdealsandclicks.article.ArticleService;
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
 import com.njdealsandclicks.country.Country;
 import com.njdealsandclicks.country.CountryService;
+import com.njdealsandclicks.dto.article.ArticleDTO;
 import com.njdealsandclicks.dto.product.ProductCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
@@ -34,17 +40,20 @@ public class ProductService {
     private final CategoryService categoryService;
     // private final CurrencyService currencyService;
     private final CountryService countryService;
+    private final ArticleService articleService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
 
 
     public ProductService(ProductRepository productRepository, PriceHistoryService priceHistoryService, CategoryService categoryService,
-                            /*CurrencyService currencyService*/ CountryService countryService, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
+                            /*CurrencyService currencyService*/ CountryService countryService, ArticleService articleService,
+                            PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.productRepository = productRepository;
         this.priceHistoryService = priceHistoryService;
         this.categoryService = categoryService;
         // this.currencyService = currencyService;
         this.countryService = countryService;
+        this.articleService = articleService;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
@@ -214,5 +223,70 @@ public class ProductService {
         // poi posso procedere ad eliminare a eliminare il prodotto
         // productRepository.delete(getProductById(id));
         productRepository.deleteById(product.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductDTO> findRelatedProductsByArticle(Article article, int maxResults) {
+        
+        // raccogli publicId dei prodotti menzionati
+        List<String> productPublicIds = new ArrayList<>();
+        for (Product product : article.getProducts()) {
+            productPublicIds.add(product.getPublicId());
+        }
+        // prodotti completi dal DB (per avere tag e categoria)
+        List<Product> originalProducts = productRepository.findByPublicIds(productPublicIds);
+
+        // tag combinati
+        Set<String> relatedTags = originalProducts.stream()
+            .map(Product::getTags)
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(Collectors.toSet());
+
+        // prendi una categoria valida tra i prodotti (la prima trovata non-null)
+        // futuro: considera piu' cagetorie, dato i prodotti in lista
+        String mainCategory = originalProducts.stream()
+            .map(p -> p.getCategory() != null ? p.getCategory().getName() : null)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
+
+        return productRepository.findRelatedProducts(
+                productPublicIds,
+                new ArrayList<>(relatedTags),
+                mainCategory,
+                maxResults
+            ).stream()
+            .map(this::mapToProductDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<ArticleDTO> getArticlesThatMentionProduct(String publicId) {
+        return articleService.findArticlesThatMentionProduct(publicId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getRelatedProducts(String publicId, int maxResults) {
+        // Recupera il prodotto originale
+    Product originalProduct = productRepository.findByPublicId(publicId)
+        .orElseThrow(() -> new RuntimeException("Product not found: " + publicId));
+
+    // Tag del prodotto
+    List<String> tags = originalProduct.getTags() != null ? originalProduct.getTags() : List.of();
+
+    // Categoria del prodotto
+    String categoryName = originalProduct.getCategory() != null
+        ? originalProduct.getCategory().getName()
+        : null;
+
+    // Query per trovare prodotti correlati (escludendo quello attuale)
+    return productRepository.findRelatedProducts(
+            List.of(publicId), // excludeIds
+            tags,
+            categoryName,
+            maxResults
+        ).stream()
+        .map(this::mapToProductDTO)
+        .collect(Collectors.toList());
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.njdealsandclicks.dto.article.ArticleDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 
@@ -34,5 +35,15 @@ public class ProductPublicController {
     @GetMapping("/category/{categoryPublicId}")
     public List<ProductDTO> getProductsByCategoryId(@PathVariable("categoryPublicId") String categoryPublicId) {
         return productService.getProductDTOsByCategoryId(categoryPublicId);
+    }
+
+    @GetMapping("/{publicId}/mentioned-in-articles")
+    public List<ArticleDTO> getArticlesThatMentionProduct(@PathVariable("publicId") String publicId) {
+        return productService.getArticlesThatMentionProduct(publicId);
+    }
+
+    @GetMapping("/{publicId}/related-products")
+    public List<ProductDTO> getRelatedProducts(@PathVariable("publicId") String publicId) {
+        return productService.getRelatedProducts(publicId, 6); // es: massimo 6 correlati
     }
 }
