@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-// import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.query.Param;
 
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
     Optional<Article> findByPublicId(String publicId);
@@ -21,7 +21,7 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
         AND a.isDeleted = false
         AND a.isPublished = true
     """)
-    List<Article> findPublishedArticlesByProductPublicId(String productPublicId); // per mostrare in pag product details gli articoli dove menziono product
+    List<Article> findPublishedArticlesByProductPublicId(@Param("productPublicId") String productPublicId); // per mostrare in pag product details gli articoli dove menziono product
 
     @Query(value = """
         SELECT elem AS available_public_id

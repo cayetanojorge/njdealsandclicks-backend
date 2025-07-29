@@ -58,20 +58,20 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         WHERE p.public_id NOT IN :excludeIds
         AND (
             EXISTS (
-            SELECT 1
-            FROM unnest(:tags) AS tag
-            WHERE tag = ANY(p.tags)
-            )
+                    SELECT 1
+                    FROM jsonb_array_elements_text(p.tags) t
+                    WHERE t IN :tags
+                )
             OR c.name = :categoryName
         )
         ORDER BY p.review_count DESC
         LIMIT :limit
         """, nativeQuery = true)
     List<Product> findRelatedProducts(
-        List<String> excludeIds,
-        List<String> tags,
-        String categoryName,
-        int limit
+        @Param("excludeIds") List<String> excludeIds,
+        @Param("tags") List<String> tags,
+        @Param("categoryName") String categoryName,
+        @Param("limit") int limit
     );
 
     /* per le query sui tags e features che sono json in db postgresql */

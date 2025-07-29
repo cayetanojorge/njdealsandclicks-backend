@@ -260,7 +260,9 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<ProductDTO> findRelatedProductsByProduct(Product product, int maxResults) {
         // Tag del prodotto
-        List<String> tags = product.getTags() != null ? product.getTags() : List.of();
+        List<String> tags = product.getTags() != null && !product.getTags().isEmpty()
+            ? product.getTags() 
+            : List.of();
 
         // Categoria del prodotto
         String categoryName = product.getCategory() != null
