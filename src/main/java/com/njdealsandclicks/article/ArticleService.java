@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.dto.article.ArticleCreateUpdateDTO;
 import com.njdealsandclicks.dto.article.ArticleDTO;
-import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.product.ProductService;
 import com.njdealsandclicks.util.DateUtil;
@@ -193,16 +192,6 @@ public class ArticleService {
             .stream()
             .map(this::mapToArticleDTO)
             .collect(Collectors.toList());
-    }
-
-    public List<ProductDTO> getRelatedProductsByArticleSlug(String slug, int maxResults) {
-        Article article = getArticleBySlug(slug);
-        return productService.findRelatedProductsByArticle(article, maxResults);
-    }
-
-    public List<ArticleDTO> getRelatedArticlesByArticleSlug(String slug, int maxResults) {
-        Article article = getArticleBySlug(slug);
-        return findRelatedArticlesByArticle(article, maxResults);
     }
 
     private String titleToSlug(String title) {

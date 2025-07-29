@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.njdealsandclicks.dto.article.ArticleDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
+import com.njdealsandclicks.recommendation.RecommendationService;
 
 
 @RestController
@@ -17,9 +18,11 @@ import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 public class ProductPublicController {
     
     private final ProductService productService;
+    private final RecommendationService recommendationService;
 
-    public ProductPublicController(ProductService productService) {
+    public ProductPublicController(ProductService productService, RecommendationService recommendationService) {
         this.productService = productService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/")
@@ -37,13 +40,16 @@ public class ProductPublicController {
         return productService.getProductDTOsByCategoryId(categoryPublicId);
     }
 
+    // ----------- per pagina product details -----------
     @GetMapping("/{publicId}/mentioned-in-articles")
     public List<ArticleDTO> getArticlesThatMentionProduct(@PathVariable("publicId") String publicId) {
-        return productService.getArticlesThatMentionProduct(publicId);
+        return recommendationService.getArticlesThatMentionProduct(publicId);
     }
 
     @GetMapping("/{publicId}/related-products")
-    public List<ProductDTO> getRelatedProducts(@PathVariable("publicId") String publicId) {
-        return productService.getRelatedProducts(publicId, 6); // es: massimo 6 correlati
+    public List<ProductDTO> getRelatedProductsByProductPublicId(@PathVariable("publicId") String publicId) {
+        return recommendationService.getRelatedProductsByProductPublicId(publicId, 6); // es: massimo 6 correlati
     }
+    // ----------- ----------- ----------- ----------- -----------
+
 }

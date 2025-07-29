@@ -9,15 +9,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.njdealsandclicks.dto.article.ArticleDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
+import com.njdealsandclicks.recommendation.RecommendationService;
 
 @RestController
 @RequestMapping("/api/public/article")
 public class ArticlePublicController {
     
     private final ArticleService articleService;
+    private final RecommendationService recommendationService;
 
-    public ArticlePublicController(ArticleService articleService) {
+
+    public ArticlePublicController(ArticleService articleService, RecommendationService recommendationService) {
         this.articleService = articleService;
+        this.recommendationService = recommendationService;
     }
 
     @GetMapping("/")
@@ -30,14 +34,16 @@ public class ArticlePublicController {
         return articleService.getArticleDTOBySlug(slug);
     }
 
+    // ----------- per pagina article details -----------
     @GetMapping("/{slug}/related-products")
     public List<ProductDTO> getRelatedProductsByArticle(@PathVariable("slug") String slug) {
-        return articleService.getRelatedProductsByArticleSlug(slug, 6); // esempio: max 6 prodotti
+        return recommendationService.getRelatedProductsByArticleSlug(slug, 6); // esempio: max 6 prodotti
     }
 
     @GetMapping("/{slug}/related-articles")
     public List<ArticleDTO> getRelatedArticlesByArticle(@PathVariable("slug") String slug) {
-        return articleService.getRelatedArticlesByArticleSlug(slug, 3); // esempio: max 3 articoli
+        return recommendationService.getRelatedArticlesByArticleSlug(slug, 3); // esempio: max 3 articoli
     }
+    // ----------- ----------- ----------- ----------- -----------
 
 }

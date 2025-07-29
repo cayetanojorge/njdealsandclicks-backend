@@ -12,12 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.article.Article;
-import com.njdealsandclicks.article.ArticleService;
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.category.CategoryService;
 import com.njdealsandclicks.country.Country;
 import com.njdealsandclicks.country.CountryService;
-import com.njdealsandclicks.dto.article.ArticleDTO;
 import com.njdealsandclicks.dto.product.ProductCreateUpdateDTO;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.dto.product.ProductDetailsDTO;
@@ -40,20 +38,18 @@ public class ProductService {
     private final CategoryService categoryService;
     // private final CurrencyService currencyService;
     private final CountryService countryService;
-    private final ArticleService articleService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
 
 
     public ProductService(ProductRepository productRepository, PriceHistoryService priceHistoryService, CategoryService categoryService,
-                            /*CurrencyService currencyService*/ CountryService countryService, ArticleService articleService,
+                            /*CurrencyService currencyService*/ CountryService countryService,
                             PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.productRepository = productRepository;
         this.priceHistoryService = priceHistoryService;
         this.categoryService = categoryService;
         // this.currencyService = currencyService;
         this.countryService = countryService;
-        this.articleService = articleService;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
@@ -261,32 +257,24 @@ public class ProductService {
             .collect(Collectors.toList());
     }
 
-    public List<ArticleDTO> getArticlesThatMentionProduct(String publicId) {
-        return articleService.findArticlesThatMentionProduct(publicId);
-    }
-
     @Transactional(readOnly = true)
-    public List<ProductDTO> getRelatedProducts(String publicId, int maxResults) {
-        // Recupera il prodotto originale
-    Product originalProduct = productRepository.findByPublicId(publicId)
-        .orElseThrow(() -> new RuntimeException("Product not found: " + publicId));
+    public List<ProductDTO> findRelatedProductsByProduct(Product product, int maxResults) {
+        // Tag del prodotto
+        List<String> tags = product.getTags() != null ? product.getTags() : List.of();
 
-    // Tag del prodotto
-    List<String> tags = originalProduct.getTags() != null ? originalProduct.getTags() : List.of();
+        // Categoria del prodotto
+        String categoryName = product.getCategory() != null
+            ? product.getCategory().getName()
+            : null;
 
-    // Categoria del prodotto
-    String categoryName = originalProduct.getCategory() != null
-        ? originalProduct.getCategory().getName()
-        : null;
-
-    // Query per trovare prodotti correlati (escludendo quello attuale)
-    return productRepository.findRelatedProducts(
-            List.of(publicId), // excludeIds
-            tags,
-            categoryName,
-            maxResults
-        ).stream()
-        .map(this::mapToProductDTO)
-        .collect(Collectors.toList());
+        // Query per trovare prodotti correlati (escludendo quello attuale)
+        return productRepository.findRelatedProducts(
+                List.of(product.getPublicId()), // excludeIds
+                tags,
+                categoryName,
+                maxResults
+            ).stream()
+            .map(this::mapToProductDTO)
+            .collect(Collectors.toList());
     }
 }
