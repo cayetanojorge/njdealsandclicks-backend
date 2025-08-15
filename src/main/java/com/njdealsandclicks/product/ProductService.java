@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.njdealsandclicks.article.Article;
 import com.njdealsandclicks.category.Category;
@@ -276,6 +277,21 @@ public class ProductService {
                 categoryName,
                 maxResults
             ).stream()
+            .map(this::mapToProductDTO)
+            .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductDTO> searchProducts(String q, int limit) {
+        if (!StringUtils.hasText(q)) return List.of();
+
+        // Normalizza query (trim ecc.)
+        String query = q.trim();
+
+        // Semplice ricerca testuale su name/brand/description + tags
+        List<Product> products = productRepository.searchByText(query, limit);
+
+        return products.stream()
             .map(this::mapToProductDTO)
             .collect(Collectors.toList());
     }

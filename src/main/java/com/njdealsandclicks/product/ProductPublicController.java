@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.njdealsandclicks.dto.article.ArticleDTO;
@@ -51,5 +52,14 @@ public class ProductPublicController {
         return recommendationService.getRelatedProductsByProductPublicId(publicId, 6); // es: massimo 6 correlati
     }
     // ----------- ----------- ----------- ----------- -----------
+
+
+    // ----------- per pagina home search -----------
+    @GetMapping("/search-products")
+    public List<ProductDTO> search(@RequestParam("q") String q, @RequestParam(name="limit", defaultValue = "12") int limit) {
+        return productService.searchProducts(q, limit);        
+    }
+    // ----------- ----------- ----------- ----------- -----------
+
 
 }

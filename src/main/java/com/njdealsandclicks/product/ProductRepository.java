@@ -39,7 +39,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         SELECT elem AS available_public_id
         FROM unnest(CAST(ARRAY[?1] AS text[])) AS elem
         WHERE NOT EXISTS (
-            SELECT 1 FROM category WHERE public_id = elem
+            SELECT 1 FROM product WHERE public_id = elem
         )
         """, nativeQuery = true)
     List<String> filterAvailablePublicIds(@Param("publicIds") List<String> publicIds);
@@ -73,6 +73,24 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
         @Param("categoryName") String categoryName,
         @Param("limit") int limit
     );
+
+    @Query(value = """
+        SELECT p.*
+        FROM product p
+        LEFT JOIN category c ON p.category_id = c.id
+        WHERE 
+            p.name ILIKE CONCAT('%', :q, '%')
+            OR (p.brand IS NOT NULL AND p.brand ILIKE CONCAT('%', :q, '%'))
+            OR (p.description IS NOT NULL AND p.description ILIKE CONCAT('%', :q, '%'))
+            OR EXISTS (
+                SELECT 1
+                FROM jsonb_array_elements_text(p.tags) t
+                WHERE t ILIKE CONCAT('%', :q, '%')
+            )
+        ORDER BY p.review_count DESC NULLS LAST, p.rating DESC NULLS LAST
+        LIMIT :limit
+        """, nativeQuery = true)
+    List<Product> searchByText(@Param("q") String q, @Param("limit") int limit);
 
     /* per le query sui tags e features che sono json in db postgresql */
     // // // Ricerca prodotti che contengono un tag specifico nel JSONB
