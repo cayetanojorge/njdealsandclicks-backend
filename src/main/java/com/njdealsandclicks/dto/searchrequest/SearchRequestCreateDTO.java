@@ -2,8 +2,13 @@ package com.njdealsandclicks.dto.searchrequest;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.njdealsandclicks.util.enums.Market;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -11,11 +16,27 @@ import lombok.Data;
 public class SearchRequestCreateDTO {
     
     @NotBlank
+    @Size(max = 2000)
     private String input;
-    private Integer resultsCount;
+    
+    @Min(0)
+    private Integer resultsCount = 0;
+    
+    @Size(max = 300)
     private String path;
+
+    @Size(max = 300)
     private String ref;
+
+    @Pattern(
+        regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?(Z|[+\\-]\\d{2}:\\d{2})$",
+        message = "clientTs must be ISO-8601, es. 2025-08-15T14:30:00Z"
+    )
     private String clientTs;
+    
+    @NotNull
+    private Market market; // "IT", "ES", "UK", "US"
+
     /*
     ---> clientTs:
     1️⃣ Lo tieni solo come informazione extra

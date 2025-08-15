@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.dto.searchrequest.SearchRequestCreateDTO;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
+import com.njdealsandclicks.util.enums.Market;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -22,32 +23,34 @@ public class SearchRequestService {
     private final SearchRequestRepository searchRequestRepository;
     private final PublicIdGeneratorService publicIdGeneratorService;
 
-    public SearchRequestService(SearchRequestRepository searchRequestRepository, PublicIdGeneratorService publicIdGeneratorService) {
+    public SearchRequestService(SearchRequestRepository searchRequestRepository,
+                                 PublicIdGeneratorService publicIdGeneratorService) {
         this.searchRequestRepository = searchRequestRepository;
         this.publicIdGeneratorService = publicIdGeneratorService;
     }
 
-    /*
-    4) Perché così è meglio
-    Dedup: non riempi il DB con 100 righe uguali; incrementi count.
-    Telemetria utile: resultsCount, path, referrer, acceptLanguage, device, ip → capisci cosa manca e dove.
-    Robusto a proxy/CDN: prendi X-Forwarded-For quando deployerai dietro reverse proxy.
-    Privacy: salvi solo ciò che serve (nessun dato personale). Se aggiungi email in futuro, fallo opt-in e con consenso.
-     */
-
     private String createPublicId() {
-        return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, searchRequestRepository::filterAvailablePublicIds);
+        return publicIdGeneratorService.generateSinglePublicId(
+                PREFIX_PUBLIC_ID,
+                searchRequestRepository::filterAvailablePublicIds
+        );
     }
 
     @Transactional
     public void saveOrBump(SearchRequestCreateDTO dto, HttpServletRequest req) {
         if (dto == null || dto.getInput() == null || dto.getInput().isBlank()) return;
 
+        // Normalizza input e calcola hash
         String normalized = dto.getInput().trim().toLowerCase();
         String hash = sha256(normalized);
 
-        var since = java.time.ZonedDateTime.now(java.time.ZoneId.of("UTC")).minusHours(24);
-        var recentOpt = searchRequestRepository.findTopByQueryHashAndCreatedAtGreaterThanEqualOrderByCreatedAtDesc(hash, since);
+        Market marketEnum = dto.getMarket();
+        ZonedDateTime since = ZonedDateTime.now(ZoneId.of("UTC")).minusHours(24);
+
+        // Cerca duplicati recenti per (market, queryHash)
+        var recentOpt = searchRequestRepository.findLatestByMarketAndQueryHashSince(
+                marketEnum, hash, since
+        );
 
         if (recentOpt.isPresent()) {
             var last = recentOpt.get();
@@ -57,25 +60,38 @@ public class SearchRequestService {
             return;
         }
 
+        int rc = (dto.getResultsCount() == null) ? 0 : Math.max(0, dto.getResultsCount());
+
+        // Nuovo record
         SearchRequest r = new SearchRequest();
         r.setPublicId(createPublicId());
-        r.setInputText(dto.getInput().trim());
+        r.setMarket(marketEnum);
+        r.setInputText(cut(dto.getInput(), 2000));
         r.setUrl(URL_REGEX.matcher(dto.getInput().trim()).matches());
-        r.setUserAgent(req.getHeader("User-Agent"));
-        r.setIpAddress(clientIp(req));
-        r.setAcceptLanguage(req.getHeader("Accept-Language"));
-        r.setDevice(guessDevice(req.getHeader("User-Agent"))); // opzionale, semplice euristica
-        r.setResultsCount(dto.getResultsCount());
-        r.setPath(dto.getPath());
-        r.setReferrer(dto.getRef());
-        r.setStatus("NEW");
+        r.setUserAgent(cut(req.getHeader("User-Agent"), 512));
+        r.setIpAddress(cut(clientIp(req), 100));
+        r.setAcceptLanguage(cut(req.getHeader("Accept-Language"), 100));
+        r.setDevice(cut(guessDevice(req.getHeader("User-Agent")), 120));
+        r.setResultsCount(rc);
+        r.setPath(cut(dto.getPath(), 300));
+        r.setReferrer(cut(dto.getRef(), 300));
+        // r.setStatus(SearchRequestStatus.NEW);
         r.setQueryHash(hash);
+
+        // se vuoi salvare anche clientTs in entity:
+        // r.setClientTs(dto.getClientTs());
+
         searchRequestRepository.save(r);
     }
 
     private String clientIp(HttpServletRequest req) {
-        String h = req.getHeader("X-Forwarded-For");
-        if (h != null && !h.isBlank()) return h.split(",")[0].trim();
+        String[] headers = {
+            "X-Forwarded-For", "CF-Connecting-IP", "X-Real-IP"
+        };
+        for (String h : headers) {
+            String v = req.getHeader(h);
+            if (v != null && !v.isBlank()) return v.split(",")[0].trim();
+        }
         return req.getRemoteAddr();
     }
 
@@ -84,9 +100,11 @@ public class SearchRequestService {
             var md = java.security.MessageDigest.getInstance("SHA-256");
             byte[] d = md.digest(s.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             StringBuilder sb = new StringBuilder();
-            for (byte b: d) sb.append(String.format("%02x", b));
+            for (byte b : d) sb.append(String.format("%02x", b));
             return sb.toString();
-        } catch (Exception e) { return s; }
+        } catch (Exception e) {
+            return s;
+        }
     }
 
     private String guessDevice(String ua) {
@@ -95,5 +113,11 @@ public class SearchRequestService {
         if (x.contains("mobile")) return "mobile";
         if (x.contains("tablet") || x.contains("ipad")) return "tablet";
         return "desktop";
+    }
+
+    private String cut(String s, int max) {
+        if (s == null) return null;
+        s = s.trim();
+        return s.length() <= max ? s : s.substring(0, max);
     }
 }
