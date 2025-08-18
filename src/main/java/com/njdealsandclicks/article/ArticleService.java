@@ -98,6 +98,11 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
+    public Article getArticleWithProductsBySlug(String slug) {
+        return articleRepository.findWithProductsBySlug(slug);
+    }    
+
+    @Transactional(readOnly = true)
     public Article getArticleBySlugAndCountry(String slug, String countryCode) {
         Article article = getArticleBySlug(slug);
         List<Product> products = articleRepository.findProductsBySlugAndCountry(slug, countryCode);

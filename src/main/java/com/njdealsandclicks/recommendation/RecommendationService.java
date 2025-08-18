@@ -30,7 +30,7 @@ public class RecommendationService {
     }
 
     public List<ArticleDTO> getRelatedArticlesByArticleSlug(String slug, int maxResults) {
-        Article article = articleService.getArticleBySlug(slug);
+        Article article = articleService.getArticleWithProductsBySlug(slug);
         return articleService.findRelatedArticlesByArticle(article, maxResults);
     }
 

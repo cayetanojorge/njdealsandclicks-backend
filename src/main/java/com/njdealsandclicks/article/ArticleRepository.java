@@ -15,6 +15,18 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     Article findBySlug(String slug);
     List<Article> findAllByIsDeletedFalseAndIsPublishedTrue();
 
+    // per evitare problema di LazyInitializationException(=prendo oggetto article ma non carica in memoria lista product perche' relazione many quindi e' lazy)
+    @Query("""
+        SELECT DISTINCT a
+        FROM Article a
+        LEFT JOIN FETCH a.products p
+        LEFT JOIN FETCH p.category
+        WHERE a.isDeleted = false
+            AND a.isPublished = true
+            AND a.slug = :slug
+    """)
+    Article findWithProductsBySlug(@Param("slug") String slug);
+
     @Query("""
         SELECT p
         FROM Article a
@@ -65,22 +77,23 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
         LEFT JOIN category c ON p.category_id = c.id
         WHERE a.is_published = true
         AND a.is_deleted = false
-        AND a.public_id != :excludePublicId
+        AND a.public_id <> :excludePublicId
         AND (
             EXISTS (
-            SELECT 1 FROM unnest(:tags) AS tag
-            WHERE tag = ANY(a.tags)
+                SELECT 1
+                FROM jsonb_array_elements_text(a.tags) AS t(value)
+                WHERE t.value IN (:tags)
             )
             OR c.name = :categoryName
         )
-        ORDER BY a.updated_at DESC
+        ORDER BY a.updated_at DESC NULLS LAST
         LIMIT :limit
         """, nativeQuery = true)
     List<Article> findRelatedArticles(
-        String excludePublicId,
-        List<String> tags,
-        String categoryName,
-        int limit
+        @Param("excludePublicId") String excludePublicId,
+        @Param("tags") List<String> tags,
+        @Param("categoryName") String categoryName,
+        @Param("limit") int limit
     );
 
 }
