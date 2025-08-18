@@ -48,7 +48,8 @@ import lombok.EqualsAndHashCode;
         @Index(name = "idx_product_category", columnList = "category_id"),
         @Index(name = "idx_product_category_price", columnList = "category_id, current_price"), /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
         @Index(name = "idx_product_tags_gin", columnList = "tags"), // (solo descrittivo, fare con query in db)
-        @Index(name = "idx_product_features_gin", columnList = "features") // (solo descrittivo, fare con query in db)
+        @Index(name = "idx_product_features_gin", columnList = "features"), // (solo descrittivo, fare con query in db)
+        @Index(name = "idx_product_country", columnList = "country_id")
     }
 )
 @Data

@@ -24,9 +24,9 @@ public class RecommendationService {
     }
 
     // ----------- per pagina article details -----------
-    public List<ProductDTO> getRelatedProductsByArticleSlug(String slug, int maxResults) {
+    public List<ProductDTO> getRelatedProductsByArticleSlugAndCountry(String slug, int maxResults, String countryCode) {
         Article article = articleService.getArticleBySlug(slug);
-        return productService.findRelatedProductsByArticle(article, maxResults);
+        return productService.findRelatedProductsByArticleAndCountry(article, maxResults, countryCode);
     }
 
     public List<ArticleDTO> getRelatedArticlesByArticleSlug(String slug, int maxResults) {
@@ -40,9 +40,9 @@ public class RecommendationService {
         return articleService.findArticlesThatMentionProduct(productPublicId);
     }
 
-    public List<ProductDTO> getRelatedProductsByProductPublicId(String productPublicId, int maxResults) {
+    public List<ProductDTO> getRelatedProductsByProductPublicIdAndCountry(String productPublicId, int maxResults, String countryCode) {
         Product product = productService.getProductByPublicId(productPublicId);
-        return productService.findRelatedProductsByProduct(product, maxResults);
+        return productService.findRelatedProductsByProductAndCountry(product, maxResults, countryCode);
     }
 
 }

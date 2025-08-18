@@ -1,5 +1,6 @@
 package com.njdealsandclicks.article;
 
+import java.time.ZoneId;
 // import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -13,6 +14,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 // import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -113,8 +115,8 @@ public class Article extends BaseEntity {
     private List<Product> products;
 
 
-    // @PrePersist
-    // protected void onCreate() {
-    //     this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
-    // }
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    }
 }

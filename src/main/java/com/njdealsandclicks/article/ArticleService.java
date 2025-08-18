@@ -98,9 +98,22 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
+    public Article getArticleBySlugAndCountry(String slug, String countryCode) {
+        Article article = getArticleBySlug(slug);
+        List<Product> products = articleRepository.findProductsBySlugAndCountry(slug, countryCode);
+        article.setProducts(products);
+        return article;
+    }
+
+    @Transactional(readOnly = true)
     public ArticleDTO getArticleDTOBySlug(String slug) {
         // return articleRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Article with slug " + slug + " not found"));
         return mapToArticleDTO(getArticleBySlug(slug));
+    }
+    
+    @Transactional(readOnly = true)
+    public ArticleDTO getArticleDTOBySlugAndCountry(String slug, String countryCode) {
+        return mapToArticleDTO(getArticleBySlugAndCountry(slug, countryCode));
     }
 
     @Transactional

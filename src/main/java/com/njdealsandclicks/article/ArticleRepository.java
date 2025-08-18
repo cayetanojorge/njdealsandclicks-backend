@@ -8,10 +8,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.njdealsandclicks.product.Product;
+
 public interface ArticleRepository extends JpaRepository<Article, UUID> {
     Optional<Article> findByPublicId(String publicId);
     Article findBySlug(String slug);
     List<Article> findAllByIsDeletedFalseAndIsPublishedTrue();
+
+    @Query("""
+        SELECT p
+        FROM Article a
+        JOIN a.products p
+        JOIN p.country c
+        WHERE a.slug = :slug
+            AND a.isDeleted = false
+            AND a.isPublished = true
+            AND c.code = :countryCode
+    """)
+    List<Product> findProductsBySlugAndCountry(@Param("slug") String slug,
+                                        @Param("countryCode") String countryCode);
 
     @Query("""
         SELECT a

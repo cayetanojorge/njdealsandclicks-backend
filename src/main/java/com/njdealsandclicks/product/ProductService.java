@@ -107,6 +107,13 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public List<ProductDTO> getAllProductsByMarket(String countryCode) {
+        return productRepository.findByCountryCode(countryCode).stream()
+                .map(this::mapToProductDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public Product getProductById(UUID id) {
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product with id " + id + " not found"));
     }
@@ -223,15 +230,15 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductDTO> findRelatedProductsByArticle(Article article, int maxResults) {
+    public List<ProductDTO> findRelatedProductsByArticleAndCountry(Article article, int maxResults, String countryCode) {
         
         // raccogli publicId dei prodotti menzionati
-        List<String> productPublicIds = new ArrayList<>();
+        List<String> articleProdPublicIds = new ArrayList<>();
         for (Product product : article.getProducts()) {
-            productPublicIds.add(product.getPublicId());
+            articleProdPublicIds.add(product.getPublicId());
         }
         // prodotti completi dal DB (per avere tag e categoria)
-        List<Product> originalProducts = productRepository.findByPublicIds(productPublicIds);
+        List<Product> originalProducts = productRepository.findByPublicIdsAndCountry(articleProdPublicIds, countryCode);
 
         // tag combinati
         Set<String> relatedTags = originalProducts.stream()
@@ -248,18 +255,21 @@ public class ProductService {
             .findFirst()
             .orElse(null);
 
-        return productRepository.findRelatedProducts(
-                productPublicIds,
+        return productRepository.findRelatedProductsByCountry(
+                articleProdPublicIds,
                 new ArrayList<>(relatedTags),
+                !relatedTags.isEmpty(),
                 mainCategory,
+                countryCode,
                 maxResults
             ).stream()
+            // .filter(p -> p.getCountry().getCode().equalsIgnoreCase(countryCode)) // qui puoi anche filtrare di nuovo per market, se la native non lo fa
             .map(this::mapToProductDTO)
             .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<ProductDTO> findRelatedProductsByProduct(Product product, int maxResults) {
+    public List<ProductDTO> findRelatedProductsByProductAndCountry(Product product, int maxResults, String countryCode) {
         // Tag del prodotto
         List<String> tags = product.getTags() != null && !product.getTags().isEmpty()
             ? product.getTags() 
@@ -271,10 +281,12 @@ public class ProductService {
             : null;
 
         // Query per trovare prodotti correlati (escludendo quello attuale)
-        return productRepository.findRelatedProducts(
+        return productRepository.findRelatedProductsByCountry(
                 List.of(product.getPublicId()), // excludeIds
                 tags,
+                !tags.isEmpty(),
                 categoryName,
+                countryCode,
                 maxResults
             ).stream()
             .map(this::mapToProductDTO)
@@ -282,14 +294,14 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductDTO> searchProducts(String q, int limit) {
+    public List<ProductDTO> searchProducts(String q, int limit, String countryCode) {
         if (!StringUtils.hasText(q)) return List.of();
 
         // Normalizza query (trim ecc.)
         String query = q.trim();
 
         // Semplice ricerca testuale su name/brand/description + tags
-        List<Product> products = productRepository.searchByText(query, limit);
+        List<Product> products = productRepository.searchByTextAndCountry(query, limit, countryCode);
 
         return products.stream()
             .map(this::mapToProductDTO)

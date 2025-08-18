@@ -26,9 +26,14 @@ public class ProductPublicController {
         this.recommendationService = recommendationService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/")
+    public List<ProductDTO> getAllProductsByMarket(@RequestParam("market") String market) {
+        return productService.getAllProductsByMarket(market);
     }
 
     @GetMapping("/{publicId}")
@@ -48,16 +53,19 @@ public class ProductPublicController {
     }
 
     @GetMapping("/{publicId}/related-products")
-    public List<ProductDTO> getRelatedProductsByProductPublicId(@PathVariable("publicId") String publicId) {
-        return recommendationService.getRelatedProductsByProductPublicId(publicId, 6); // es: massimo 6 correlati
+    public List<ProductDTO> getRelatedProductsByProductPublicIdAndCountry(@PathVariable("publicId") String publicId, @RequestParam("market") String market) {
+        return recommendationService.getRelatedProductsByProductPublicIdAndCountry(publicId, 6, market); // es: massimo 6 correlati
     }
     // ----------- ----------- ----------- ----------- -----------
 
 
     // ----------- per pagina home search -----------
     @GetMapping("/search-products")
-    public List<ProductDTO> search(@RequestParam("q") String q, @RequestParam(name="limit", defaultValue = "12") int limit) {
-        return productService.searchProducts(q, limit);        
+    public List<ProductDTO> search(
+                                @RequestParam("q") String q,
+                                @RequestParam(name="limit", defaultValue = "12") int limit,
+                                @RequestParam("market") String market) {
+        return productService.searchProducts(q, limit, market);
     }
     // ----------- ----------- ----------- ----------- -----------
 
