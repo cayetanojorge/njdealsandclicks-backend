@@ -47,6 +47,6 @@ public class PriceHistory {
     // @JsonIgnore sotto joincolumn così al servizio get non ci sia ricorsione di oggetti ma si ferma qua
     @NotNull
     @ManyToOne(optional = false)
-    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "product_market_id", referencedColumnName = "id", nullable = false)
     private Product product;
 }

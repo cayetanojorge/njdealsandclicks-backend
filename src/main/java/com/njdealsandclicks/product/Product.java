@@ -10,8 +10,7 @@ import org.hibernate.type.SqlTypes;
 
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.common.BaseEntity;
-import com.njdealsandclicks.country.Country;
-import com.njdealsandclicks.pricehistory.PriceHistory;
+import com.njdealsandclicks.productmarket.ProductMarket;
 import com.njdealsandclicks.util.StringListToJsonConverterUtil;
 
 import jakarta.persistence.CascadeType;
@@ -24,10 +23,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -41,15 +38,15 @@ import lombok.EqualsAndHashCode;
 @Entity /* per indicate che sia tabella in db */
 @Table(
     name = "product",
-    uniqueConstraints = { @UniqueConstraint(columnNames = {"affiliate_link", "country_id"}) },
+    // uniqueConstraints = { @UniqueConstraint(columnNames = {"affiliate_link", "country_id"}) },
     indexes = {
         @Index(name = "idx_product_public_id", columnList = "public_id"),
-        @Index(name = "idx_product_current_price", columnList = "current_price"),
+        // @Index(name = "idx_product_current_price", columnList = "current_price"),
         @Index(name = "idx_product_category", columnList = "category_id"),
-        @Index(name = "idx_product_category_price", columnList = "category_id, current_price"), /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
+        // @Index(name = "idx_product_category_price", columnList = "category_id, current_price"), /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
         @Index(name = "idx_product_tags_gin", columnList = "tags"), // (solo descrittivo, fare con query in db)
         @Index(name = "idx_product_features_gin", columnList = "features"), // (solo descrittivo, fare con query in db)
-        @Index(name = "idx_product_country", columnList = "country_id")
+        // @Index(name = "idx_product_country", columnList = "country_id")
     }
 )
 @Data
@@ -63,50 +60,11 @@ public class Product extends BaseEntity {
     @Column(name = "description", nullable = true)
     private String description;
 
-    @NotNull
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
-    private Country country;
-
-    @NotNull
-    @Positive
-    @Column(name = "current_price", nullable = false)
-    private Double currentPrice;
-    
-    // todo-future creare entita' ProductMarket con alcune caratteristiche di Product, futuro ampliamento in altri mercati: UK, USA, ecc.
-
-    @NotBlank
-    @Column(name = "affiliate_link", nullable = false)
-    private String affiliateLink;
-
-    @NotNull
-    @Column(name = "rating", nullable = false)
-    private Double rating = 0.0;
-
-    @NotNull
-    @Column(name = "review_count", nullable = false)
-    private Integer reviewCount = 0;
-
-    @NotNull
-    @Column(name = "is_available", nullable = false)
-    private Boolean isAvailable = true;
-
     @Column(name = "image_url", nullable = true)
     private String imageUrl;
-    
+
     @Column(name = "brand", nullable = true)
     private String brand;
-
-    /* 
-     * GIN sta per Generalized Inverted Index. È un tipo di indice PostgreSQL specifico per colonne JSONB, array, full-text search. 
-     * Ti serve se vorrai eseguire query come:
-     *  SELECT * FROM product WHERE tags @> '["offerta", "gaming"]';
-     *  SELECT * FROM product WHERE features @> '["oled"]';
-     * abilitarlo:
-     * Puoi farlo direttamente via migration Flyway o liquibase o uno script SQL manuale:
-     *  CREATE INDEX idx_product_tags_gin ON product USING GIN (tags); 
-     *  CREATE INDEX idx_product_features_gin ON product USING GIN (features);
-    */
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Convert(converter = StringListToJsonConverterUtil.class)
@@ -122,22 +80,10 @@ public class Product extends BaseEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false) // name e' nome della colonna, refe...Name e' nome della colonna di tabella Category a cui si fa riferimento
     private Category category;
-    
-    // lato NON proprietario
-    /* one-to-many & mappedBy presenti qua = indico questo lato come non proprietario della relazione tra due entita'.
-        Evitiamo in questa tabella la creazione di colonna aggiuntiva.
-        mappedBy indica quale proprieta' nell'altra entita' (in questo caso Product in PriceHistory) mappa questa relazione.
-        Quindi la tab price_history avra' colonna foreign key che fa riferimento a tabella product.
-      
-        Nota: è relazione oneToMany - lato many PriceHistory detiene fk a product, lato one Product accede ai dati tramite join
-        non c'e' colonna che fa riferimento a price_history; la relazione e' gestita in memoria dell'applicazione da Hibernate tramite lista priceHistories.
-        (se ci fosse colonna riferimento a PriceHistory per ogni relazione, allora impossibile rappresentare relazione OneToMany, prodotto con più prezzi storici,
-        questo perche' una colonna non puo' contenere molteplici riferimenti in una tabella relazionale) */
-    // cascade - Qualsiasi operazione eseguita su un prodotto (ad esempio, salvataggio, aggiornamento o eliminazione) viene propagata a tutti i record di PriceHistory associati.
-    //      Esempio: Se elimini un prodotto, tutti i suoi record di storico prezzi verranno eliminati automaticamente.
-    // orphanRemoval - Se un record di PriceHistory viene scollegato dal prodotto (rimosso dalla lista priceHistories), verrà eliminato automaticamente dal database.
+
+    // opzionale, utile per UI (pallini di disponibilità per mercato)
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PriceHistory> priceHistories = new ArrayList<>();
+    private List<ProductMarket> productMarkets = new ArrayList<>();
 
     @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -151,5 +97,15 @@ public class Product extends BaseEntity {
     protected void onCreate() {
         this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
     }
-
+    
+    /* 
+     * GIN sta per Generalized Inverted Index. È un tipo di indice PostgreSQL specifico per colonne JSONB, array, full-text search. 
+     * Ti serve se vorrai eseguire query come:
+     *  SELECT * FROM product WHERE tags @> '["offerta", "gaming"]';
+     *  SELECT * FROM product WHERE features @> '["oled"]';
+     * abilitarlo:
+     * Puoi farlo direttamente via migration Flyway o liquibase o uno script SQL manuale:
+     *  CREATE INDEX idx_product_tags_gin ON product USING GIN (tags); 
+     *  CREATE INDEX idx_product_features_gin ON product USING GIN (features);
+    */
 }
