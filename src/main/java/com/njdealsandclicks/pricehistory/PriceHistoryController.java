@@ -28,7 +28,7 @@ public class PriceHistoryController {
 
     @GetMapping("/product/{productPublicId}")
     public List<PriceHistoryDTO> getPriceHistoriesByProductPublicId(@PathVariable("productPublicId") String productPublicId) {
-        return priceHistoryService.getPriceHistoriesDTOsByProductPublicId(productPublicId);
+        return priceHistoryService.getPriceHistoriesDTOsByProductMarketPublicId(productPublicId);
     }
 
     @PostMapping("/create")

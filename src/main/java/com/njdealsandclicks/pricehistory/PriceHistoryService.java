@@ -28,17 +28,17 @@ public class PriceHistoryService {
     }
     
     @Transactional(readOnly = true)
-    public List<PriceHistory> getPriceHistoriesByProductId(UUID productId) {
-        return priceHistoryRepository.findByProductId(productId);
+    public List<PriceHistory> getPriceHistoriesByProductMarketId(UUID productMarketId) {
+        return priceHistoryRepository.findByProductId(productMarketId);
     }
 
     @Transactional(readOnly = true)
-    public List<PriceHistory> getPriceHistoriesByProductPublicId(String productPublicId) {
-        return priceHistoryRepository.findByProductPublicId(productPublicId);
+    public List<PriceHistory> getPriceHistoriesByProductMarketPublicId(String productMarketPublicId) {
+        return priceHistoryRepository.findByProductPublicId(productMarketPublicId);
     }
 
-    public List<PriceHistoryDTO> getPriceHistoriesDTOsByProductPublicId(String productPublicId) {
-        List<PriceHistory> priceHistories = getPriceHistoriesByProductPublicId(productPublicId);
+    public List<PriceHistoryDTO> getPriceHistoriesDTOsByProductMarketPublicId(String productMarketPublicId) {
+        List<PriceHistory> priceHistories = getPriceHistoriesByProductMarketPublicId(productMarketPublicId);
         return priceHistories.stream()
             .map(this::mapToPriceHistoryDTO)
             .collect(Collectors.toList());

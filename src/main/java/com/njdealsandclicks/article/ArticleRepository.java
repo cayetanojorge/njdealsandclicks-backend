@@ -28,14 +28,15 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     Article findWithProductsBySlug(@Param("slug") String slug);
 
     @Query("""
-        SELECT p
+        SELECT DISTINCT p
         FROM Article a
         JOIN a.products p
-        JOIN p.country c
+        JOIN ProductMarket pm ON pm.product = p
+        JOIN pm.country c
         WHERE a.slug = :slug
-            AND a.isDeleted = false
-            AND a.isPublished = true
-            AND c.code = :countryCode
+        AND a.isDeleted = false
+        AND a.isPublished = true
+        AND c.code = :countryCode
     """)
     List<Product> findProductsBySlugAndCountry(@Param("slug") String slug,
                                         @Param("countryCode") String countryCode);

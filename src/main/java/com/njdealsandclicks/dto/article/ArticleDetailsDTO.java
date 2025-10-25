@@ -5,13 +5,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ArticleDTO {
+public class ArticleDetailsDTO {
     
     @NotBlank
     private String publicId;
@@ -37,4 +38,5 @@ public class ArticleDTO {
 
     private Integer readingTimeMinutes; // Mapper con una stima tipo: content.split(" ").length / 200
 
+    private List<ProductDetailsDTO> productDetailsDTOs;
 }

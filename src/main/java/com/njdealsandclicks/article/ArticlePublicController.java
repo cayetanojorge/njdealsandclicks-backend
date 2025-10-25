@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.njdealsandclicks.dto.article.ArticleDTO;
-import com.njdealsandclicks.dto.product.ProductDTO;
+import com.njdealsandclicks.dto.article.ArticleDetailsDTO;
+import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 import com.njdealsandclicks.recommendation.RecommendationService;
 
 @RestController
@@ -31,13 +32,13 @@ public class ArticlePublicController {
     }
 
     @GetMapping("/{slug}")
-    public ArticleDTO getArticleBySlug(@PathVariable("slug") String slug, @RequestParam("market") String market) {
+    public ArticleDetailsDTO getArticleBySlug(@PathVariable("slug") String slug, @RequestParam("market") String market) {
         return articleService.getArticleDTOBySlugAndCountry(slug, market);
     }
 
     // ----------- per pagina article details -----------
     @GetMapping("/{slug}/related-products") // ancora NON usato nel frontend
-    public List<ProductDTO> getRelatedProductsByArticle(@PathVariable("slug") String slug, @RequestParam("market") String market) {
+    public List<ProductDetailsDTO> getRelatedProductsByArticle(@PathVariable("slug") String slug, @RequestParam("market") String market) {
         return recommendationService.getRelatedProductsByArticleSlugAndCountry(slug, 6, market); // esempio: max 6 prodotti
     }
 

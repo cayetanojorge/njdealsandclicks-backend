@@ -2,7 +2,6 @@ package com.njdealsandclicks.article;
 
 import java.text.Normalizer;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.dto.article.ArticleCreateUpdateDTO;
 import com.njdealsandclicks.dto.article.ArticleDTO;
+import com.njdealsandclicks.dto.article.ArticleDetailsDTO;
+import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.product.ProductService;
+import com.njdealsandclicks.productmarket.ProductMarketService;
 import com.njdealsandclicks.util.DateUtil;
 import com.njdealsandclicks.util.PublicIdGeneratorService;
 
@@ -25,12 +27,15 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final ProductService productService;
+    private final ProductMarketService productMarketService;
     private final PublicIdGeneratorService publicIdGeneratorService;
     private final DateUtil dateUtil;
 
-    public ArticleService(ArticleRepository articleRepository, ProductService productService, PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
+    public ArticleService(ArticleRepository articleRepository, ProductService productService, ProductMarketService productMarketService,
+                        PublicIdGeneratorService publicIdGeneratorService, DateUtil dateUtil) {
         this.articleRepository = articleRepository;
         this.productService = productService;
+        this.productMarketService = productMarketService;
         this.publicIdGeneratorService = publicIdGeneratorService;
         this.dateUtil = dateUtil;
     }
@@ -51,13 +56,32 @@ public class ArticleService {
         articleDTO.setUpdatedAt(article.getUpdatedAt());
         articleDTO.setPublishedAt(article.getPublishedAt());
         articleDTO.setReadingTimeMinutes(article.getContent().split(" ").length / 200);
-
-        List<String> productPublicIds = new ArrayList<>();
-        for(Product product : article.getProducts()) {
-            productPublicIds.add(product.getPublicId());
-        }
-        articleDTO.setProductDTOs(productService.productsToProductDTOs(productService.getProductsByPublicIds(productPublicIds)));
         return articleDTO;
+    }
+
+    private ArticleDetailsDTO mapToArticleDetailsDTO(Article article, String countryCode) {
+        ArticleDetailsDTO articleDetailsDTO = new ArticleDetailsDTO();
+        articleDetailsDTO.setPublicId(article.getPublicId());
+        articleDetailsDTO.setSlug(article.getSlug());
+        articleDetailsDTO.setTitle(article.getTitle());
+        articleDetailsDTO.setExcerpt(article.getExcerpt());
+        articleDetailsDTO.setContent(article.getContent());
+        articleDetailsDTO.setImageUrl(article.getImageUrl());
+        articleDetailsDTO.setTags(article.getTags());
+        articleDetailsDTO.setUpdatedAt(article.getUpdatedAt());
+        articleDetailsDTO.setPublishedAt(article.getPublishedAt());
+        articleDetailsDTO.setReadingTimeMinutes(article.getContent().split(" ").length / 200);
+
+        List<Product> products = article.getProducts();
+        if (products == null || products.isEmpty()) {
+            articleDetailsDTO.setProductDetailsDTOs(List.of());
+            return articleDetailsDTO;
+        }
+        List<String> productPublicIds = products.stream().map(Product::getPublicId).toList();
+        List<ProductDetailsDTO> productDetailsDTOs = productMarketService.findByProductAndCountry(productPublicIds, countryCode);
+        articleDetailsDTO.setProductDetailsDTOs(productDetailsDTOs);
+
+        return articleDetailsDTO;
     }
 
     // for inter purpose
@@ -117,8 +141,8 @@ public class ArticleService {
     }
     
     @Transactional(readOnly = true)
-    public ArticleDTO getArticleDTOBySlugAndCountry(String slug, String countryCode) {
-        return mapToArticleDTO(getArticleBySlugAndCountry(slug, countryCode));
+    public ArticleDetailsDTO getArticleDTOBySlugAndCountry(String slug, String countryCode) {
+        return mapToArticleDetailsDTO(getArticleBySlugAndCountry(slug, countryCode), countryCode);
     }
 
     @Transactional

@@ -5,12 +5,9 @@ import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.njdealsandclicks.dto.article.ArticleDTO;
-import com.njdealsandclicks.dto.product.ProductDTO;
-import com.njdealsandclicks.dto.product.ProductDetailsDTO;
 import com.njdealsandclicks.recommendation.RecommendationService;
 
 
@@ -18,56 +15,39 @@ import com.njdealsandclicks.recommendation.RecommendationService;
 @RequestMapping("/api/public/product")
 public class ProductPublicController {
     
-    private final ProductService productService;
+    // private final ProductService productService;
     private final RecommendationService recommendationService;
 
-    public ProductPublicController(ProductService productService, RecommendationService recommendationService) {
-        this.productService = productService;
+    public ProductPublicController(//ProductService productService, 
+                        RecommendationService recommendationService) {
+        // this.productService = productService;
         this.recommendationService = recommendationService;
     }
 
-    @GetMapping("/all")
-    public List<ProductDTO> getAllProducts() {
-        return productService.getAllProducts();
-    }
+    // @GetMapping("/all")
+    // public List<ProductDTO> getAllProducts() {
+    //     return productService.getAllProducts();
+    // }
 
-    @GetMapping("/")
-    public List<ProductDTO> getAllProductsByMarket(@RequestParam("market") String market) {
-        return productService.getAllProductsByMarket(market);
-    }
+    // @GetMapping("/")
+    // public List<ProductDTO> getAllProductsByMarket(@RequestParam("market") String market) {
+    //     return productService.getAllProductsByMarket(market);
+    // }
 
-    @GetMapping("/{publicId}")
-    public ProductDetailsDTO getProductByPublicId(@PathVariable("publicId") String publicId) {
-        return productService.getProductDetailsDTOsByPublicId(publicId);
-    }
+    // @GetMapping("/{publicId}")
+    // public ProductDetailsDTO getProductByPublicId(@PathVariable("publicId") String publicId) {
+    //     return productService.getProductDetailsDTOsByPublicId(publicId);
+    // }
 
-    @GetMapping("/category/{categoryPublicId}")
-    public List<ProductDTO> getProductsByCategoryId(@PathVariable("categoryPublicId") String categoryPublicId) {
-        return productService.getProductDTOsByCategoryId(categoryPublicId);
-    }
+    // @GetMapping("/category/{categoryPublicId}")
+    // public List<ProductDTO> getProductsByCategoryId(@PathVariable("categoryPublicId") String categoryPublicId) {
+    //     return productService.getProductDTOsByCategoryId(categoryPublicId);
+    // }
 
     // ----------- per pagina product details -----------
     @GetMapping("/{publicId}/mentioned-in-articles")
     public List<ArticleDTO> getArticlesThatMentionProduct(@PathVariable("publicId") String publicId) {
         return recommendationService.getArticlesThatMentionProduct(publicId);
     }
-
-    @GetMapping("/{publicId}/related-products")
-    public List<ProductDTO> getRelatedProductsByProductPublicIdAndCountry(@PathVariable("publicId") String publicId, @RequestParam("market") String market) {
-        return recommendationService.getRelatedProductsByProductPublicIdAndCountry(publicId, 6, market); // es: massimo 6 correlati
-    }
-    // ----------- ----------- ----------- ----------- -----------
-
-
-    // ----------- per pagina home search -----------
-    @GetMapping("/search-products")
-    public List<ProductDTO> search(
-                                @RequestParam("q") String q,
-                                @RequestParam(name="limit", defaultValue = "12") int limit,
-                                @RequestParam("market") String market) {
-        return productService.searchProducts(q, limit, market);
-    }
-    // ----------- ----------- ----------- ----------- -----------
-
 
 }

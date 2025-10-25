@@ -7,28 +7,30 @@ import org.springframework.stereotype.Service;
 import com.njdealsandclicks.article.Article;
 import com.njdealsandclicks.article.ArticleService;
 import com.njdealsandclicks.dto.article.ArticleDTO;
-import com.njdealsandclicks.dto.product.ProductDTO;
-import com.njdealsandclicks.product.Product;
-import com.njdealsandclicks.product.ProductService;
+import com.njdealsandclicks.dto.product.ProductDetailsDTO;
+import com.njdealsandclicks.productmarket.ProductMarket;
+import com.njdealsandclicks.productmarket.ProductMarketService;
 
 
 @Service
 public class RecommendationService {
     
     private final ArticleService articleService;
-    private final ProductService productService;
+    private final ProductMarketService productMarketService;
 
-    public RecommendationService(ArticleService articleService, ProductService productService) {
+    public RecommendationService(ArticleService articleService, ProductMarketService productMarketService) {
         this.articleService = articleService;
-        this.productService = productService;
+        this.productMarketService = productMarketService;
     }
 
     // ----------- per pagina article details -----------
-    public List<ProductDTO> getRelatedProductsByArticleSlugAndCountry(String slug, int maxResults, String countryCode) {
+    // prodotti correlati in base ai prodotti menzionati dall'articolo
+    public List<ProductDetailsDTO> getRelatedProductsByArticleSlugAndCountry(String slug, int maxResults, String countryCode) {
         Article article = articleService.getArticleBySlug(slug);
-        return productService.findRelatedProductsByArticleAndCountry(article, maxResults, countryCode);
+        return productMarketService.findRelatedProductsByArticleAndCountry(article, maxResults, countryCode);
     }
 
+    // articoli correlati in base all'articolo
     public List<ArticleDTO> getRelatedArticlesByArticleSlug(String slug, int maxResults) {
         Article article = articleService.getArticleWithProductsBySlug(slug);
         return articleService.findRelatedArticlesByArticle(article, maxResults);
@@ -36,13 +38,15 @@ public class RecommendationService {
 
 
     // ----------- per pagina product details -----------
+    // articoli che menzionano il prodotto
     public List<ArticleDTO> getArticlesThatMentionProduct(String productPublicId) {
         return articleService.findArticlesThatMentionProduct(productPublicId);
     }
 
-    public List<ProductDTO> getRelatedProductsByProductPublicIdAndCountry(String productPublicId, int maxResults, String countryCode) {
-        Product product = productService.getProductByPublicId(productPublicId);
-        return productService.findRelatedProductsByProductAndCountry(product, maxResults, countryCode);
+    // prodotti correlati in base al prodotto, la cui pagina e' stata aperta
+    public List<ProductDetailsDTO> getRelatedProductsByProductMarketPublicIdAndCountry(String productMarketPublicId, int maxResults, String countryCode) {
+        ProductMarket productMarket = productMarketService.getProductMarketByPublicId(productMarketPublicId);
+        return productMarketService.findRelatedProductsByProductAndCountry(productMarket, maxResults, countryCode);
     }
 
 }

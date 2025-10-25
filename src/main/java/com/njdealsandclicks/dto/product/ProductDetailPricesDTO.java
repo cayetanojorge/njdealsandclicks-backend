@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.njdealsandclicks.dto.productmarket.ProductMarketDTO;
+import com.njdealsandclicks.dto.productmarket.ProductMarketDetailsDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ProductDetailsDTO {
+public class ProductDetailPricesDTO {
 
     @NotBlank
     private String publicId;
@@ -32,5 +32,5 @@ public class ProductDetailsDTO {
     @NotBlank
     private String categoryName;
 
-    private ProductMarketDTO productMarketDTO;
+    private ProductMarketDetailsDTO productMarketDetailsDTO;
 }

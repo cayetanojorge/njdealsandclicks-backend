@@ -3,7 +3,7 @@ package com.njdealsandclicks.pricehistory;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import com.njdealsandclicks.product.Product;
+import com.njdealsandclicks.productmarket.ProductMarket;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,5 +48,5 @@ public class PriceHistory {
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_market_id", referencedColumnName = "id", nullable = false)
-    private Product product;
+    private ProductMarket productMarket;
 }
