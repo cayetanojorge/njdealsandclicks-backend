@@ -4,12 +4,14 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.njdealsandclicks.category.Category;
 import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.product.Product;
 import com.njdealsandclicks.user.User;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -28,10 +30,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Newsletter extends BaseEntity{
 
-    // cascade se elimino user elimino rispettive riga in tab newsletter
-    // orphanRemoval che se record in tab newsletter è orfano di user allora elimino
-    @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE) // se elimino utente con tool esterni a JPA (fastapi o manuale a db) elimino newsletter
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
     private User user;
 
     @NotNull

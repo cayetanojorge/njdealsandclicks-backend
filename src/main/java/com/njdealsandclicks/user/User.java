@@ -4,13 +4,16 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import com.njdealsandclicks.common.BaseEntity;
+import com.njdealsandclicks.newsletter.Newsletter;
 import com.njdealsandclicks.subscription.Subscription;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -89,6 +92,9 @@ public class User extends BaseEntity{
     @NotNull
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true) // se utente eliminato elimino newsletter
+    private Newsletter newsletter;
 
     @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
