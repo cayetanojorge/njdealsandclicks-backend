@@ -131,42 +131,78 @@ TODO
 
 
 
--------- attivare cambio market in sito --------
-- utente sceglie mercato da bottone un frontend
-➕ Permettere all’utente di cambiare mercato
-📌 Obiettivo: mostrare selettore paese (con bandiera), salvare scelta e reindirizzare alla pagina corrispondente
-Backend:
- . Aggiungi campo is_active in entità Country
- . Esporre endpoint /api/available-countries
- . Restituire bandiera, codice, nome, lingua, ecc.
-Frontend (SvelteKit):
- . All’avvio, carica mercati attivi via /api/available-countries
- . Mostra selettore con bandierina e codice (es. 🇮🇹 IT)
- . Al cambio paese, aggiorna localStorage e naviga a /${country}/...
- . Tutte le pagine usano params.country per fetch filtrato
-📅 Tempistica: Subito, per rendere il sito multi-market e pronto al traffico
+– Gestione Newsletter e Email Audience (fase futura)
+- ✅ Creare tabella email_audience (base per utenti iscritti alla newsletter):
+. Campi:
+id, email (unique), is_active, email_verified,
+default_country_code, locale, timezone,
+consent_at, consent_source, deactivated_at, user_id (nullable FK)
+. user_id collegato in futuro a User (quando introdurrai il login)
+. Indice su email e user_id
+. Gestione deactivated_at per disiscrizione utenti
 
-- product page:
-➕ Filtrare prodotti per mercato nella pagina /products
-📌 Obiettivo: mostrare solo i prodotti del mercato selezionato
-Backend:
-. Aggiungi findAllByCountry_CodeAndIsDeletedFalse(String) in ProductRepository
-. Aggiungi getAllByCountry(String) in ProductService
-. Aggiungi endpoint /api/products?country=XX
-Frontend (SvelteKit):
-. Crea/aggiorna routing /[country]/products
-. In load(), chiama /api/products?country=XX
-. Mostra ProductDTO solo per paese selezionato
+- ➕ Consentire iscrizione da diversi punti del sito:
+Home page:
+→ utente vuole ricevere aggiornamenti generali (newsletter globale)
+→ salva in email_audience + default_country_code del mercato corrente
+→ se si iscrive da un mercato diverso, aggiungere record in tabella secondaria email_audience_market_pref
+Pagina prodotto:
+→ utente interessato a quello specifico prodotto
+→ salva in email_audience + crea record in tabella email_audience_product_pref
+→ riferimento deve essere a product_market_id (non solo al link affiliato)
+Pagina articoli/blog generale:
+→ utente vuole aggiornamenti sugli articoli pubblicati
+→ salva in email_audience + email_audience_article_pref con tipo “general_articles”
+Pagina di un singolo articolo:
+→ utente riceverà aggiornamenti sui prodotti menzionati in quell’articolo
+→ salva in email_audience + email_audience_product_pref per ogni ProductMarket menzionato
+→ opzionale: salva anche preferenza per categoria/tag dell’articolo in email_audience_article_pref
 
-- article
-➕ Gestione prodotti per mercato selezionato
-📌 Obiettivo: filtrare prodotti collegati a un articolo in base al mercato (IT, UK, ES, US)
-Backend:
-. Associa ogni Product a un Country
-. Aggiungi getDTOsByCountry(List<Product>, countryCode) in ProductService
-. Modifica mapToArticleDTO(Article, countryCode) per filtrare prodotti
-. Endpoint REST /api/article/{publicId}?country=IT accetta country
-Frontend (SvelteKit):
-. Adotta struttura URL /[country]/blog/[publicId]/[slug]
-. In load(), passa countryCode come query param
-. Usa store globale (es. marketStore) se serve memorizzare mercato attivo
+- ➕ Tabella secondarie di preferenze:
+. email_audience_market_pref → per utenti interessati a più mercati (country_code, audience_id)
+. email_audience_product_pref → per prodotti specifici (product_market_id, audience_id)
+. email_audience_article_pref → per tag o categorie articoli (category_id o tag + audience_id)
+
+- ⚙️ Service EmailAudienceService
+. subscribeGeneral(email, countryCode, source) → newsletter generale
+. subscribeProduct(email, productPublicId, countryCode, source) → prodotto specifico
+. subscribeArticles(email, countryCode, tagsOrCategoryIds, source) → articoli per categoria
+. subscribeFromArticle(email, articleSlug, countryCode) → prodotti menzionati nell’articolo
+. unsubscribe(email) → set is_active = false + deactivated_at = now()
+. (futuro) linkToUserOnSignup(User user) → collega account registrato all’audience
+
+- ⚙️ Controller pubblici:
+POST /api/public/newsletter/subscribe
+POST /api/public/newsletter/subscribe-product
+POST /api/public/newsletter/subscribe-articles
+POST /api/public/newsletter/subscribe-from-article
+POST /api/public/newsletter/unsubscribe
+
+- 🔄 Logica d’iscrizione idempotente
+. Se email già presente → aggiorna consent_source e aggiungi solo nuove preferenze
+. Non sovrascrivere consent_at o default_country_code esistenti
+. Multi-mercato supportato: aggiungere record in market_pref, non sostituire
+
+- 🕒 Gestione disiscrizione:
+. Non cancellare fisicamente il record
+. Imposta is_active=false, deactivated_at=ZonedDateTime.now()
+. Facile riattivazione in caso di nuova iscrizione (reset is_active=true)
+
+- 📅 Cron Job / Integrazione futura
+(Fase 2) job settimanale che invia “Weekly Digest” con nuovi articoli e offerte del mercato selezionato
+(Fase 3) job per “Product Alerts” in caso di calo di prezzo su product_market_id seguiti
+
+- 📜 Compliance e sicurezza
+. Double opt-in (facoltativo ora, ma previsto)
+. Audit: consent_at, consent_source, deactivated_at
+. One-click unsubscribe (token firmato)
+. Rate limit iscrizioni per IP/email
+
+📊 Analytics (futuro)
+Numero iscritti per mercato
+Iscritti attivi per tipo (generale, prodotto, articolo)
+Origine iscrizione (consent_source → “home”, “product_page”, “article_page”, ecc.)
+
+📌 Priorità: bassa (futura evoluzione)
+📅 Tempistica consigliata: dopo il deploy stabile del blog e dei prodotti multi-market
+🎯 Obiettivo: costruire base per email marketing segmentato per mercato, prodotto o categoria
