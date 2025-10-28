@@ -57,7 +57,7 @@ public class NewsletterService {
         newsletterDTO.setPublicId(newsletter.getPublicId());
         newsletterDTO.setUserDTO(userService.getUserDTOByPublicId(newsletter.getUser().getPublicId()));
         newsletterDTO.setGeneralNewsletter(newsletter.getGeneralNewsletter());
-        newsletterDTO.setProductDTOs(productService.productsToProductDTOs(newsletter.getProducts()));
+        // newsletterDTO.setProductDTOs(productService.productsToProductDTOs(newsletter.getProducts()));
         newsletterDTO.setCategoryDTOs(categoryService.categoriesToCategoryDTOs(newsletter.getCategories()));
         return newsletterDTO;
     }
