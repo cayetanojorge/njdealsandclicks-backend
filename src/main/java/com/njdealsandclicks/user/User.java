@@ -10,6 +10,7 @@ import com.njdealsandclicks.subscription.Subscription;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -93,7 +94,7 @@ public class User extends BaseEntity{
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true) // se utente eliminato elimino newsletter
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true) // se utente eliminato elimino newsletter
     private Newsletter newsletter;
 
     @Column(name = "updated_at", nullable = true)

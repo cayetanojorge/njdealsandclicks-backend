@@ -22,7 +22,7 @@ import lombok.Data;
 @Table(
     name = "price_history",
     indexes = {
-        @Index(name = "idx_price_history_product", columnList = "product_id")
+        @Index(name = "idx_price_history_product_market", columnList = "product_market_id")
     }
 )
 @Data

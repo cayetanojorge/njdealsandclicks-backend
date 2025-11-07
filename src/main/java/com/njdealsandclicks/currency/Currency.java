@@ -24,6 +24,6 @@ public class Currency extends BaseEntity{
     private String name; // "Euro", "US Dollar", etc.
 
     @NotBlank
-    @Column(name = "symbol", nullable = false, unique = true)
+    @Column(name = "symbol", nullable = false)
     private String symbol; // "€", "$", "£"
 }

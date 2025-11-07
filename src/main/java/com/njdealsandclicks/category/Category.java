@@ -67,24 +67,12 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Category> subCategories;
 
-
-    // future-todo
-    // // // @Column(nullable = false)
-    // // // private Boolean createdByUser;
-    // // // @Column(nullable = true)
-    // // // private User user;
-
     @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
     private ZonedDateTime createdAt;
     
     @Column(name = "updated_at", nullable = true)
     private ZonedDateTime updatedAt;
-
-    // utile per recuperare lista prodotto da tabella Category, ogni prodotto aggiunto poi aggiunto a specifica categoria
-    // non utile se abbiamo migliaia di prodotto, dati ridondanti.
-    // @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    // private List<Product> products = new ArrayList<>();
 
 
     @PrePersist

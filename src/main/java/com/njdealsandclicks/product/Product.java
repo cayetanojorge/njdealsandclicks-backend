@@ -17,6 +17,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -29,24 +30,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 
-/**
- * Definisci l'entità Product che rappresenta una tabella nel database.
- */
 
-
-// Se il prezzo corrente viene utilizzato spesso per ordinare i prodotti (es., "ordina dal più economico al più costoso"):
-@Entity /* per indicate che sia tabella in db */
+@Entity
 @Table(
     name = "product",
-    // uniqueConstraints = { @UniqueConstraint(columnNames = {"affiliate_link", "country_id"}) },
     indexes = {
         @Index(name = "idx_product_public_id", columnList = "public_id"),
-        // @Index(name = "idx_product_current_price", columnList = "current_price"),
         @Index(name = "idx_product_category", columnList = "category_id"),
-        // @Index(name = "idx_product_category_price", columnList = "category_id, current_price"), /* index composto: ordinare frequentemente risultati per prezzo all'interno di una categoria */
         @Index(name = "idx_product_tags_gin", columnList = "tags"), // (solo descrittivo, fare con query in db)
         @Index(name = "idx_product_features_gin", columnList = "features"), // (solo descrittivo, fare con query in db)
-        // @Index(name = "idx_product_country", columnList = "country_id")
     }
 )
 @Data
@@ -77,7 +69,7 @@ public class Product extends BaseEntity {
     private List<String> features; // caratteristiche specifiche, ie: "Schermo OLED", "Batteria da 5000mAh"
     
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false) // name e' nome della colonna, refe...Name e' nome della colonna di tabella Category a cui si fa riferimento
     private Category category;
 

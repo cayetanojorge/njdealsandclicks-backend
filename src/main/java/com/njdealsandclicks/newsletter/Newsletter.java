@@ -14,6 +14,7 @@ import com.njdealsandclicks.user.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -31,7 +32,7 @@ import lombok.EqualsAndHashCode;
 public class Newsletter extends BaseEntity{
 
     @OnDelete(action = OnDeleteAction.CASCADE) // se elimino utente con tool esterni a JPA (fastapi o manuale a db) elimino newsletter
-    @OneToOne(optional = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false, unique = true)
     private User user;
 

@@ -13,6 +13,7 @@ import com.njdealsandclicks.product.Product;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,9 +21,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -42,12 +45,12 @@ import lombok.EqualsAndHashCode;
 public class ProductMarket extends BaseEntity{
 
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
     private Product product;
 
     @NotNull
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
     private Country country;
 
@@ -60,15 +63,18 @@ public class ProductMarket extends BaseEntity{
     private String affiliateLink;
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     @Column(name = "current_price", nullable = false)
     private Double currentPrice;
 
     @NotNull
+    @DecimalMin("0.0")
+    @DecimalMax("5.0")
     @Column(name = "rating", nullable = false)
     private Double rating = 0.0;
 
     @NotNull
+    @PositiveOrZero
     @Column(name = "review_count", nullable = false)
     private Integer reviewCount = 0;
 
@@ -104,6 +110,13 @@ public class ProductMarket extends BaseEntity{
     // orphanRemoval - Se un record di PriceHistory viene scollegato dal prodotto (rimosso dalla lista priceHistories), verrà eliminato automaticamente dal database.
     @OneToMany(mappedBy = "productMarket", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PriceHistory> priceHistories = new ArrayList<>();
+
+    @NotNull
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    @Column(name = "deleted_at", nullable = true)
+    private ZonedDateTime deletedAt;
 
     @PrePersist
     protected void onCreate() {
