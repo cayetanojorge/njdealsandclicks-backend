@@ -42,7 +42,7 @@ subscription_expiration_date - Vuoi fare query tipo "quali utenti scadono oggi?"
     }
 )
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class User extends BaseEntity{
 
     @NotBlank
@@ -94,7 +94,7 @@ public class User extends BaseEntity{
     @Column(name = "registration_date", nullable = false, updatable = false)
     private ZonedDateTime registrationDate;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true) // se utente eliminato elimino newsletter
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) // se utente eliminato elimino newsletter
     private Newsletter newsletter;
 
     @Column(name = "updated_at", nullable = true)

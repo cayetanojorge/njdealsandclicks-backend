@@ -28,7 +28,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "newsletter")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Newsletter extends BaseEntity{
 
     @OnDelete(action = OnDeleteAction.CASCADE) // se elimino utente con tool esterni a JPA (fastapi o manuale a db) elimino newsletter

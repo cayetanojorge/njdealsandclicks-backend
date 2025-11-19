@@ -30,7 +30,7 @@ import lombok.EqualsAndHashCode;
     }
 )
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Category extends BaseEntity {
 
     @Column(name = "name", nullable = false, unique = true)
@@ -59,7 +59,7 @@ public class Category extends BaseEntity {
     - Navigazione utente: Gli utenti possono esplorare le categorie partendo da un livello alto e scendendo a livelli più specifici.
     - Organizzazione backend: Utile per organizzare i prodotti e facilitare la gestione da parte degli amministratori.
      */
-    @ManyToOne(fetch = FetchType.EAGER) // carica entità categoria con anche la categoria padre, senza query in secondo momento
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parentCategory;
 

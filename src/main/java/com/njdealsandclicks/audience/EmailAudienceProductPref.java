@@ -1,5 +1,6 @@
 package com.njdealsandclicks.audience;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import com.njdealsandclicks.common.BaseEntity;
@@ -11,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +31,7 @@ import lombok.EqualsAndHashCode;
     }
 )
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EmailAudienceProductPref extends BaseEntity {
 
     @NotNull
@@ -45,4 +47,9 @@ public class EmailAudienceProductPref extends BaseEntity {
     @NotNull
     @Column(name = "subscribed_at", nullable = false)
     private ZonedDateTime subscribedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.subscribedAt = ZonedDateTime.now(ZoneId.of("UTC"));
+    }
 }

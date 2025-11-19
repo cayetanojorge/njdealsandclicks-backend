@@ -2,6 +2,7 @@ package com.njdealsandclicks.audience;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import com.njdealsandclicks.common.BaseEntity;
 import com.njdealsandclicks.user.User;
@@ -33,7 +34,7 @@ import lombok.EqualsAndHashCode;
     }
 )
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class EmailAudience extends BaseEntity {
 
     @NotBlank
@@ -70,6 +71,25 @@ public class EmailAudience extends BaseEntity {
     @Column(name = "deactivated_at")
     private ZonedDateTime deactivatedAt;
 
+    /*
+    Serve per implementare un link “unsubscribe / disiscrizione**”** senza autenticazione.
+    Perché una persona iscritta alla newsletter potrebbe:
+        non avere un account
+        cliccare il link "Cancellami" direttamente dall’email
+        non poter essere autenticata con sessione JWT
+    Quando invii un’email includi il link: https://njdealsandclicks.com/unsubscribe?token=ab3498df9234...
+    Backend:
+        Cerca EmailAudience per token
+        Se esiste:
+            is_active = false
+            deactivated_at = now()
+            rimuove ProductPref / MarketPref (se vuoi) 
+    È fondamentale per:
+        GDPR compliance
+        Unsubscribe one-click
+        Evitare di esporre UUID o email nel link
+        Sicurezza (no brute force: token lungo 64 charset)
+    */
     @Column(name="unsubscribe_token", unique=true, length=64)
     private String unsubscribeToken;
 
@@ -85,5 +105,9 @@ public class EmailAudience extends BaseEntity {
     @PrePersist
     protected void onCreate() {
         this.createdAt = ZonedDateTime.now(ZoneId.of("UTC"));
+        if (this.email != null) this.email = this.email.trim().toLowerCase();
+        if (unsubscribeToken == null) {
+            this.unsubscribeToken = UUID.randomUUID().toString().replace("-", "");
+        }
     }
 }

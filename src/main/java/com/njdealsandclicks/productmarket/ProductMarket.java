@@ -41,7 +41,7 @@ import lombok.EqualsAndHashCode;
   }
 )
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class ProductMarket extends BaseEntity{
 
     @NotNull

@@ -13,6 +13,12 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     Optional<Category> findByPublicId(String publicId);
     boolean existsByPublicId(String publicId);
 
+    @Query("SELECT c FROM Category c JOIN FETCH c.parentCategory WHERE c.id = :id")
+    Optional<Category> findWithParentById(UUID id);
+
+    @Query("SELECT c FROM Category c JOIN FETCH c.parentCategory WHERE c.publicId = :publicId")
+    Optional<Category> findWithParentByPublicId(String publicId);
+
     /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
     @Query("SELECT c.publicId FROM Category c WHERE c.publicId IN :publicIds")
     List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);

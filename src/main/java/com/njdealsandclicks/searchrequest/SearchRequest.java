@@ -29,7 +29,7 @@ import lombok.EqualsAndHashCode;
         @Index(name = "idx_search_request_market_hash_created", columnList = "market, query_hash, created_at")
     })
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class SearchRequest extends BaseEntity {
 
     @NotBlank
