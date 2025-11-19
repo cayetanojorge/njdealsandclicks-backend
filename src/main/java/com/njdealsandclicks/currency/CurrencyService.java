@@ -1,9 +1,11 @@
 package com.njdealsandclicks.currency;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +49,7 @@ public class CurrencyService {
     }
 
     @Transactional(readOnly = true)
-    public Currency getCurrencyById(UUID id) {
+    public Currency getCurrencyById(@NonNull UUID id) {
         return currencyRepository.findById(id).orElseThrow(() -> new RuntimeException("Currency with id " + id + " not found"));
     }
     
@@ -91,6 +93,7 @@ public class CurrencyService {
     @Transactional
     public void deleteCurrency(String publicId) {
         Currency currency = getCurrencyByPublicId(publicId);
-        currencyRepository.deleteById(currency.getId());
+        UUID id = Objects.requireNonNull(currency.getId(), "Currency id must not be null");
+        currencyRepository.deleteById(id);
     }
 }

@@ -8,6 +8,7 @@ import com.njdealsandclicks.dto.pricehistory.PriceHistoryDTO;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +33,12 @@ public class PriceHistoryController {
     }
 
     @PostMapping("/create")
-    public PriceHistory postMethodName(@RequestBody PriceHistory priceHistory) {        
+    public PriceHistory postMethodName(@RequestBody @NonNull PriceHistory priceHistory) {        
         return priceHistoryService.createPriceHistory(priceHistory);
     }
 
     @DeleteMapping("/{id}")
-    public void deletePriceHistory(@PathVariable UUID id) {
+    public void deletePriceHistory(@PathVariable @NonNull UUID id) {
         priceHistoryService.deletePriceHistory(id);
     }
 

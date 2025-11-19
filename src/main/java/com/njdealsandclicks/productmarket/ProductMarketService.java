@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -125,7 +126,7 @@ public class ProductMarketService {
     }
 
     @Transactional(readOnly = true)
-    public ProductMarket getProductMarketById(UUID id) {
+    public ProductMarket getProductMarketById(@NonNull UUID id) {
         return productMarketRepository.findById(id).orElseThrow(() -> new RuntimeException("ProductMarket with id " + id + " not found"));
     }
 

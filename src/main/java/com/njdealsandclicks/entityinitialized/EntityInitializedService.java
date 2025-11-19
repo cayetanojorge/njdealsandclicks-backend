@@ -2,6 +2,7 @@ package com.njdealsandclicks.entityinitialized;
 
 import java.io.IOException;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.njdealsandclicks.common.dbinitializer.DbInitializationProperties;
@@ -20,7 +21,7 @@ public class EntityInitializedService {
     private final DbInitializationProperties properties;
     private final DateUtil dateUtil;
 
-    public boolean needsInitialization(String entityName, String yamlName) {
+    public boolean needsInitialization(@NonNull String entityName, String yamlName) {
         if (properties.isForce() || properties.getForceEntities().contains(entityName)) {
             return true;
         }
@@ -39,7 +40,7 @@ public class EntityInitializedService {
     }
     
     @Transactional
-    public void markAsInitialized(String entityName, String yamlName, String version) {
+    public void markAsInitialized(@NonNull String entityName, String yamlName, String version) {
         try {            
             EntityInitialized entityInitialized = entityInitializedRepository.findById(entityName)
                 .orElse(new EntityInitialized(entityName));

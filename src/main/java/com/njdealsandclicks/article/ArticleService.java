@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,7 +103,7 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Article getArticleById(UUID id) {
+    public Article getArticleById(@NonNull UUID id) {
         return articleRepository.findById(id).orElseThrow(() -> new RuntimeException("Article with id " + id + " not found"));
     }
 
@@ -205,7 +206,8 @@ public class ArticleService {
     @Transactional
     public void deleteArticle(String publicId) {
         Article article = getArticleByPublicId(publicId);
-        articleRepository.deleteById(article.getId());
+        UUID id = Objects.requireNonNull(article.getId(), "Article id must not be null");
+        articleRepository.deleteById(id);
     }
 
     @Transactional(readOnly = true)

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.njdealsandclicks.common.dbinitializer.EntityInitializer;
@@ -26,6 +27,7 @@ public class SubscriptionInitializer implements EntityInitializer {
     private final YamlService yamlService;
 
     @Override
+    @NonNull
     public String getEntityName() {
         return "subscription";
     }

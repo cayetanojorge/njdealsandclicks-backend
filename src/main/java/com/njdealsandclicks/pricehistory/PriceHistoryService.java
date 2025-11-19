@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,12 +46,12 @@ public class PriceHistoryService {
     }
     
     @Transactional
-    public PriceHistory createPriceHistory(PriceHistory priceHistory) {
+    public PriceHistory createPriceHistory(@NonNull PriceHistory priceHistory) {
         return priceHistoryRepository.save(priceHistory);
     }
 
     @Transactional
-    public void deletePriceHistory(UUID id) {
+    public void deletePriceHistory(@NonNull UUID id) {
         priceHistoryRepository.deleteById(id);
     }
     

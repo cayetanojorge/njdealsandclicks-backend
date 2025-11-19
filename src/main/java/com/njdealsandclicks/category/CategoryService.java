@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +59,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Category getCategoryById(UUID id) {
+    public Category getCategoryById(@NonNull UUID id) {
         return categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category with id " + id + " not found"));
     }
 
@@ -186,6 +187,7 @@ public class CategoryService {
         parentCategory.setSubCategories(parentSubs);
         categoryRepository.save(parentCategory);
 
-        categoryRepository.deleteById(category.getId());
+        UUID id = Objects.requireNonNull(category.getId(), "Category id must not be null");
+        categoryRepository.deleteById(id);
     }
 }

@@ -3,6 +3,7 @@ package com.njdealsandclicks.product;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,7 +96,7 @@ public class ProductService {
     // }
 
     @Transactional(readOnly = true)
-    public Product getProductById(UUID id) {
+    public Product getProductById(@NonNull UUID id) {
         return productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product with id " + id + " not found"));
     }
 

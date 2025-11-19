@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.njdealsandclicks.common.dbinitializer.EntityInitializer;
@@ -31,6 +32,7 @@ public class CategoryInitializer implements EntityInitializer {
 
     
     @Override
+    @NonNull
     public String getEntityName() { 
         return "category";
     }

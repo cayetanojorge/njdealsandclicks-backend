@@ -1,9 +1,11 @@
 package com.njdealsandclicks.country;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +57,7 @@ public class CountryService {
     }
 
     @Transactional(readOnly = true)
-    public Country getCountryById(UUID id) {
+    public Country getCountryById(@NonNull UUID id) {
         return countryRepository.findById(id).orElseThrow(() -> new RuntimeException("Country with id " + id + " not found"));
     }
     
@@ -117,6 +119,7 @@ public class CountryService {
     @Transactional
     public void deleteCountry(String publicId) {
         Country country = getCountryByPublicId(publicId);
-        countryRepository.deleteById(country.getId());
+        UUID id = Objects.requireNonNull(country.getId(), "Country id must not be null");
+        countryRepository.deleteById(id);
     }
 }

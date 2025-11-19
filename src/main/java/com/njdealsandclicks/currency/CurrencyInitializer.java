@@ -3,6 +3,7 @@ package com.njdealsandclicks.currency;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.njdealsandclicks.common.dbinitializer.EntityInitializer;
@@ -27,6 +28,7 @@ public class CurrencyInitializer implements EntityInitializer {
 
 
     @Override
+    @NonNull
     public String getEntityName() {
         return "currency";
     }

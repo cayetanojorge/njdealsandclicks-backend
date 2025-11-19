@@ -3,6 +3,7 @@ package com.njdealsandclicks.country;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.njdealsandclicks.common.dbinitializer.EntityInitializer;
@@ -29,6 +30,7 @@ public class CountryInitializer implements EntityInitializer {
 
 
     @Override
+    @NonNull
     public String getEntityName() {
         return "country";
     }

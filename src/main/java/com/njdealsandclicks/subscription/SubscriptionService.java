@@ -1,9 +1,11 @@
 package com.njdealsandclicks.subscription;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +63,7 @@ public class SubscriptionService {
     }
 
     @Transactional(readOnly = true)
-    public Subscription getSubscriptionById(UUID id) {
+    public Subscription getSubscriptionById(@NonNull UUID id) {
         return subscriptionRepository.findById(id).orElseThrow(() -> new RuntimeException("Subscription with id " + id + " not found"));
     }
 
@@ -123,6 +125,7 @@ public class SubscriptionService {
     @Transactional
     public void deleteSubscription(String publicId) {
         Subscription subscription = getSubscriptionByPublicId(publicId);
-        subscriptionRepository.deleteById(subscription.getId());
+        UUID id = Objects.requireNonNull(subscription.getId(), "Subscription id must not be null");
+        subscriptionRepository.deleteById(id);
     }
 }

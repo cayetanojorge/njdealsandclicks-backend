@@ -2,9 +2,11 @@ package com.njdealsandclicks.newsletter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,7 +73,7 @@ public class NewsletterService {
     }
 
     @Transactional(readOnly = true)
-    public Newsletter getNewsletterById(UUID id) {
+    public Newsletter getNewsletterById(@NonNull UUID id) {
         return newsletterRepository.findById(id).orElseThrow(() -> new RuntimeException("Subscription with " + id + " not found"));
     }
 
@@ -177,7 +179,8 @@ public class NewsletterService {
         log.info("|- newsletter_category: deleted_records={}", deletedCategories);
 
         // ora elimino newsletter normalmente
-        newsletterRepository.deleteById(newsletter.getId());
+        UUID id = Objects.requireNonNull(newsletter.getId(), "Newsletter id must not be null");
+        newsletterRepository.deleteById(id);
     }
 
     // public void deleteSubscription(String email) {
