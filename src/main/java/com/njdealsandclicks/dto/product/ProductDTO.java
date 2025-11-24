@@ -32,6 +32,6 @@ public class ProductDTO {
     @NotBlank
     private String categoryName;
 
-    private Map<String, String> productMarketMap; // per fare mappa di publicID e countryCode
+    private Map<String, String> productMarketMap; // es: { "IT" -> "prod_market_abc", "ES" -> "prod_market_def" }
     
 }

@@ -2,12 +2,15 @@ package com.njdealsandclicks.product;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.njdealsandclicks.category.CategoryService;
+import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.pricehistory.PriceHistoryService;
 
 /**
@@ -41,23 +44,27 @@ public class ProductService {
     //     return publicIdGeneratorService.generateSinglePublicId(PREFIX_PUBLIC_ID, productRepository::filterAvailablePublicIds);
     // }
 
-    // private ProductDTO mapToProductDTO(Product product) {
-    //     ProductDTO productDTO = new ProductDTO();
-    //     productDTO.setPublicId(product.getPublicId());
-    //     productDTO.setName(product.getName());
-    //     productDTO.setDescription(product.getDescription());
-    //     productDTO.setCountryDTO(countryService.getCountryDTOByPublicId(product.getCountry().getPublicId()));
-    //     productDTO.setCurrentPrice(product.getCurrentPrice());
-    //     productDTO.setAffiliateLink(product.getAffiliateLink());
-    //     productDTO.setRating(product.getRating());
-    //     productDTO.setReviewCount(product.getReviewCount());
-    //     productDTO.setImageUrl(product.getImageUrl());
-    //     productDTO.setBrand(product.getBrand());
-    //     productDTO.setTags(product.getTags());
-    //     productDTO.setFeatures(product.getFeatures());
-    //     productDTO.setCategoryName(product.getCategory().getName());
-    //     return productDTO;
-    // }
+    private ProductDTO mapToProductDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setPublicId(product.getPublicId());
+        productDTO.setName(product.getName());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setImageUrl(product.getImageUrl());
+        productDTO.setBrand(product.getBrand());
+        productDTO.setTags(product.getTags());
+        productDTO.setFeatures(product.getFeatures());
+        productDTO.setCategoryName(product.getCategory().getName());
+
+        Map<String, String> productMarketMap = product.getProductMarkets().stream()
+            .filter(pm -> Boolean.FALSE.equals(pm.getIsDeleted())) // opzionale: solo non eliminati
+            .collect(Collectors.toMap(
+                pm -> pm.getCountry().getCode(),   // key: "IT", "ES", ...
+                pm -> pm.getPublicId()             // value: publicId di ProductMarket
+            ));
+
+        productDTO.setProductMarketMap(productMarketMap);
+        return productDTO;
+    }
 
     // private ProductDetailsDTO mapToProductDetailsDTO(Product product) {
     //     ProductDetailsDTO productDetailsDTO = new ProductDetailsDTO();
@@ -88,12 +95,12 @@ public class ProductService {
     //         .collect(Collectors.toList());
     // }
 
-    // @Transactional(readOnly = true)
-    // public List<ProductDTO> getAllProductsByMarket(String countryCode) {
-    //     return productRepository.findByCountryCode(countryCode).stream()
-    //             .map(this::mapToProductDTO)
-    //             .collect(Collectors.toList());
-    // }
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getAllProductsByMarket(String countryCode) {
+        return productRepository.findByCountryCode(countryCode).stream()
+                .map(this::mapToProductDTO)
+                .collect(Collectors.toList());
+    }
 
     @Transactional(readOnly = true)
     public Product getProductById(@NonNull UUID id) {

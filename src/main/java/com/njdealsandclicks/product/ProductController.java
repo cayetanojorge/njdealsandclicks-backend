@@ -1,7 +1,13 @@
 package com.njdealsandclicks.product;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.njdealsandclicks.dto.product.ProductDTO;
 
 
 
@@ -19,6 +25,11 @@ public class ProductController {
     // public List<ProductDTO> getAllProducts() {
     //     return productService.getAllProducts();
     // }
+
+    @GetMapping("/")
+    public List<ProductDTO> getAllProductsByMarket(@RequestParam("market") String market) {
+        return productService.getAllProductsByMarket(market);
+    }
 
     // @GetMapping("/{publicId}")
     // public ProductDetailsDTO getProductByPublicId(@PathVariable String publicId) {

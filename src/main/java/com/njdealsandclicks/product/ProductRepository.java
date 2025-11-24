@@ -20,8 +20,11 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     boolean existsByAffiliateLink(String affiliateLink);
 
     @Query("""
-        SELECT p FROM Product p
-        WHERE p.country.code = :countryCode
+        SELECT DISTINCT p
+        FROM Product p
+            JOIN p.productMarkets pm
+            JOIN pm.country c
+        WHERE c.code = :countryCode AND pm.isDeleted = false
     """)
     List<Product> findByCountryCode(@Param("countryCode") String countryCode);
 
@@ -32,7 +35,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
     @Query("SELECT p.publicId FROM Product p WHERE p.publicId IN :publicIds")
-    List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);
+    List<String> findByPublicIdsAndCountryfindExistingPublicIds(@Param("publicIds") List<String> publicIds);
 
     //     @Query(
     // value = """
