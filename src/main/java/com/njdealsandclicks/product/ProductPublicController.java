@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.njdealsandclicks.dto.article.ArticleDTO;
+import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.recommendation.RecommendationService;
 
 
@@ -15,19 +16,18 @@ import com.njdealsandclicks.recommendation.RecommendationService;
 @RequestMapping("/api/public/product")
 public class ProductPublicController {
     
-    // private final ProductService productService;
+    private final ProductService productService;
     private final RecommendationService recommendationService;
 
-    public ProductPublicController(//ProductService productService, 
-                        RecommendationService recommendationService) {
-        // this.productService = productService;
+    public ProductPublicController(ProductService productService, RecommendationService recommendationService) {
+        this.productService = productService;
         this.recommendationService = recommendationService;
     }
 
-    // @GetMapping("/all")
-    // public List<ProductDTO> getAllProducts() {
-    //     return productService.getAllProducts();
-    // }
+    @GetMapping("/all")
+    public List<ProductDTO> getAllProducts() {
+        return productService.getAllProducts();
+    }
 
     // @GetMapping("/")
     // public List<ProductDTO> getAllProductsByMarket(@RequestParam("market") String market) {

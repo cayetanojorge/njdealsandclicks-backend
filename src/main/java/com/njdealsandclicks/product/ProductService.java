@@ -13,9 +13,7 @@ import com.njdealsandclicks.category.CategoryService;
 import com.njdealsandclicks.dto.product.ProductDTO;
 import com.njdealsandclicks.pricehistory.PriceHistoryService;
 
-/**
- * Il servizio contiene la logica per gestire i prodotti e usa il repository.
- */
+
 
 @Service
 public class ProductService {
@@ -56,7 +54,7 @@ public class ProductService {
         productDTO.setCategoryName(product.getCategory().getName());
 
         Map<String, String> productMarketMap = product.getProductMarkets().stream()
-            .filter(pm -> Boolean.FALSE.equals(pm.getIsDeleted())) // opzionale: solo non eliminati
+            //.filter(pm -> Boolean.FALSE.equals(pm.getIsDeleted())) // opzionale: solo non eliminati, ma filtro fatto in repository
             .collect(Collectors.toMap(
                 pm -> pm.getCountry().getCode(),   // key: "IT", "ES", ...
                 pm -> pm.getPublicId()             // value: publicId di ProductMarket
@@ -85,22 +83,22 @@ public class ProductService {
     //     return productDetailsDTO;
     // }
 
-    // @Transactional(readOnly = true)
-    // public List<ProductDTO> getAllProducts() {
-    //     // return productRepository.findAll();
-        
-    //     List<Product> products = productRepository.findAll();
-    //     return products.stream()
-    //         .map(this::mapToProductDTO)
-    //         .collect(Collectors.toList());
-    // }
-
     @Transactional(readOnly = true)
-    public List<ProductDTO> getAllProductsByMarket(String countryCode) {
-        return productRepository.findByCountryCode(countryCode).stream()
-                .map(this::mapToProductDTO)
-                .collect(Collectors.toList());
+    public List<ProductDTO> getAllProducts() {
+        // return productRepository.findAll();
+        
+        List<Product> products = productRepository.findAllWithMarketsAndCountry();
+        return products.stream()
+            .map(this::mapToProductDTO)
+            .collect(Collectors.toList());
     }
+
+    // @Transactional(readOnly = true)
+    // public List<ProductDTO> getAllProductsByMarket(String countryCode) {
+    //     return productRepository.findByCountryCode(countryCode).stream()
+    //             .map(this::mapToProductDTO)
+    //             .collect(Collectors.toList());
+    // }
 
     @Transactional(readOnly = true)
     public Product getProductById(@NonNull UUID id) {

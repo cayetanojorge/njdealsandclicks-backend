@@ -8,17 +8,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-/**
- * Il repository gestisce l'interazione con il database per l'entità Product
- */
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     /* JpaRepository: Fornisce metodi CRUD predefiniti (es. findAll(), save(), deleteById()) */
 
     Optional<Product> findByPublicId(String publicId);
     boolean existsByPublicId(String publicId);
-    boolean existsByAffiliateLink(String affiliateLink);
 
+    // Lista completa prodotti + category + productMarkets (solo non deleted) + country
+    @Query("""
+        SELECT DISTINCT p
+        FROM Product p
+            LEFT JOIN FETCH p.category c
+            LEFT JOIN FETCH p.productMarkets pm
+                ON pm.isDeleted = false
+            LEFT JOIN FETCH pm.country
+    """)
+    List<Product> findAllWithMarketsAndCountry();
+
+    // Prodotti disponibili in un certo country (tramite ProductMarket)
     @Query("""
         SELECT DISTINCT p
         FROM Product p
@@ -28,14 +36,14 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     """)
     List<Product> findByCountryCode(@Param("countryCode") String countryCode);
 
-    // x filtrare i prodotti collegati a un articolo in base al market
-    @Query("SELECT p FROM Product p WHERE p.publicId IN :publicIds AND p.country.code = :countryCode")
-    List<Product> findByPublicIdsAndCountry(@Param("publicIds") List<String> publicIds,
-                                            @Param("countryCode") String countryCode);
+    // // x filtrare i prodotti collegati a un articolo in base al market
+    // @Query("SELECT p FROM Product p WHERE p.publicId IN :publicIds AND p.country.code = :countryCode")
+    // List<Product> findByPublicIdsAndCountry(@Param("publicIds") List<String> publicIds,
+    //                                         @Param("countryCode") String countryCode);
 
-    /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
-    @Query("SELECT p.publicId FROM Product p WHERE p.publicId IN :publicIds")
-    List<String> findByPublicIdsAndCountryfindExistingPublicIds(@Param("publicIds") List<String> publicIds);
+    // /* ok per gran numero di record nel database, poiché la verifica utilizza un'operazione SQL ottimizzata (IN con lista) */
+    // @Query("SELECT p.publicId FROM Product p WHERE p.publicId IN :publicIds")
+    // List<String> findExistingPublicIds(@Param("publicIds") List<String> publicIds);
 
     //     @Query(
     // value = """
@@ -65,56 +73,56 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product p WHERE p.category.publicId = :categoryPublicId")
     List<Product> findByCategoryPublicId(@Param("categoryPublicId") String categoryPublicId);
 
-    @Query(value = """
-        SELECT p.*
-        FROM product p
-        JOIN country co ON p.country_id = co.id
-        JOIN category c ON p.category_id = c.id
-        WHERE co.code = :countryCode
-        AND p.public_id NOT IN (:excludeIds)
-        AND (
-                ( :hasTags = TRUE AND EXISTS (
-                    SELECT 1
-                    FROM jsonb_array_elements_text(p.tags) t
-                    WHERE t IN (:tags)
-                ))
-            OR ( :categoryName IS NOT NULL AND c.name = :categoryName )
-            )
-        ORDER BY p.review_count DESC NULLS LAST, p.rating DESC NULLS LAST
-        LIMIT :limit
-        """, nativeQuery = true)
-    List<Product> findRelatedProductsByCountry(
-        @Param("excludeIds") List<String> excludeIds,
-        @Param("tags") List<String> tags,
-        @Param("hasTags") boolean hasTags,
-        @Param("categoryName") String categoryName,
-        @Param("countryCode") String countryCode,
-        @Param("limit") int limit
-    );
+    // @Query(value = """
+    //     SELECT p.*
+    //     FROM product p
+    //     JOIN country co ON p.country_id = co.id
+    //     JOIN category c ON p.category_id = c.id
+    //     WHERE co.code = :countryCode
+    //     AND p.public_id NOT IN (:excludeIds)
+    //     AND (
+    //             ( :hasTags = TRUE AND EXISTS (
+    //                 SELECT 1
+    //                 FROM jsonb_array_elements_text(p.tags) t
+    //                 WHERE t IN (:tags)
+    //             ))
+    //         OR ( :categoryName IS NOT NULL AND c.name = :categoryName )
+    //         )
+    //     ORDER BY p.review_count DESC NULLS LAST, p.rating DESC NULLS LAST
+    //     LIMIT :limit
+    //     """, nativeQuery = true)
+    // List<Product> findRelatedProductsByCountry(
+    //     @Param("excludeIds") List<String> excludeIds,
+    //     @Param("tags") List<String> tags,
+    //     @Param("hasTags") boolean hasTags,
+    //     @Param("categoryName") String categoryName,
+    //     @Param("countryCode") String countryCode,
+    //     @Param("limit") int limit
+    // );
 
-    // --- search per filtrare per paese ---
-    @Query(value = """
-        SELECT p.*
-        FROM product p
-        JOIN country co ON p.country_id = co.id
-        LEFT JOIN category c ON p.category_id = c.id
-        WHERE co.code = :countryCode
-        AND (
-            p.name ILIKE CONCAT('%', :q, '%')
-            OR (p.brand IS NOT NULL AND p.brand ILIKE CONCAT('%', :q, '%'))
-            OR (p.description IS NOT NULL AND p.description ILIKE CONCAT('%', :q, '%'))
-            OR EXISTS (
-                SELECT 1
-                FROM jsonb_array_elements_text(p.tags) t
-                WHERE t ILIKE CONCAT('%', :q, '%')
-            )
-        )
-        ORDER BY p.review_count DESC NULLS LAST, p.rating DESC NULLS LAST
-        LIMIT :limit
-        """, nativeQuery = true)
-    List<Product> searchByTextAndCountry(@Param("q") String q,
-                                        @Param("limit") int limit,
-                                        @Param("countryCode") String countryCode);
+    // // --- search per filtrare per paese ---
+    // @Query(value = """
+    //     SELECT p.*
+    //     FROM product p
+    //     JOIN country co ON p.country_id = co.id
+    //     LEFT JOIN category c ON p.category_id = c.id
+    //     WHERE co.code = :countryCode
+    //     AND (
+    //         p.name ILIKE CONCAT('%', :q, '%')
+    //         OR (p.brand IS NOT NULL AND p.brand ILIKE CONCAT('%', :q, '%'))
+    //         OR (p.description IS NOT NULL AND p.description ILIKE CONCAT('%', :q, '%'))
+    //         OR EXISTS (
+    //             SELECT 1
+    //             FROM jsonb_array_elements_text(p.tags) t
+    //             WHERE t ILIKE CONCAT('%', :q, '%')
+    //         )
+    //     )
+    //     ORDER BY p.review_count DESC NULLS LAST, p.rating DESC NULLS LAST
+    //     LIMIT :limit
+    //     """, nativeQuery = true)
+    // List<Product> searchByTextAndCountry(@Param("q") String q,
+    //                                     @Param("limit") int limit,
+    //                                     @Param("countryCode") String countryCode);
 
     /* per le query sui tags e features che sono json in db postgresql */
     // // // Ricerca prodotti che contengono un tag specifico nel JSONB
